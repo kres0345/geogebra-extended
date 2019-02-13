@@ -13,7 +13,7 @@ If you can't get it to work, then I will do my best to help set it up, just open
 
 - #### Comic Sans
 
-To enabled `Comic Sans`, select `Settings` --> `Advanced` --> Scroll to the button, there you'l see `Enable Comic Sans`.
+To enabled `Comic Sans`, select `Settings` --> `Advanced` --> Scroll to the buttom, there you'l see `Enable Comic Sans`.
 
 - #### LAN Sessions
 
