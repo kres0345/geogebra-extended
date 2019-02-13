@@ -1,0 +1,48 @@
+buildscript {
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "27.0.2"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 27
+    }
+}
+
+def jniLibsDir = "src/main/jniLibs"
+def armeabiDir = "$jniLibsDir/armeabi-v7a"
+def x86Dir = "$jniLibsDir/x86"
+
+task copyCrystaxSo {
+    description 'Copies Crystax .so files to the appropriate folders.'
+    def found = 0
+    doLast {
+	def so = "libcrystax.so"
+	def PATH = System.env['PATH'].split(":").each { d ->
+	    def libdirArmeabi = d + "/../arm-linux-androideabi/lib/"
+	    def libdirX86 = d + "/../i686-linux-android/lib/"
+	    if (file(libdirArmeabi + so).exists()) {
+		println " Found armeabi .so"
+		found ++
+		copy { from libdirArmeabi include so into armeabiDir }
+		}
+	    if (file(libdirX86 + so).exists()) {
+		println " Found x86 .so"
+		found ++
+		copy { from libdirX86 include so into x86Dir }
+		}
+	    }
+	if (found < 2) {
+	    def missing = 2 - found
+	    throw new GradleException("Missing $missing $so libraries, check PATH")
+	    }
+	}
+    }

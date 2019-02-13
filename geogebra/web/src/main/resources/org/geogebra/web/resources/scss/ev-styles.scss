@@ -1,0 +1,748 @@
+@import 'colors';
+	
+.GeoGebraFrame {
+	$always_on_top: 60;
+	
+	.TitleBarPanel {
+		z-index: $always_on_top;
+	}
+	
+	.MatTitleBarPanelContent {
+		min-width: 48px;
+		min-height: 64px;
+		box-shadow: none !important;
+		padding: 0px !important;
+		background-color: transparent !important;
+	}
+
+	.button.flatButton.graphicsContextMenuBtn.button-up {
+		margin-top: 10px;
+		margin-right: 10px;	
+		position: relative;
+		right: 0px;
+		border-radius: 50%;
+		transition: background-color 150ms ease 0ms;
+		img {
+			opacity: 0.54;
+		}
+	}
+		
+	.button.flatButton.graphicsContextMenuBtn.button-up-hovering {
+		@extend .button-up;
+				
+		img {
+			opacity: 0.84;	
+		}
+	}
+
+	.button.flatButton.graphicsContextMenuBtn.mow.button-up-hovering {
+		@extend .button-up;
+			
+		background-color: $mow_card_background_hover;
+		img {
+			opacity: 1;	
+		}
+	}
+
+	.flatButton:focus{
+		outline: $focus-black 5px auto;
+	}
+
+	.gwt-MenuItem:focus {
+		background: $menu-focus-default !important;
+	}	
+	/*dyn stylebar*/
+	.matDynStyleBar {
+		// popup has 500
+		z-index: 499;
+		position: absolute;
+	    border-radius: 2px;
+	    padding: 8px 4px 8px 16px;
+	    background-color: $white;
+	    box-shadow: 0 0 2px 1px $popup-shadow;
+	    
+	    &.noContextBtn {
+	    	padding: 8px 0px 8px 8px;
+	    }
+	    
+	    /*stylebar btn*/
+	    .MyCanvasButton {
+			text-align: center;
+			border-radius: 2px;
+			border: $tool-border solid 1px;
+			background-color: $white;
+			width: 24px;
+			height: 24px;
+			margin-left: 0px;
+			margin-right: 8px;
+			cursor: pointer;
+			
+			img , .buttonContent {
+				opacity: 0.7;	
+			}
+
+			&:hover {
+				border: $purple-default solid 1px;
+			}
+
+			&.active {
+				border: $purple-default solid 1px;
+			}
+		
+			&.withIcon {
+				border: $tool-border solid 1px;
+				
+				.buttonContent {
+					opacity: 0.7;	
+				}
+			
+				&:hover {
+					border: $purple-default solid 1px;
+				}
+			}
+		}
+	
+		.btnBold,.btnItalic {
+			border-radius: 2px;
+			margin-left: 0px;
+			margin-right: 8px;
+			
+			img {
+				opacity: 0.7;
+			}	
+		
+			&:hover, &:focus {
+				border: $purple-default solid 1px;
+			}
+		
+			&.gwt-ToggleButton-down {
+				border: $purple-default solid 1px;
+			}
+		}
+
+		.matDynStyleContextButton { 
+			margin-right: 0px !important;
+			margin-left: 0px !important;
+			border: none !important;
+			
+			&.noOpacity, &.noOpacity:hover {
+				.buttonContent.stylebarButton {
+					opacity: 1 !important;	
+				}
+			}
+		
+			&:hover {
+				.buttonContent.stylebarButton {
+					opacity: 1 !important;		
+				}
+			}
+		
+		}
+	}
+
+	.mowDynStyleBar.matDynStyleBar.noContextBtn{
+	    padding: 8px 0px 8px 8px;
+	    
+	    .MyCanvasButton.delete{
+	    	margin-right: -12px;
+	    }
+	}
+
+	/* text size popup */
+	.textSizePopupPanel {
+		border-radius: 2px;
+		padding: 8px 0px 8px 0px;
+		margin: 0px;
+		
+		.matSelectionTable {
+    		border-collapse: separate;
+			border-spacing: 0px 0px;
+    			
+    		.gwt-Label {
+    			padding: 0px 16px 0px 16px;
+    			height: 24px;
+    			line-height: 24px;
+    			
+    			&:hover {
+    				background-color: $selected-menuitem-background;
+    				color: $black;
+    				/*background-color: $white-90;*/
+    				/*color: $toolbar-header-54;	*/
+    			}
+    		
+    			&.selected {
+    				/*border: 1px solid $purple-default;*/
+    				color: $purple-default;
+    				
+    				&:hover {
+    					color: $purple-default !important;
+    				}
+    			}
+    		}
+    	}
+    
+	}
+
+	/*dyn stylebar popup panel*/
+	.matPopupPanel {
+		border-radius: 2px;
+    	padding: 0px 8px 0px 8px;
+    	background-color: $white;
+    	box-shadow: 0 0 2px 1px $tool-border;
+    	z-index: 500000;	
+    	min-height: 30px;
+    	
+    	/*slider panel*/
+    	.ButtonPopupMenu .panelRow2 { 
+    		padding-bottom: 8px;
+    		padding-top: 8px;
+    		line-height: 10px;
+    		
+    		/*slider label*/
+    		.popupSliderLabel {
+    			float: right;
+    		    margin-right: 10px;
+    		    cursor: default;
+    		}
+    		/*slider*/
+    		input[type=range] {
+    			padding: 5px 0;
+    			margin: 0px 0px 0px 8px;
+    			width: calc(100% - 40px);
+    			cursor: pointer;
+    		}
+    		.opacityLabel {
+    			display: block;
+			    margin-bottom: 15px;
+			    margin-left: 5px;
+			    margin-top: 5px;
+			    cursor: default;
+    		}
+    		.thicknessLabel {
+    			display: block;
+			    margin-bottom: 10px;
+			    margin-left: 5px;
+			    margin-top: 5px;
+			    cursor: default;
+    		}
+    		.pointSizeLabel {
+    			display: block;
+			    margin-left: 5px;
+			    margin-top: 5px;
+			    cursor: default;
+    		}
+    		.preview{
+		    	margin: 3px 0px 3px 12px;
+			}
+    	}
+    
+    	.labelPopupPanel {
+    		padding: 8px 8px;
+    		width: 192px;
+    		
+    		.panelRow {
+    			height: 32px !important;
+    			display: flex;
+    			.gwt-Label {
+    				line-height: 30px;
+    				cursor: default;
+				}
+    			
+    			.AutoCompleteTextFieldW {
+    				width: 134px;
+    				margin: 0px !important;
+    				border-radius: 2px;	
+    				
+    				.TextField {
+    					padding: 2px;
+   						padding-left: 8px;
+   						margin-bottom: 2px;
+    					border: none;
+    					border-bottom: 1px solid #dcdcdc;
+    					background: transparent;
+    					box-shadow: none;
+    					border-radius: 0px !important;
+    				}
+    			}
+    		}
+    		
+    		.checkMarkMenuItem {
+    			cursor: pointer;
+    		
+    			img {
+    				opacity: 0.54;
+    				margin-top: -2px;
+    			}	    				
+    		}
+    	}
+	}
+
+	/*point/line style table*/
+	.matSelectionTable {
+		
+			border-collapse: separate;
+			border-spacing: 8px 8px;
+    		
+    		td {
+    		    padding: 0px;
+    		}	
+    	
+    		.gwt-Label {
+    			margin: 0px;
+    		}
+    	
+    		.gwt-Label.border {
+    			border-radius: 2px;
+    			
+    			&:hover {
+    				border: 1px solid $purple-default;
+    			}
+    		}
+    	
+    		.gwt-Label.border.selected,.gwt-Label.border.selected:hover {
+    			border: 1px solid $purple-default;
+    		}
+    	
+    		 .gwt-Label.borderButton {
+    		 	border: 1px solid;
+    			border-radius: 2px;
+    			height: 24px;
+    			width: 24px;
+    			
+    			&:hover {
+    				opacity: 0.65;
+    			}
+    			
+    			&.plusButton {
+    				border: $black-3 solid 1px;
+    				opacity: 0.54;	
+    				
+    				&:hover {
+    					opacity: 1;
+    					border: 1px solid $purple-default;
+    					background-color: $white-90;
+    				}
+    			}
+    		 }
+	}	
+
+	.matPopupPanel.tealBorder {
+		padding: 0px !important; 
+		
+   		.matSelectionTable {
+   		 	.gwt-Label.border:hover,
+   		 		.gwt-Label.border.selected, 
+					.gwt-Label.border.selected:hover {
+   		 		border: 1px solid $teal-default !important;
+   		 	}
+   		}
+   	}
+
+	.zoomPanel {
+		position: absolute;
+		z-index: 11;
+		cursor: default;
+		top: auto !important;
+    	left: auto !important;
+    	z-index: $always_on_top;
+		
+    	.zoomPanelBtn {
+    		position: relative;
+    		width: 36px;
+    		height: 36px;
+    		margin-bottom: 8px;
+    		background-color: $white;
+    		/*background-color: #888;*/
+    		border-radius: 50%;
+    		box-shadow: 0 1px 3px 0 $black-2, 0 1px 1px 0 $black-14, 0 2px 1px -1px $black-12;
+    		cursor: pointer;
+    		transition: background-color 150ms ease 0ms;
+    		
+    		img {
+    			padding: 6px;
+    			opacity: 0.54;
+    		}	
+    	
+    		&:hover {
+    			/*background-color: #666;*/
+    			background-color: $selected-menuitem-background;
+    			
+    			img {
+    				opacity: 1;	
+    			}
+    		}
+    	
+    		&:focus {
+    			img {
+    				opacity: 1;
+    				outline: $focus-black 5px auto;	
+    			}	
+    		}
+    	}
+		.zoomPanelBtnSmall img { 
+ 	        padding: 8px; 
+ 	    } 
+		.zoomPanelHomeIn {
+			@extend .zoomPanelBtn;
+			opacity: 1;
+			visibility: visible;	 
+			transition: all 0.2s ease;
+			}
+	
+		.zoomPanelHomeOut {
+			@extend .zoomPanelBtn;
+			cursor: default;
+			opacity: 0;	
+			visibility: hidden;	 
+			transition: all 0.2s ease;
+	
+			img {
+    			opacity: 0;
+    		}
+    	
+    		&:hover, &:focus {
+    			/*background-color: #666;*/
+    			background-color: $selected-menuitem-background;
+    			
+    			img {
+    				opacity: 0;	
+    			}
+    		}
+    	
+		}
+	}
+	.zoomPanelPosition {
+    	bottom: 8px !important;
+    	right: 16px !important;
+    }
+    .mowZoomPanel {
+    	margin-top: 48px!important;
+	    left: auto !important;
+	    z-index: 60;
+	    right: 4px !important;
+	    
+	    .zoomPanelBtn {
+	    	position: relative;
+		    margin: 6px;
+		    padding: 6px;
+		    cursor: pointer;
+		    border-radius: 50%;
+		    width: 24px;
+    		height: 24px;
+    		transition: background-color 150ms ease 0ms;
+		    
+		    &.zoomPanelBtnSmall {
+		    	padding: 8px;	
+		    	width: 20px;
+    			height: 20px;
+		    	
+		    	img {
+		    		width: 20px;
+					height: 20px;		    			
+		    	}
+		    }
+		   
+		   img {
+		   		width: 24px;
+				height: 24px;	
+				opacity: 0.54;	    	
+		   }
+		  
+		  	&:hover, &:focus, &.selected {
+		  		img { 
+		  			opacity: 1;
+		  		}
+		  		background-color: $mow_card_background_hover;
+		  	}
+		}
+		.zoomPanelHomeIn {
+			@extend .zoomPanelBtn;
+			opacity: 1;
+			visibility: visible;	 
+			transition: all 0.2s ease;
+		}
+	
+		.zoomPanelHomeOut {
+			@extend .zoomPanelBtn;
+			cursor: default;
+			opacity: 0;	
+			visibility: hidden;	 
+			transition: all 0.2s ease;
+	
+			img {
+    			opacity: 0;
+    		}
+    	
+    		&:hover, &:focus {
+    			background-color: $mow_card_background_hover;
+    			
+    			img {
+    				opacity: 1;	
+    			}
+    		}
+    	
+		}
+    }
+	.zoomPanelWithPageControl {
+		margin-bottom: 64px;
+		right: 22px !important;
+	}
+
+	.speechBtnPanel {
+	    
+	    .speechBtn {
+		 	height: 36px;
+		    width: 36px;
+		    background-color: #fff;
+		    border-radius: 50%;
+		    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
+		    transition: background-color 150ms ease 0ms;
+		    cursor: pointer;
+		    z-index: 60;
+		    position: relative;
+		    bottom: 52px;
+    		margin: 0px 0px 16px 16px;
+		    display: inline-block;
+				    
+			img {
+			   padding: 6px;
+			   opacity: 0.54;
+			}	
+			    	
+			&:hover {
+				background-color: $selected-menuitem-background;
+			    			
+			    img {
+			    	opacity: 1;	
+				}
+			}
+			    	
+			&:focus {
+			    img {
+			    	opacity: 1;
+			    	outline: $focus-black 5px auto;	
+			    }	
+			}
+		}
+	}
+
+	.undoRedoPanel {
+		padding-top: 4px;
+		padding-bottom: 4px;
+		padding-left: 12px;
+		position: absolute;
+		z-index: $always_on_top;
+		
+		.flatButton {
+			display: inline-block;
+		}
+		
+		.hideButton {
+			display: none;
+		}
+	}
+	.undoRedoPositionMow {
+		top: 0px;
+		left: 40px;
+		.flatButton {
+			border-radius: 50%;	
+			transition: background-color 150ms ease 0ms;
+			
+			&.buttonActive:hover {
+				img { 
+		  			opacity: 1;
+		  		}
+		  		background-color: $mow_card_background_hover;
+			}
+		}
+	}
+
+	input[type="text"], input[type="number"], .gwt-TextBox,
+	select, textarea,
+	.gwt-TextArea, .gwt-SuggestBox,
+	iframe.objectPropertiesTextEditor {
+		border: #DCDCDC solid 1px;
+		background: #FFFFFF;
+		padding: 4px 5px;
+		color: #666666;
+		border-radius: 5px;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		font-size: 100%;
+		font-family: geogebra-sans-serif, Arial Unicode MS, Arial, sans-serif;
+		box-shadow: inset 1px 1px rgba(102, 102, 102, 0.1);
+	}
+
+	input[type="text"],
+	input[type="number"],
+	.gwt-TextBox,
+	select,
+	textarea,
+	.gwt-TextArea,
+	iframe.objectPropertiesTextEditor {
+		&:focus,&:focus:not([readonly]){
+			border: 1px #6161FF solid;
+		}
+	}
+
+	/*============ AutocompleteTextFieldW =======*/
+
+	.InputPanel .html-face, .AutoCompleteTextFieldW .html-face {
+		cursor: hand;
+		cursor: pointer;
+	}
+
+	.AutoCompleteTextFieldW {
+		box-sizing: border-box;
+		position: relative;
+	}
+
+	.AutoCompleteTextFieldW .TextField {
+		display: inline-block;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		padding-left: 5px;
+		padding-right: 5px;
+		/*width: 100% !important;*/
+	}
+
+	.AutoCompleteTextFieldW.FromDrawTextFieldNew {
+		line-height: 70%;
+	}
+
+	.AutoCompleteTextFieldW.FromDrawTextFieldNew input[type="text"].TextField {
+		padding-left: 2px;
+		padding-right: 2px;
+	}
+
+	.AutoCompleteTextFieldW.FromDrawTextField .TextField {
+		margin: 0px;
+	}
+
+	.InputTreeItem .hasCursorPermanent {
+		border-color: #DCDCDC;
+	}
+
+	.scrollableTextBox{
+		width: 100%;
+		display: inline-block;
+	}
+
+	.scrollableTextBox > div{
+		width: calc(100% - 18px);
+		overflow-x: hidden;
+		display: inline-block;
+	}
+
+	.scrollableTextBox > div.gwt-PushButton{
+		width: auto;
+	}
+
+	.scrollableTextBox > div::-webkit-scrollbar{
+		display: none;
+	}
+
+	/* Slider top row: no extra padding*/
+	.gwt-TreeItem .noPadding{
+		padding-left: 0;
+	}
+
+	.latexEditor .scrollableTextBox{
+		padding-left:40px;
+		padding-top:5px;
+		padding-bottom:5px;
+		padding-right:10px;
+		box-sizing: border-box;
+	}
+
+	.scrollableTextBox {
+		overflow: hidden;
+	}
+
+	.scrollableTextBox >* {
+		overflow: hidden;
+	}
+
+	.NoHorizontalScroll .InputTreeItem .hasCursorPermanent {
+		border-color: #6161FF;
+	}
+
+	.SymbolToggleButton {
+		width: 20px;
+		height: 20px;
+		line-height: 20px;
+		text-align: center;
+		display: none;
+	}
+
+	.AutoCompleteTextFieldW .SymbolToggleButton {
+		position: absolute;
+		right: 0.6em;
+		top: 50%;
+		margin-top: -0.66em;
+	}
+
+	.InputTreeItemParent .XButton,
+	.InputTreeItemParent .XButtonNeighbour,
+	.XButtonPanelParent .XButton,
+	.XButtonPanelParent .XButtonNeighbour {
+		cursor: pointer;
+		padding-left: 4px;
+	}
+
+	.advanced-TextButtonPanel .AutoCompleteTextFieldW .SymbolToggleButton {
+		right: 1.6em;
+	}
+
+	.AutoCompleteTextFieldW.SymbolCanBeShown input:focus+.SymbolToggleButton {
+		display: inline-block;
+	}
+
+	.AutoCompleteTextFieldW.SymbolCanBeShown input:focus.TextField {
+		padding-right: 40px;
+	}
+
+	.InputTreeItemParent .XButton.shown,
+	.InputTreeItemParent .XButton.ShowSymbolButtonFocused,
+	.InputTreeItemParent .XButtonNeighbour.shown,
+	.XButtonPanelParent .XButton.shown,
+	.XButtonPanelParent .XButtonNeighbour.shown {
+		display: inline-block;
+	}
+
+	/* avoid 'x' in IE */
+	input[type="text"]::-ms-clear {
+		display: none;
+	}
+
+	.SymbolTablePopup {
+		z-index: 501;
+		background-color: $white;
+		border-radius: 0px;
+		padding: 16px;
+		-webkit-box-shadow: 0 2px 10px rgba(0,0,0,.2);
+		box-shadow: 0 2px 10px rgba(0,0,0,.2);
+
+		.SymbolTable tr {
+			cursor: pointer;
+		}
+
+		.SymbolTable td {
+			padding: 8px;
+			text-align: center;
+		}
+
+		.SymbolTable td:hover, .GeoGebraFrame .SymbolTable td.focus {
+			background: $white;
+			color: $teal-light;
+		}
+	}
+}
+
+/* Outside of GeoGebraFrame */
+.GeoGebraFullscreenContainer {
+	background-color: black;
+	top: 0px;
+	left: 0px;
+	z-index: 9999;
+}

@@ -1,0 +1,5 @@
+#!/bin/sh
+SVNDIR=`cd ../../..; pwd` # FIXME: add another ..
+test -r autotest.conf && . ./autotest.conf
+cd $SVNDIR/geogebra # FIXME: add ..
+svn info | grep "Last Changed Rev:" | awk '{print $4}'

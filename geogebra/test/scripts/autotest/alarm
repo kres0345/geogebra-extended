@@ -1,0 +1,107 @@
+#!/bin/sh
+# Checks if the current build works properly (basic checks) and alarms, if not
+
+# 1. Start and loading configuration
+test -r autotest.conf || {
+ echo "$0: Cannot find autotest.conf (make sure you edit autotest.conf.dist first)"
+ exit 127
+ }
+test -r autotest.conf && . ./autotest.conf
+
+REVISION=`./myrevision`
+REV_HTTP="http://dev.geogebra.org/trac/changeset/$REVISION"
+WEBDIR=$SVNDIR/geogebra/web
+MAILSERVERSSHLOGIN=build@dev.geogebra.org
+
+./simpletest
+RESULT=$?
+
+if [ $RESULT = 1 ]; then
+ MESSAGE="A build problem occurred at revision $REVISION"
+ fi
+
+if [ $RESULT = 2 ]; then
+ MESSAGE="JAR file creation problem at revision $REVISION"
+ fi
+
+if [ $RESULT = 3 ]; then
+ MESSAGE="There is a problem with the output of simpletest at revision $REVISION"
+ # Try to find out exactly what happened:
+ for i in log stdout stderr; do
+  TEMPFILE=$REVDIR/$REVISION/simpletest.$i
+  if [ -r $TEMPFILE ]; then
+   THISLOG=`cat $TEMPFILE | awk '{printf("%s\\\n",$0);}'`
+   LOG="$LOG\\nsimpletest.$i:\\n$THISLOG"
+   fi
+  done
+ fi
+
+if [ $RESULT = 4 ]; then
+ MESSAGE="There is a compilation problem at revision $REVISION, however GeoGebra starts properly"
+ LOG=`cat $REVDIR/$REVISION/ecjerrors | awk '{printf("%s\\\n",$0);}'`
+ fi
+
+if [ $RESULT = 5 ]; then
+ MESSAGE="There is a GeoGebraWeb GWT compilation problem at revision $REVISION, however GeoGebra compiles and starts properly"
+ LOG=`cat $WEBDIR/.buildlog | awk '{printf("%s\\\n",$0);}'`
+ fi
+
+echo $RESULT > $REVDIR/$REVISION/result
+
+# There was no problem during the simple testing...
+# Now let's do something more serious: JUnit testing!
+if [ $RESULT = 0 ]; then
+ ./junit-tests
+ JRESULT=$?
+ echo $JRESULT > $REVDIR/$REVISION/jresult
+
+ if [ $JRESULT = 0 ]; then
+
+  # Now we run webtest:
+  LOG=`./webtest`
+  WRESULT=$?
+
+  if [ $WRESULT = 0 ]; then
+   MESSAGE="Everything is OK at revision $REVISION"
+   exit 0 # Not sending an email
+
+  else # WRESULT != 0, so error reporting needed:
+   MESSAGE="Error on webtest: $WMESSAGE"
+   RESULT=$WRESULT
+   fi # WRESULT == 0
+
+ else # JRESULT != 0, so error reporting needed:
+  LOG=`cat ../../.warnings | awk '{printf("%s\\\n",$0);}'`
+  if [ $JRESULT = 1 ]; then
+   MESSAGE="A JUnit build problem occurred at revision $REVISION"
+   RESULT=11
+   fi
+  if [ $JRESULT = 2 ]; then
+   NERRS=`cat ../../.junit-tests-errors`
+   MESSAGE="Errors occured during JUnit tests at revision $REVISION ($NERRS errors)"
+   RESULT=12
+   fi
+  if [ $JRESULT = 3 ]; then
+   MESSAGE="A newly introduced failure has been detected by JUnit tests at revision $REVISION"
+   RESULT=13
+   fi
+
+  fi # JRESULT != 0
+
+ fi # RESULT == 0
+
+# Error was detected, report needed (general case):
+echo $RESULT > $REVDIR/$REVISION/result
+
+# Sending an email to geogebra-dev:
+LASTOK=`./which-latest-ok`
+if [ "$LASTOK" != "" ]; then
+ LASTOKINFO="The last error-free revision was $LASTOK in the autotest database"
+ fi
+echo "$MESSAGE
+$REV_HTTP
+$LASTOKINFO
+
+$LOG
+
+Automatic message, do not reply" | ssh -i $MAILSERVERSSHKEY -p$MAILSERVERSSHPORT $MAILSERVERSSHLOGIN mail -s \"autotest/alarm report\" $RECIPIENT

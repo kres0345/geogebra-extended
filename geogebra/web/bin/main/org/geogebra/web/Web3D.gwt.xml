@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='web3d'>
+
+  <inherits name='org.geogebra.web.WebND'/>
+  <!-- webGL -->
+  <inherits name='com.googlecode.gwtgl.binding'/>
+    
+  <!-- Specify the app entry point class.                         -->
+  <entry-point class='org.geogebra.web.full.Web'/>
+  
+  <!-- Specify the paths for translatable code                    -->
+  <source path='geogebra3D'/>
+  
+  <replace-with class="org.geogebra.web.geogebra3D.AppletFactory3D">
+    <when-type-is class="org.geogebra.web.full.gui.applet.AppletFactory" />    
+  </replace-with>
+
+  <!-- Compile only one permutation -->
+  <collapse-all-properties />
+</module>

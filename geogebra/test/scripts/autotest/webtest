@@ -1,0 +1,196 @@
+#!/bin/bash
+
+# Runs all tests in the $REVDIR/$REVISION/war/test or in
+# the specified directory (-d ...). It can use a
+# different template than the default webtest-template.js
+# (use -t ...) and can skip analyzing (-a no-analyze).
+# Also BASE can be changed (-b ...).
+# Use -r ... to change the report suffix (REPORT),
+# -s to add an extra substitution variable,
+# in this case specify -S ... for a suffix file pattern
+# and -P ... for an external program to get the substitution string.
+# -c switch caching on (based on GGB's XML's SHA1).
+# -R forces retrying when the phantomjs --debug output contains the parameter.
+
+PHANTOMJS=./phantomjs-1.9.7 # override this with autotest.conf
+
+test -r autotest.conf && . ./autotest.conf
+
+TESTPARAMS="m=test&c=&s=0&h=0&v=1&t=1"
+PNGFILE=output.png
+TEMPLATE=webtest-template.js
+PHANTOMJSFILE=webtest.js
+PDEBUGINFO=phantomjs.debuginfo
+
+REVISION=`./myrevision`
+WEBTESTWARDIR=`echo $WEBTESTWARDIR | sed s/latest/$REVISION/`
+
+BASE=$WEBTESTPROTOCOL://$WEBTESTSERVER:$WEBTESTPORT/$WEBTESTWARDIR/$WEBTESTPAGE
+BASE_CHANGED=0
+REMOTEBASE=$REMOTEWEBTESTPROTOCOL://$REMOTEWEBTESTSERVER:$REMOTEWEBTESTPORT/$WEBTESTWARDIR/$WEBTESTPAGE
+REPORT=webtest-out.json
+TIMEOUT=20000
+REPEAT=1000
+COLORS="--colors"
+COLORS="" # disabling it for easier analyzation
+# phantomjs timeouts:
+TIMEOUT_P=30 # sigterm
+TIMEOUT_P2=40 # sigkill
+
+run() {
+ TEST="$1"
+ PARAMS="f=$TEST&$TESTPARAMS"
+ TESTURL="$BASE?$PARAMS"
+ if [ "$BASE_CHANGED" = 1 ]; then
+  # We have a different TESTURL logic. In this case the
+  # BASE must be followed by $1 as the directory (without .ggb):
+  TESTNAME=`basename $1 .ggb`
+  # TESTURL="$BASE/$TESTNAME/test_compiled0.html"
+  TESTURL="$BASE/$TESTNAME/test0.html"
+  # There will be probably SUBST_FROM, SUBST_SUFFIX and SUBST_PROGRAM variables, too.
+  if [ "$SUBST_FROM" != "" -a "$SUBST_SUFFIX" != "" -a $SUBST_PROGRAM != "" ]; then
+   SUBST_TO=`$SUBST_PROGRAM $TESTNAME.ggb-$SUBST_SUFFIX`
+   fi
+  fi
+ echo "Testing URL $TESTURL" >/dev/stderr
+ TESTURLSED=`echo $TESTURL | sed s/"\/"/"\\\\\\\\\/"/g | sed s/"\&"/"\\\\\\\\\&"/g`
+ TESTNAME=`basename $1 .ggb | tr _ " "`
+ if [ "$2" = "" ]; then
+  EXITSTRING="] $TESTNAME" # this is some kind of heuristics since the page title will contain "[12345] TestName"
+ else
+  EXITSTRING="$2" # sometimes we must override the heuristics
+  fi
+ cat $TEMPLATE | sed s/"\$TESTURL"/"$TESTURLSED"/g | sed s/"\$OUTPUTPNG"/"$PNGFILE"/g \
+  | sed s/"\$TIMEOUT"/"$TIMEOUT"/g | sed s/"\$REPEAT"/"$REPEAT"/g \
+  | sed s/"\$EXITSTRING"/"$EXITSTRING"/g | sed s/"\$$SUBST_FROM"/"$SUBST_TO"/g \
+  > $PHANTOMJSFILE
+ DONE=0; ATTEMPTS=0; MAXATTEMPTS=5
+ while [ $DONE = 0 -a $ATTEMPTS -lt $MAXATTEMPTS ]; do
+  timeout -k $TIMEOUT_P2 $TIMEOUT_P $PHANTOMJS --debug=true $PHANTOMJSFILE > $REPORT 2> phantomjs.debug-$TEST
+  if [ "$RETRY" = "" ]; then
+   DONE=1
+   fi
+  cat phantomjs.debug-$TEST | grep "$RETRY" && DONE=1
+  if [ $DONE = 0 ]; then
+   date >> $PDEBUGINFO
+   echo "$TEST unreliable ($ATTEMPTS)" >> $PDEBUGINFO
+   fi
+  ATTEMPTS=$((ATTEMPTS+1))
+  done
+ echo "Return value: $?" >/dev/stderr
+ # Postprocessing:
+ tail -10 $REPORT >/dev/stderr
+ cp $REPORT $TEST-$REPORT
+ convert $PNGFILE jpg:- | jp2a - --width=100 $COLORS > $TEST.ansi
+ }
+
+ansi_analyze() {
+ANSIFILENAME="$1.ansi"
+REMOTEURL="$REMOTEBASE?f=$1&$TESTPARAMS"
+# Taken from http://stackoverflow.com/questions/4174113/how-to-gather-characters-usage-statistics-in-text-file-using-unix-commands:
+cat $ANSIFILENAME | sed 's/\(.\)/\1\n/g' | sort | uniq -c | sort -nr > $ANSIFILENAME.test
+# We created character frequency statistics.
+# 1. If the most frequent character is "space", and no other characters exists,
+# it means no real output is shown. This can be checked by having a 2-lines-output file:
+if [ `cat $ANSIFILENAME.test | wc -l` = 2 ]; then
+ echo "Output seems empty for test $1 ($REMOTEURL)"
+ if [ "$2" = force ]; then
+  exit 21
+  fi
+ return 21
+ fi
+# 2. If the "space" character is the most often, it may mean that the output
+# stops at the splash screen:
+MOST=`cat $ANSIFILENAME.test | head -1 | awk '{print $2}'`
+FREQ=`cat $ANSIFILENAME.test | head -1 | awk '{print $1}'`
+echo $MOST | grep --silent "[0-9] M$" && {
+ if [ `echo $FREQ \> 3700 | bc -q` = 1 ]; then
+  echo "Output for test $1 ($REMOTEURL) seems to be almost empty, maybe too slow"
+  if [ "$2" = force ]; then
+   exit 22
+   fi
+  return 22
+  fi
+ }
+return 0
+}
+
+json_analyze() {
+JSONFILENAME="$1-webtest-out.json"
+REMOTEURL="$REMOTEBASE?f=$1&$TESTPARAMS"
+SYNTAXERROR=`cat $JSONFILENAME | grep SyntaxError`
+if [ "$SYNTAXERROR" != "" ]; then
+ echo "$SYNTAXERROR for test $1 ($REMOTEURL)"
+ # exit 23 # Not as critical as it seems
+ fi
+}
+
+MYDIR=`pwd`
+TESTDIR=$REVDIR/$REVISION/war/test
+
+while getopts ":R:d:a:t:b:r:s:S:P:c" o; do
+ case "${o}" in
+  R)
+   RETRY=${OPTARG}
+   ;;
+  d)
+   TESTDIR=${OPTARG}
+   ;;
+  t)
+   TEMPLATE=${OPTARG}
+   ;;
+  a)
+   ACTION=${OPTARG}
+   ;;
+  b)
+   BASE=${OPTARG}
+   BASE_CHANGED=1
+   ;;
+  r)
+   REPORT=${OPTARG}
+   ;;
+  s)
+   SUBST_FROM=${OPTARG}
+   ;;
+  S)
+   SUBST_SUFFIX=${OPTARG}
+   ;;
+  P)
+   SUBST_PROGRAM=${OPTARG}
+   ;;
+  c)
+   CACHE=1
+   ;;
+   
+  esac
+ done
+shift $((OPTIND-1))
+ 
+
+TESTFILES=`cd $TESTDIR; ls -1 *.ggb | grep -v ^_`
+for i in $TESTFILES; do
+
+ if [ "$CACHE" = "1" ]; then
+  rm -f /tmp/geogebra.xml
+  unzip $TESTDIR/$i geogebra.xml -d /tmp
+  sha1sum /tmp/geogebra.xml > $i-current.sha1
+  if [ -r $i.sha1 ]; then
+   cmp $i-current.sha1 $i.sha1 && continue 1
+   fi
+   mv $i-current.sha1 $i.sha1
+  fi
+
+ run $i
+ if [ "$ACTION" = "no-analyze" ]; then
+  continue 1;
+  fi
+ ansi_analyze $i ggbOnInit
+ RETVAL=$?
+ if [ $RETVAL = 21 -o $RETVAL = 22 ]; then
+  run $i somethingrandomstringwhichwillneveroccur
+  ansi_analyze $i force
+  fi
+ json_analyze $i
+ done
+
+exit 0

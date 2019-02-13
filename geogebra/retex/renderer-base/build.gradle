@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'com.github.spotbugs' version '1.6.9'
+}
+
+group 'com.himamis.retex'
+version '0.1'
+
+publishing {
+    publications {
+        library(MavenPublication) {
+            from components.java
+        }
+    }
+}
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+    compile 'com.google.j2objc:annotations:1.0.2'
+}
+
+task jarSources(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+    from sourceSets.main.allSource 
+}
+
+spotbugs {
+	ignoreFailures = true
+	excludeFilter = file("../../common/config/findbugs.xml")
+}

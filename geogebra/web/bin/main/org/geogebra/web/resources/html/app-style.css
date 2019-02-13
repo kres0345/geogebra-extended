@@ -1,0 +1,562 @@
+@-webkit-keyframes a{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}.mk-spinner-ring{height:50px;margin-top:-25px;border-radius:50%;border:3px solid #00bcd4;border-left-color:transparent;background:transparent;-webkit-animation:a 1s infinite linear;animation:a 1s infinite linear}.mk-spinner-fan,.mk-spinner-ring{content:"";display:inline-block;position:absolute;width:50px;top:50%;left:50%;margin-left:-25px;z-index:1}.mk-spinner-fan{height:0;margin-top:0;border:3px solid #cebb17;border-radius:50%;-webkit-animation:a .8s infinite linear;animation:a .8s infinite linear}@-webkit-keyframes b{0%{-webkit-transform:scale(.9);transform:scale(.9)}to{-webkit-transform:scale(1);transform:scale(1)}}@keyframes b{0%{-webkit-transform:scale(.9);transform:scale(.9)}to{-webkit-transform:scale(1);transform:scale(1)}}@-webkit-keyframes c{0%{-webkit-transform:scale(.9);transform:scale(.9)}to{-webkit-transform:scale(4);transform:scale(4)}}@keyframes c{0%{-webkit-transform:scale(.9);transform:scale(.9)}to{-webkit-transform:scale(4);transform:scale(4)}}.mk-spinner-ripple:after,.mk-spinner-ripple:before{content:"";display:inline-block;position:absolute;width:20px;height:20px;top:50%;margin-top:-10px;left:50%;margin-left:-10px;z-index:1;border-radius:50%}.mk-spinner-ripple:before{background:#00796b;-webkit-animation:b 1s infinite .5s;animation:b 1s infinite .5s}.mk-spinner-ripple:after{background:#1de9b6;z-index:0;-webkit-transform:scale(3);transform:scale(3);-webkit-animation:c 1s infinite .5s;animation:c 1s infinite .5s}.mk-spinner-pie{content:"";display:inline-block;position:absolute;width:50px;height:50px;top:50%;margin-top:-25px;left:50%;margin-left:-25px;z-index:1;background:transparent;border-radius:50%;border:25px solid;border-color:#ffca28 #eeff41 #00bcd4 #1de9b6;-webkit-animation:a 1s infinite linear;animation:a 1s infinite linear}.mk-spinner-doublecircle{background:transparent;-webkit-animation:a 2s linear infinite;animation:a 2s linear infinite}.mk-spinner-doublecircle,.mk-spinner-doublecircle:after{border:3px solid;border-radius:50%;content:"";display:inline-block;position:absolute;width:50px;height:50px;top:50%;margin-top:-25px;left:50%;margin-left:-25px;z-index:1}.mk-spinner-doublecircle{border-color:#1de9b6 rgba(0,0,0,.07)}.mk-spinner-doublecircle:after{border-color:transparent #eeff41;-webkit-animation:a 5s linear infinite;animation:a 5s linear infinite}@keyframes a{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}.mk-spinner-weight{-webkit-animation:a 1.5s infinite ease-in;animation:a 1.5s infinite ease-in;content:"";display:inline-block;position:absolute;width:50px;height:2px;top:50%;margin-top:-1px;left:50%;margin-left:-25px;z-index:1;background:#1de9b6}.mk-spinner-weight:after,.mk-spinner-weight:before{content:"";position:absolute;top:50%;border:2px solid #1de9b6;border-radius:50%}.mk-spinner-weight:before{width:12px;height:12px;margin-top:-6px;right:100%}.mk-spinner-weight:after{width:16px;height:16px;margin-top:-8px;left:100%}@-webkit-keyframes d{0%,to{-webkit-transform:scale(0);transform:scale(0)}50%{-webkit-transform:scale(1);transform:scale(1)}}@keyframes d{0%,to{-webkit-transform:scale(0);transform:scale(0)}50%{-webkit-transform:scale(1);transform:scale(1)}}@-webkit-keyframes e{0%,to{-webkit-transform:scale(1);transform:scale(1)}50%{-webkit-transform:scale(0);transform:scale(0)}}@keyframes e{0%,to{-webkit-transform:scale(1);transform:scale(1)}50%{-webkit-transform:scale(0);transform:scale(0)}}.mk-spinner-bubbles,.mk-spinner-bubbles:after,.mk-spinner-bubbles:before{content:"";display:inline-block;position:absolute;width:20px;height:20px;top:50%;margin-top:-10px;left:50%;margin-left:-10px;z-index:1;border-radius:50%;background:inherit}.mk-spinner-bubbles:before{left:-100%;-webkit-animation:d 1.5s infinite;animation:d 1.5s infinite}.mk-spinner-bubbles{opacity:.7;background:#1de9b6}.mk-spinner-bubbles:after{opacity:.5;left:200%;-webkit-animation:e 1.5s infinite;animation:e 1.5s infinite}@-webkit-keyframes f{0%{-webkit-transform:translateY(0);transform:translateY(0)}25%{-webkit-transform:translateY(-4px);transform:translateY(-4px)}50%{-webkit-transform:translateY(0);transform:translateY(0)}75%{-webkit-transform:translateY(4px);transform:translateY(4px)}to{-webkit-transform:translateY(0);transform:translateY(0)}}@keyframes f{0%{-webkit-transform:translateY(0);transform:translateY(0)}25%{-webkit-transform:translateY(-4px);transform:translateY(-4px)}50%{-webkit-transform:translateY(0);transform:translateY(0)}75%{-webkit-transform:translateY(4px);transform:translateY(4px)}to{-webkit-transform:translateY(0);transform:translateY(0)}}.mk-spinner-dots,.mk-spinner-dots:after,.mk-spinner-dots:before{content:"";display:inline-block;position:absolute;width:12px;height:12px;top:50%;margin-top:-6px;left:50%;margin-left:-6px;z-index:1;border-radius:50%;background:inherit;-webkit-transform-origin:center;transform-origin:center;-webkit-animation-name:f;animation-name:f;-webkit-animation-duration:2s;animation-duration:2s;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite;-webkit-animation-timing-function:ease-in-out;animation-timing-function:ease-in-out;-webkit-animation-fill-mode:both;animation-fill-mode:both}.mk-spinner-dots:before{left:-100%;-webkit-animation-delay:.5s;animation-delay:.5s;background:#1de9b6}.mk-spinner-dots{background:rgba(29,233,182,.6)}.mk-spinner-dots:after{left:200%;-webkit-animation-delay:1s;animation-delay:1s;background:rgba(29,233,182,.3)}@-webkit-keyframes g{0%,50%,60%{-webkit-transform:translateX(0);transform:translateX(0)}90%,to{-webkit-transform:translateX(-100%);transform:translateX(-100%)}}@keyframes g{0%,50%,60%{-webkit-transform:translateX(0);transform:translateX(0)}90%,to{-webkit-transform:translateX(-100%);transform:translateX(-100%)}}@-webkit-keyframes h{0%{-webkit-transform:translateX(0);transform:translateX(0)}50%,60%{-webkit-transform:translateX(-100%);transform:translateX(-100%)}90%,to{-webkit-transform:translateX(-200%);transform:translateX(-200%)}}@keyframes h{0%{-webkit-transform:translateX(0);transform:translateX(0)}50%,60%{-webkit-transform:translateX(-100%);transform:translateX(-100%)}90%,to{-webkit-transform:translateX(-200%);transform:translateX(-200%)}}.mk-spinner-boxes,.mk-spinner-boxes:after,.mk-spinner-boxes:before{content:"";display:inline-block;position:absolute;width:20px;height:20px;top:50%;margin-top:-10px;left:50%;margin-left:-10px;z-index:1}.mk-spinner-boxes{background:#1de9b6}.mk-spinner-boxes:after,.mk-spinner-boxes:before{margin-left:0;background:inherit}.mk-spinner-boxes:before{opacity:.5;left:100%;-webkit-animation:g 2s infinite 2s;animation:g 2s infinite 2s}.mk-spinner-boxes:after{opacity:.2;left:200%;-webkit-animation:h 2s infinite;animation:h 2s infinite}*,:after,:before{-webkit-box-sizing:border-box;box-sizing:border-box}.mk-spinner-wrap{min-height:100px;width:100%;position:relative}@-webkit-keyframes i{0%,5%{left:0;top:0}50%,55%{left:50%;top:50%}95%,to{left:0;top:0}}@keyframes i{0%,5%{left:0;top:0}50%,55%{left:50%;top:50%}95%,to{left:0;top:0}}@-webkit-keyframes j{0%,5%{right:0;bottom:0}50%,55%{right:50%;bottom:50%}95%,to{right:0;bottom:0}}@keyframes j{0%,5%{right:0;bottom:0}50%,55%{right:50%;bottom:50%}95%,to{right:0;bottom:0}}.mk-spinner-window{content:"";display:inline-block;position:absolute;width:36px;height:36px;top:50%;margin-top:-18px;left:50%;margin-left:-18px;z-index:1;background:#82b3ae}.mk-spinner-window:after,.mk-spinner-window:before{content:"";position:absolute;width:18px;height:18px;background:#6fa7a2}.mk-spinner-window:before{top:0;left:0;background:#6fa7a2;background:rgba(0,0,0,.1);-webkit-animation:i 3s infinite linear;animation:i 3s infinite linear}.mk-spinner-window:after{right:0;bottom:0;background:#62a099;background:rgba(0,0,0,.2);-webkit-animation:j 3s infinite linear;animation:j 3s infinite linear}
+.GeoGebraHeader , .GeoGebraFrame * {
+	box-sizing:content-box;
+}
+ .GeoGebraFrame, .GeoGebraFrame .GeoGebraPopup, .GeoGebraFrame .DialogBox, .GeoGebraFrame .gwt-PopupPanel, .GeoGebraFrame .gwt-SuggestBoxPopup, .GeoGebraFrame .ToolTip {
+    font: 100%/120% geogebra-sans-serif,Frutiger,"Frutiger Linotype",Univers,Calibri,"Gill Sans","Gill Sans MT","Myriad Pro",Myriad,"DejaVu Sans Condensed","Liberation Sans","Nimbus Sans L",Tahoma,Geneva,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-style: normal;
+    font-variant-ligatures: normal;
+    font-variant-caps: normal;
+    font-variant-numeric: normal;
+    font-variant-east-asian: normal;
+    font-weight: normal;
+    font-stretch: normal;
+    font-size: 100%;
+    line-height: 120%;
+    font-family: geogebra-sans-serif, Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+.GeoGebraFrame .ggbdockpanelhack>div {
+    overflow: visible!important;
+}
+.GeoGebraFrame .TitleBarPanel {
+    z-index: 60;
+    left: auto!important;
+    bottom: auto!important;
+    max-width: 100%;
+}
+ .GeoGebraFrame {
+    background-color: #fff;
+    color: rgba(0,0,0,.87);
+    font-size: 16px;
+}
+ .GeoGebraFrame .toolbar .header-open-landscape{
+	height: 56px;
+    width: 100%;
+    background-color: #6557D2;
+}
+.GeoGebraFrame .toolbar .header .center, .GeoGebraFrame .toolbar .header-open-portrait .center, .GeoGebraFrame .toolbar .header-open-landscape .center, .GeoGebraFrame .toolbar .header-close-portrait .center, .GeoGebraFrame .toolbar .header-close-landscape .center {
+    position: absolute;
+    display: inline-flex;
+    left: calc(50% - 84px);
+}
+.GeoGebraFrame .flatButton {
+    margin: 6px;
+    padding: 6px;
+    padding-top: 6px;
+    padding-right: 6px;
+    padding-bottom: 6px;
+    padding-left: 6px;
+    width: 24px;
+    height: 24px;
+}
+.GeoGebraFrame .menu {
+    position: absolute;
+    top: 4px;
+    left: 0px;
+    z-index: 498;
+}
+.GeoGebraFrame .tabButton {
+    position: relative;
+    margin: 6px;
+    padding: 6px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+}
+.GeoGebraFrame .toolbar .main>* {
+    position: absolute !important;
+    display: inline-block;
+}
+.GeoGebraFrame .toolbar .header .rightSide, .GeoGebraFrame .toolbar .header-open-portrait .rightSide, .GeoGebraFrame .toolbar .header-open-landscape .rightSide, .GeoGebraFrame .toolbar .header-close-portrait .rightSide, .GeoGebraFrame .toolbar .header-close-landscape .rightSide {
+    float: right;
+}
+.GeoGebraFrame .toolbar .header-open-landscape .close, .GeoGebraFrame .toolbar .header-close-portrait .close {
+    float: left;
+    margin-right: 6px;
+}
+.GeoGebraFrame .toolbar .main .tab-hidden {
+    visibility: hidden;
+}
+.GeoGebraFrame .toolbar .tools {
+    position: absolute;
+    left: -100%;
+    transition: left 200ms ease;
+}
+.GeoGebraFrame .hide-Dragger .gwt-SplitLayoutPanel-HDragger {
+    border-left: 1px solid #ccc;
+    z-index: 1;
+    box-shadow: 2px 0px 6px rgba(0,0,0,0.4);
+    width: 0px !important;
+}
+
+.GeoGebraFrame .undoRedoPanel {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 12px;
+    position: absolute;
+    z-index: 10;
+}
+
+.GeoGebraFrame .button.flatButton.graphicsContextMenuBtn.button-up, .GeoGebraFrame .button.flatButton.graphicsContextMenuBtn.button-up-hovering {
+    margin-top: 10px;
+    margin-right: 10px;
+    position: absolute;
+    right: 0px;
+}
+
+.GeoGebraFrame .button.flatButton.graphicsContextMenuBtn.button-up img, .GeoGebraFrame .button.flatButton.graphicsContextMenuBtn.button-up-hovering img {
+    opacity: 0.54;
+}
+
+.GeoGebraFrame .matOpenKeyboardBtn {
+    position: absolute;
+    bottom: 8px;
+    height: 22px;
+    text-align: center;
+    z-index: 99;
+}
+.GeoGebraFrame .matOpenKeyboardBtn img {
+    width: 36px;
+    opacity: 0.54;
+}
+
+.GeoGebraFrame .matAvDesign .NewRadioButtonTreeItemParent {
+    border-top: #6557D2 solid 1px;
+    border-bottom: #6557D2 solid 1px;
+}
+.GeoGebraFrame .matAvDesign .gwt-Tree .gwt-TreeItem .elem {
+    min-height: 48px;
+    position: relative;
+}
+.GeoGebraFrame .matAvDesign .marblePanel.error, .GeoGebraFrame .matAvDesign .marblePanel.help, .GeoGebraFrame .matAvDesign .marblePanel {
+    position: absolute;
+    height: 100%;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 18px;
+    padding-right: 18px;
+}
+.GeoGebraFrame .matAvDesign .marblePanel.plus {
+    padding-top: 0px;
+    padding-left: 4px;
+    padding-right: 4px;
+    min-height: 47px;
+}
+.GeoGebraFrame .matAvDesign .marblePanel.plus img {
+    opacity: 0.54;
+}
+.GeoGebraFrame .NewRadioButtonTreeItemParent {
+    position: absolute;
+    width: 100%;
+    z-index: 4;
+}
+.GeoGebraFrame .algebraView .avInputItem {
+    padding: 0!important;
+    z-index: 1;
+    margin-top: -2px;
+}
+.GeoGebraFrame .algebraHelpButton, .GeoGebraFrame .marblePanel {
+    border-right: 1px solid #dcdcdc;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: rgb(220, 220, 220);
+}
+
+.GeoGebraFrame .matAvDesign .NewRadioButtonTreeItemParent {
+    border-top: #6557D2 solid 1px;
+    border-bottom: #6557D2 solid 1px;
+}
+
+.GeoGebraFrame .toolbar .toolsPanel {
+    padding: 8px 16px 14px 16px;
+}
+
+.GeoGebraFrame .toolbar .toolsPanel .catLabel {
+    cursor: default;
+    line-height: 24px;
+    font-size: 100%;
+    margin: 8px 0px;
+}
+
+.GeoGebraFrame .toolbar .toolsPanel .button {
+    position: relative;
+    display: inline-block;
+    border-radius: 5px;
+    border: 1px solid #dcdcdc;
+    background-color: #fff;
+    padding: 3px;
+    margin: 3px;
+    width: 32px;
+    height: 32px;
+}
+
+.GeoGebraFrame .checkBoxPanel>*, .GeoGebraFrame .panelRow>*, .GeoGebraFrame .listBoxPanel>*, .GeoGebraFrame .panelRowIndent>*, .GeoGebraFrame .propertiesTab .gwt-CheckBox>*, .GeoGebraFrame .panelRowCell>*, .GeoGebraFrame .panelRowCell>*, .GeoGebraFrame .optionsPanel>*, .GeoGebraFrame .optionsPanelIndent>*, .GeoGebraFrame .optionsPanelCell>*, .GeoGebraFrame .propertiesTab .sliderIntervalPanel>*, .GeoGebraFrame .propertiesTab .sliderWidthPanel>*, .GeoGebraFrame .textOptionsToolBar>*, .GeoGebraFrame .BackgroundColorPanel>*, .GeoGebraFrame .minMaxPanel>* {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 3px 10px 3px 0;
+}
+
+/*** MOW ***/
+
+.GeoGebraFrame .mowToolbar {
+    position: relative;
+    height: 182px;
+    overflow: hidden;
+    background-color: #00a8d5;
+    border-radius: 2px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+    box-shadow: 0px -4px 6px 0px rgba(0,0,0,0.28);
+}
+
+.GeoGebraFrame .showMowSubmenu {
+    bottom: 178px;
+    transition: bottom 0.2s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.GeoGebraFrame .BigScreen {
+    width: 600px;
+}
+
+.GeoGebraFrame .mowToolbar img {
+    width: 32px;
+    opacity: 0.54;
+}
+
+.GeoGebraFrame .mowToolButton {
+    position: relative;
+    display: inline-block;
+    border-radius: 5px;
+    border: 1px solid #dcdcdc;
+    background-color: #fff;
+    padding: 3px;
+    margin: 3px !important;
+    width: 32px;
+    height: 32px;
+}
+.GeoGebraFrame .mowSubmenuScrollPanel, .GeoGebraFrame .slideLeft, .GeoGebraFrame .slideCenter, .GeoGebraFrame .slideRight {
+    background-color: #fff;
+    position: relative;
+    display: flex;
+    top: 56px;
+    width: 300%;
+    height: 123px;
+}
+.GeoGebraFrame .mowSubMenuContent .panelRow {
+    padding: 8px 16px 8px 16px;
+    margin: 0px;
+}
+.GeoGebraFrame .penSubMenu .penPanel .panelRow {
+    padding: 0px;
+}
+.GeoGebraFrame .penSubMenu .colorPanel .panelRow {
+    padding: 0px;
+}
+.GeoGebraFrame .mowToolbar .middle {
+    position: absolute;
+    top: 0px;
+    margin: 4px 0px 4px 0px;
+    left: calc(50% - 108px);
+    display: inline-flex;
+}
+.GeoGebraFrame .mowColorButton {
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+    margin: 6px !important;
+}
+
+.GeoGebraFrame .penSubMenu .penPanel {
+    width: 105px;
+    margin: 0px;
+}
+
+.GeoGebraFrame .mowToolbar .middle img {
+    opacity: 0.85;
+    margin: 6px;
+    padding: 6px;
+    width: 24px;
+    height: 24px;
+}
+
+.GeoGebraFrame .penSubMenu .colorPanel {
+    position: absolute;
+    left: 150px;
+    margin: 0px;
+}
+.GeoGebraFrame .penSubMenu .penPanel .plusMarginLeft {
+    margin-left: 16px !important;
+}
+.GeoGebraFrame .mowSubMenu {
+    width: calc(100% /3);
+    overflow: hidden;
+}
+
+.GeoGebraFrame .penSubMenu .sizePanel {
+    position: absolute;
+    left: 153px;
+    top: 70px;
+}
+
+.GeoGebraFrame .mowSubMenu .mowSubMenuContent .mowOptionsSlider .ui-slider-horizontal {
+    height: 5px;
+    background-color: #989898;
+    box-shadow: none;
+}
+
+.GeoGebraFrame .mowSubMenu .mowSubMenuContent .mowOptionsSlider .ui-slider-handle, .GeoGebraFrame .mowSubMenu .mowSubMenuContent .mowOptionsSlider .ui-slider-handle.ui-state-hover, .GeoGebraFrame .mowSubMenu .mowSubMenuContent .mowOptionsSlider .ui-slider-handle.ui-state-active, .GeoGebraFrame .mowSubMenu .mowSubMenuContent .mowOptionsSlider .ui-slider-handle.ui-state-focus {
+    position: absolute;
+    top: -5px !important;
+    left: 0%;
+    width: 15px !important;
+    height: 15px !important;
+    margin-left: -8px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: all .2s ease;
+    user-select: none;
+    z-index: 2;
+}
+
+.GeoGebraFrame .penSubMenu .optionsSlider .ui-state-default, .GeoGebraFrame .penSubMenu .optionsSlider .ui-widget-content .ui-state-default, .GeoGebraFrame .penSubMenu .optionsSlider .ui-widget-header .ui-state-default, .GeoGebraFrame .avItemContent .optionsSlider .ui-state-default, .GeoGebraFrame .avItemContent .optionsSlider .ui-widget-content .ui-state-default, .GeoGebraFrame .avItemContent .optionsSlider .ui-widget-header .ui-state-default {
+    background-color: #000;
+    border: 3px solid rgba(0,0,0,0.4);
+    top: -6px;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding;
+    background-clip: padding-box;
+    box-shadow: 0 0 1px 1px rgba(255,255,255,0.4);
+}
+
+.GeoGebraFrame .penSubMenu .optionsSlider .ui-slider .ui-slider-handle span, .GeoGebraFrame .avItemContent .optionsSlider .ui-slider .ui-slider-handle span {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    border-radius: 10px;
+    border: 1px solid #000;
+}
+
+.GeoGebraFrame .mowSubMenu .mowSubMenuContent .mowOptionsSlider .gwt-Label {
+    padding-left: 15px;
+    display: none;
+}
+
+.GeoGebraFrame .mowColorPlusButton {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #dcdcdc !important;
+}
+
+.GeoGebraFrame .mowToolbar .right {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    margin: 4px 0px 4px 0px;
+}
+
+.GeoGebraFrame .mowToolbar .right img {
+    opacity: 0.85;
+    margin: 6px;
+    padding: 6px;
+    width: 24px;
+    height: 24px;
+}
+.GeoGebraFrame .mowColorPlusButton img {
+     padding: 3px; 
+}
+.startscreen .mowSubMenuContent {
+	overflow: hidden !important;
+}
+
+.GeoGebraFrame .mowToolbar .middle .indicator {
+    width: 36px;
+    height: 3px;
+    background-color: white;
+    vertical-align: bottom;
+    position: relative;
+    bottom: 10px;
+    display: inline-table !important;
+    top: 40px;
+    transition: all 0.3s ease;
+    left: 50%;
+    opacity: 0.85;
+}
+
+.GeoGebraFrame .mowToolbar .middle.indicatorLeft .indicator {
+    transform: translate(calc(50% - 66px), 0);
+}
+
+.toolPane{
+	right: 0px;
+	bottom: 0px;
+	 position: absolute;
+	left: 0px;
+	top: 0px;
+	overflow:hidden;
+	width:380px;
+}
+.paneSplit {
+	
+    position: absolute;
+    overflow-x: hidden;
+    overflow-y: hidden !important;
+    left: 380px;
+    top: 0px;
+    bottom: 0px;
+    width: 8px;
+	}
+.drawingPane {
+	position: absolute; overflow: hidden; left: 388px; top: 0px; right: 0px; bottom: 0px;
+}
+.startscreen .undoRedoPanel{
+	left: 380px;
+}
+.visibleTools{
+	overflow: hidden;
+    position: relative;
+    zoom: 1;
+    height: 100%;
+    left: 0px;
+}
+.startscreen .GeoGebraFrame .toolbar .tools{
+	left: 0;
+}
+
+.GeoGebraFrame .TabbedKeyBoard.KeyBoard {
+    padding-top: 0;
+    background-color: #eee;
+    font-family: geogebra-sans-serif, sans-serif;
+}
+
+.GeoGebraFrame .KeyboardSwitcher {
+    position: relative;
+    background-color: #f8f8f8;
+    border: #dcdcdc solid;
+    border-width: 1px 0;
+    width: 100%;
+    height: 40px;
+    margin-bottom: 5px;
+}
+.GeoGebraFrame .KeyBoard .KeyBoardButton {
+    padding: 10px;
+    text-align: center;
+    line-height: inherit;
+    margin: 2px;
+    margin-top: 2px;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    font-size: 120%;
+    border-radius: 5px;
+    white-space: nowrap;
+    color: #000;
+}
+.GeoGebraFrame .KeyBoard.TabbedKeyBoard .KeyBoardButton {
+    background-color: white;
+    border-radius: 5px;
+    border-bottom: 1px solid;
+    border-bottom-color: #c7c7c7;
+    padding: 9px 0;
+}
+.GeoGebraFrame .KeyPanel {
+    margin: auto;
+    margin-top: auto;
+    margin-right: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+}
+.GeoGebraFrame .TabbedKeyBoard.KeyBoard .KeyBoardButton {
+    height: 40px;
+    box-sizing: border-box;
+}
+.GeoGebraFrame .KeyBoard.TabbedKeyBoard .KeyBoardButton.colored {
+    background-color: #dcdcdc;
+}
+
+.GeoGebraFrame .KeyBoard.TabbedKeyBoard .KeyBoardButton img {
+    width: 24px;
+    height: 24px;
+}
+.GeoGebraFrame td, .GeoGebraFrame th {
+    color: #666;
+    font-size: 16px;
+}
+
+.GeoGebraFrame .KeyBoard .KeyBoardButton div {
+    text-align: center;
+}
+
+.startscreen .KeyBoard{
+    width: 100%;
+    height: 228px;
+    position: absolute;
+    background-color: green;
+    z-index: 100;
+    bottom: 0;
+}
+
+@media (orientation: Portrait) { 
+	.toolPane {
+		top: auto;
+		height:300px;
+		width:100%;
+	}
+	
+	.paneSplit {
+		position: absolute;
+    overflow-x: hidden;
+    overflow-y: hidden !important;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    bottom: 300px;
+    top: initial;
+	}
+	
+	.startscreen .undoRedoPanel {
+		left:0;
+	}
+	
+	.drawingPane {
+	 left: 0;
+	 bottom: 300px;
+	}
+	.GeoGebraFrame .menu {
+		bottom: 250px;
+		top:initial;
+	}
+	
+	.startscreen .GeoGebraFrame .hide-Dragger .gwt-SplitLayoutPanel-HDragger {
+		height: 8px;
+    	top: 8px !important;
+		top: initial;
+		width: 100% !important;
+		box-shadow: 0px -2px 2px rgba(0,0,0,0.4);
+	}
+}
+
+.mk-spinner-wrap {
+	position:absolute;
+	top:50%;
+	transform: translateY(-50%);
+	z-index:1000;
+}
+
+.mk-spinner-ring {
+	border-color: #6557D2;
+	border-left-color: transparent;
+}
+body .startscreen .GeoGebraFrame img.gwt-Image,body .startscreen .GeoGebraFrame .button.flatButton img.gwt-Image {
+    opacity: 0.4;
+}
+
+.startscreen .GeoGebraFrame .KeyBoard .gwt-Label {
+    color: rgba(0,0,0,0.4);
+}

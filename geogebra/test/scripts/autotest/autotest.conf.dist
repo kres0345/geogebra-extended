@@ -1,0 +1,41 @@
+# Please edit below to fit your needs.
+
+# This directory will contain the working copy of GeoGebra:
+SVNDIR=${HOME}/svn # Office workstation
+#SVNDIR=/home/zoltan/svn # Linz server
+
+# Repository:
+REPO=http://dev.geogebra.org/svn/trunk/geogebra # for other installations
+
+# Java home:
+JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun
+
+# "svn" command path (it should be quite recent, 1.4.4 is too old)
+SVN_COMMAND=`which svn`
+
+# Directory for storing vanilla revisions:
+REVDIR=${HOME}/revisions/vanilla
+
+# In seconds:
+WAITBETWEENBUILDS=300
+SIMPLETESTTIMEOUT=20
+
+# Settings for sending out an email if an error is found:
+REMOTEUSER=some-developer
+RECIPIENT=geogebra-dev@googlegroups.com
+MAILSERVERSSHLOGIN=build@dev.geogebra.org
+MAILSERVERSSHPORT=22
+MAILSERVERSSHKEY=...keyfile...
+
+LOCKFILE=/tmp/autotest.lock
+
+# Settings for webtest:
+WEBTESTPROTOCOL=http
+WEBTESTSERVER=localhost
+WEBTESTPORT=80
+WEBTESTWARDIR=revs-vanilla/latest/war
+WEBTESTPAGE=test.php
+
+REMOTEWEBTESTPROTOCOL=http
+REMOTEWEBTESTSERVER=ggb1.idm.jku.at
+REMOTEWEBTESTPORT=8080

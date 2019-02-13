@@ -1,0 +1,168 @@
+@import 'colors';
+
+.GeoGebraFrame {
+	
+	/* SWITCHER COMPONENT */
+	.switch {
+		width: 40px;
+		height: 24px;
+		margin-right: 16px;
+		position: relative;
+		top: 7px;
+		float: right;
+		cursor: pointer;
+				
+		.track {
+			content: "";
+			display: inline-block;
+			position: relative;
+			width: 36px;
+			height: 14px;
+			border-radius: 15px;
+			-webkit-transition: background 0.3s ease;
+			transition: background 0.3s ease;
+			vertical-align: middle;
+		}
+
+		.thumb {
+			width: 20px;
+			height: 20px;
+			position: relative;
+			top: -18px;
+			border-radius: 50%;
+			display: block;
+			transition: left 0.3s ease, background 0.3s ease;
+		}
+
+		&.on {
+			.track {
+				background-color: #9ADAEC;
+			}
+			.thumb {
+				left: 16px;
+				background-color: #00A8D5;
+			}
+		}
+				
+		&.off {
+			.track {
+				background-color: #c5c5c5;
+			}
+			.thumb {
+				left: 0px;
+				background-color: #f1f1f1;
+			}
+		}
+	}
+
+	/* INPUT TEXT FIELD COMPONENT */
+	.inputTextField {
+		margin-top: 8px;
+		margin-bottom: 8px;
+		display: inline-block;
+		min-height: 68px; 
+		
+		.inputLabel {
+			font-size: 75%;
+			color: $text-secondary;
+			height: 12px;
+    		line-height: 100%;
+    		display: block;
+		}
+
+		&.error {
+			.inputLabel {
+				color: $error;
+			}
+
+			.AutoCompleteTextFieldW {
+				border-bottom-color: $error;
+			}
+		}
+	
+		.textField {
+			margin-top: 8px;
+		}
+	
+		.AutoCompleteTextFieldW {
+			margin-right: 16px;
+			margin-bottom: 7px; // 8 - border
+			border-radius: 0px;
+			border: none;
+			border-bottom: 1px solid $black-42;
+			
+			input[type="text"] {
+				border: none !important;
+				box-shadow: none !important;
+				height: 28px; // 20px text container + 8px bottom padding
+				margin: 0px;
+				padding: 0px 0px 8px 0px;
+			}
+		}
+		
+		.errorLabel {
+			color: $error;
+			font-size: 75%;
+			height: 12px;
+			line-height: 100%;
+			position: absolute; // actual text height > 12px, don't resize container
+		}
+
+		&.focusState {
+			.AutoCompleteTextFieldW {
+				margin-bottom: 6px; // 8 - border
+				border-bottom-width: 2px;
+			}
+		}
+
+		&.focusState:not(.error), &.focusState:not(.error):hover {
+			
+			.inputLabel {
+				color: $teal-default;
+			}
+			.AutoCompleteTextFieldW {
+				border-bottom-color: $teal-default;
+			}
+		}
+	
+		&.hoverState:not(.error) {
+
+			.inputLabel {
+				color: $black-87;
+			}
+
+			.AutoCompleteTextFieldW {
+				border-bottom: 2px solid $black-87;
+			}
+		} 	
+	}
+
+	// in case the last input field shouldn't have any bottom margin
+	.noBottomMarg {
+		.inputTextField {
+			margin-bottom: 0px;
+		}
+	}
+
+    .buttonActive {
+        position: relative;
+
+        img {
+            opacity: 0.54;
+        }
+
+        &:hover {
+            img {
+                opacity: 0.84;
+            }
+        }
+    }
+
+    .buttonInactive {
+        position: relative;
+        cursor: default;
+        img {
+            opacity: 0.26;
+        }
+    }
+}

@@ -1,0 +1,38 @@
+#!/bin/sh
+# Runs all JUnit tests
+
+# 1. Start and loading configuration
+test -r autotest.conf || {
+ echo "$0: Cannot find autotest.conf (make sure you edit autotest.conf.dist first)"
+ exit 127
+ }
+test -r autotest.conf && . ./autotest.conf
+
+MYDIR=$SVNDIR/geogebra/test/scripts/autotest
+TESTDIR=$SVNDIR/geogebra/test
+
+cd $TESTDIR
+
+RETVAL=0
+sleep 3 # Dirty hack to ensure xvfb can run properly
+xvfb-run --auto-servernum -w 3 ./run-junit-tests || RETVAL=1 # Problem running the tests
+./junit2sqlite # Copying XML data into an SQL database
+
+# giac JS test with PhantomJS (temporarily disabled):
+# cd scripts/autotest
+# ./giacjs-test.sh
+# cd ../..
+
+./warnings > .warnings
+
+ERRORS=`cat .junit-tests-errors`
+if [ $ERRORS -gt 0 ]; then
+ RETVAL=2 # Errors occured during the JUnit tests
+ fi
+
+FAILURES=`cat .warnings`
+if [ "$FAILURES" != "" ]; then
+ RETVAL=3 # A new failure has been introduced
+ fi
+
+exit $RETVAL

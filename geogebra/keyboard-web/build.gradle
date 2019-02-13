@@ -1,0 +1,70 @@
+apply plugin: 'java'
+apply plugin: 'gwt-compiler'
+apply plugin: 'pmd'
+apply plugin: 'checkstyle'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+evaluationDependsOn(':keyboard-base')
+evaluationDependsOn(':keyboard-scientific')
+evaluationDependsOn(':common')
+evaluationDependsOn(':web:dev')
+evaluationDependsOn(':renderer-web')
+
+buildscript {
+    dependencies {
+        classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
+    }
+}
+
+dependencies{
+	compile project(':keyboard-base'),
+	files(project(':keyboard-base').sourceSets.main.allSource.srcDirs),
+	project(':keyboard-scientific'),
+	files(project(':keyboard-scientific').sourceSets.main.allSource.srcDirs),
+	project(':common'), //needed for Unicode and Language
+	files(project(':common').sourceSets.main.allSource.srcDirs),
+	project(':web:dev'), //needed for Unicode and Language
+	files(project(':web:dev').sourceSets.main.allSource.srcDirs)
+}
+def kbModule = 'org.geogebra.keyboard.KeyboardWeb'
+gwt {
+    gwtVersion = project(':renderer-web').gwtCompilerVersion
+
+    
+    modules = [kbModule]    
+    
+    devModules kbModule
+    
+    maxHeapSize = '2000M'
+
+    compiler {
+        // Customize the GWT compiler here
+        strict = true;
+        // enableClosureCompiler = true;        
+        disableCastChecking = true;        
+        logLevel = 'INFO';
+        if (project.hasProperty("gdraft")) {
+            draftCompile = true
+        }
+        if (project.hasProperty("gdetailed")){
+            style = de.richsource.gradle.plugins.gwt.Style.DETAILED;
+        } else {
+            disableClassMetadata = true;
+        }
+        // style = de.richsource.gradle.plugins.gwt.Style.PRETTY;    
+    }
+}
+
+// https://issues.gradle.org/browse/GRADLE-2778
+// http://discuss.gradle.org/t/javadoc-generation-failed-with-vaadin-dependency/2502/12
+javadoc {
+    options.addStringOption("sourcepath", "")
+}
+
+pmd {
+     ignoreFailures = true
+     ruleSets = []
+     ruleSetFiles = files("config/pmd.xml")
+}

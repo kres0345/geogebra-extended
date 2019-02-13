@@ -1,0 +1,15 @@
+#!/bin/sh
+# Returns true (0) if the current SVN version is in sync, false (1) otherwise
+
+SVNDIR=`cd ../../..; pwd` # FIXME: add another ..
+test -r autotest.conf && . ./autotest.conf
+
+LATEST=`svn info $REPO | grep "Last Changed Rev:" | awk '{print $4}'`
+THIS=`./myrevision`
+echo "Latest: $LATEST, this: $THIS"
+
+if [ "$LATEST" = "$THIS" -o "$LATEST" = "" ]; then
+ exit 0 # When $LATEST is empty, then there may be some network error --- no update is needed
+else
+ exit 1
+ fi

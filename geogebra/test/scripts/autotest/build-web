@@ -1,0 +1,31 @@
+#!/bin/sh
+# Builds GeoGebraWeb and copies it into $REVDIR/REVISION for testing purposes.
+
+# 1. Start and loading configuration
+test -r autotest.conf || {
+ echo "$0: Cannot find autotest.conf (make sure you edit autotest.conf.dist first)"
+ exit 127
+ }
+test -r autotest.conf && . ./autotest.conf
+
+WEB_AUTOBUILDDIR=../../../web
+WEB_BUILDDIR=war
+REVISION=`./myrevision`
+mkdir -p $REVDIR/$REVISION
+cd $WEB_AUTOBUILDDIR
+./build -s OBFUSCATED -c -cg -i $REVDIR/$REVISION/war -- -localWorkers 2 > .buildlog 2>&1 || {
+ RESULT=$?
+ cp .buildlog $REVDIR/$REVISION/weberrors
+ exit $RESULT
+ }
+
+# Compiling webSimple
+./build -t WebSimple -s OBFUSCATED -c -cg -i $REVDIR/$REVISION/war-simple -- -localWorkers 2 > .buildlog2 2>&1
+# Compiling web3d
+./build -t Web3D -s OBFUSCATED -c -cg -i $REVDIR/$REVISION/war-3d -- -localWorkers 2 > .buildlog2 2>&1
+
+echo -n $REVISION > $REVDIR/$REVISION/war/web/version.txt
+echo -n $REVISION > $REVDIR/$REVISION/war-simple/webSimple/version.txt
+echo -n $REVISION > $REVDIR/$REVISION/war-3d/web3d/version.txt
+
+exit 0

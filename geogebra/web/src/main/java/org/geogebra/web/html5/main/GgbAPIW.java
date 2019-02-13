@@ -1,0 +1,1446 @@
+package org.geogebra.web.html5.main;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import org.geogebra.common.euclidian.EuclidianView;
+import org.geogebra.common.euclidian.EuclidianViewInterfaceCommon;
+import org.geogebra.common.io.MyXMLio;
+import org.geogebra.common.io.file.Base64ZipFile;
+import org.geogebra.common.kernel.Macro;
+import org.geogebra.common.kernel.StringTemplate;
+import org.geogebra.common.kernel.arithmetic.MyDouble;
+import org.geogebra.common.kernel.commands.CommandNotLoadedError;
+import org.geogebra.common.kernel.geos.GeoCasCell;
+import org.geogebra.common.kernel.geos.GeoElement;
+import org.geogebra.common.kernel.geos.GeoNumeric;
+import org.geogebra.common.main.App;
+import org.geogebra.common.main.App.ExportType;
+import org.geogebra.common.main.App.InputPosition;
+import org.geogebra.common.main.Localization;
+import org.geogebra.common.main.OpenFileListener;
+import org.geogebra.common.plugin.GgbAPI;
+import org.geogebra.common.util.Assignment;
+import org.geogebra.common.util.Assignment.Result;
+import org.geogebra.common.util.AsyncOperation;
+import org.geogebra.common.util.Exercise;
+import org.geogebra.common.util.StringUtil;
+import org.geogebra.common.util.debug.Log;
+import org.geogebra.web.html5.Browser;
+import org.geogebra.web.html5.css.GuiResourcesSimple;
+import org.geogebra.web.html5.euclidian.EuclidianViewW;
+import org.geogebra.web.html5.euclidian.EuclidianViewWInterface;
+import org.geogebra.web.html5.gui.GuiManagerInterfaceW;
+import org.geogebra.web.html5.gui.tooltip.ToolTipManagerW;
+import org.geogebra.web.html5.js.ResourcesInjector;
+import org.geogebra.web.html5.util.AnimationExporter;
+import org.geogebra.web.html5.util.ImageManagerW;
+import org.geogebra.web.html5.util.ViewW;
+import org.geogebra.web.resources.JavaScriptInjector;
+
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArrayString;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
+
+/**
+ * HTML5 version of API. The methods are exported in ScriptManagerW
+ *
+ */
+public class GgbAPIW extends GgbAPI {
+	/**
+	 * @param app
+	 *            application
+	 */
+	public GgbAPIW(App app) {
+		this.app = app;
+		this.kernel = app.getKernel();
+		this.algebraprocessor = kernel.getAlgebraProcessor();
+		this.construction = kernel.getConstruction();
+	}
+
+	@Override
+	public byte[] getGGBfile() {
+		throw new IllegalArgumentException(
+				"In HTML5 getGGBfile needs at least 1 argument");
+	}
+
+	@Override
+	public void setBase64(String base64) {
+		// resetPerspective();
+		// ViewW view = new ViewW((AppW) app);
+		// view.processBase64String(base64);
+
+		app.loadXML(new Base64ZipFile(base64));
+	}
+
+	private void resetPerspective() {
+		((AppW) app).resetPerspectiveParam();
+	}
+
+	/**
+	 * @param base64
+	 *            base64 encoded file
+	 * @param callback
+	 *            callback when file loaded
+	 */
+	public void setBase64(String base64, final JavaScriptObject callback) {
+		if (callback != null) {
+			OpenFileListener listener = new OpenFileListener() {
+
+				@Override
+				public boolean onOpenFile() {
+					ScriptManagerW.runCallback(callback);
+					return true;
+				}
+			};
+			app.registerOpenFileListener(listener);
+		}
+		setBase64(base64);
+	}
+
+	/**
+	 * @param filename
+	 *            file URL
+	 * @param callback
+	 *            callback when file loaded
+	 */
+	public void openFile(String filename, final JavaScriptObject callback) {
+		if (callback != null) {
+			OpenFileListener listener = new OpenFileListener() {
+
+				@Override
+				public boolean onOpenFile() {
+					ScriptManagerW.runCallback(callback);
+					return true;
+				}
+			};
+			app.registerOpenFileListener(listener);
+		}
+		openFile(filename);
+	}
+
+	@Override
+	public void setErrorDialogsActive(boolean flag) {
+		app.setErrorDialogsActive(flag);
+	}
+
+	@Override
+	public void refreshViews() {
+		app.refreshViews();
+	}
+
+	@Override
+	public void openFile(String filename) {
+		resetPerspective();
+		ViewW view = ((AppW) app).getViewW();
+		view.processFileName(filename);
+	}
+
+	/**
+	 * 
+	 * @param exportScale
+	 *            scale
+	 * @param transparent
+	 *            whether to use transparent background
+	 * @param dpi
+	 *            dots per inch eg. for paste to Word
+	 * @return png as String with "data:image/png;base64," header
+	 */
+	private String getPNG(double exportScale, boolean transparent, double dpi) {
+		String url;
+
+		EuclidianViewWInterface ev = ((EuclidianViewWInterface) app
+				.getActiveEuclidianView());
+
+		// get export image
+		// DPI ignored
+		url = ((EuclidianViewWInterface) app.getActiveEuclidianView())
+				.getExportImageDataUrl(exportScale, transparent);
+
+		if (MyDouble.isFinite(dpi) && dpi > 0 && ev instanceof EuclidianViewW) {
+
+			JavaScriptInjector
+					.inject(GuiResourcesSimple.INSTANCE.rewritePHYS());
+
+			url = addDPI(url, dpi);
+
+		}
+
+		return url;
+	}
+
+	@Override
+	public boolean writePNGtoFile(String filename, double exportScale,
+			boolean transparent, double dpi) {
+		// make browser save/download PNG file
+		Browser.exportImage(getPNG(exportScale, transparent, dpi), filename);
+		return true;
+	}
+
+	@Override
+	public String getPNGBase64(double exportScale, boolean transparent,
+			double dpi, boolean copyToClipboard) {
+		if (app.getGuiManager() != null) {
+			app.getGuiManager().getLayout().getDockManager().ensureFocus();
+
+			if (app.getGuiManager().getLayout().getDockManager()
+					.getFocusedViewId() == App.VIEW_PROBABILITY_CALCULATOR) {
+				return pngBase64(((EuclidianViewWInterface) app.getGuiManager()
+						.getPlotPanelEuclidanView()).getExportImageDataUrl(
+								exportScale, transparent));
+			}
+		}
+		return pngBase64(getPNG(exportScale, transparent, dpi));
+	}
+
+	private static String pngBase64(String pngURL) {
+		return pngURL.substring(StringUtil.pngMarker.length());
+	}
+
+	/**
+	 * @param label
+	 *            object label
+	 * @param value
+	 *            whether to use value string
+	 * @return base64 encoded PNG of LaTeX formula
+	 */
+	public String getLaTeXBase64(String label, boolean value) {
+		Canvas c = Canvas.createIfSupported();
+		GeoElement geo = kernel.lookupLabel(label);
+		if (geo == null) {
+			return "";
+		}
+		String str;
+		if (value) {
+			str = geo.toValueString(StringTemplate.latexTemplate);
+		} else {
+			str = geo instanceof GeoCasCell
+					? ((GeoCasCell) geo)
+							.getLaTeXInput(StringTemplate.latexTemplate)
+					: geo.toString(StringTemplate.latexTemplate);
+		}
+		DrawEquationW.paintOnCanvasOutput(geo, str, c, app.getFontSizeWeb());
+		return c.toDataUrl().substring(StringUtil.pngMarker.length());
+	}
+
+	/**
+	 * @param includeThumbnail
+	 *            whether to include thumbnail
+	 * @param callback
+	 *            handler for the file
+	 */
+	public void getGGBfile(final boolean includeThumbnail,
+			final JavaScriptObject callback) {
+		final boolean oldWorkers = setWorkerURL(zipJSworkerURL(), false);
+		final JavaScriptObject arch = getFileJSON(includeThumbnail);
+		getGGBZipJs(arch, callback,
+				nativeCallback(new AsyncOperation<String>() {
+			@Override
+					public void callback(String s) {
+				if (oldWorkers && !isUsingWebWorkers()) {
+					Log.warn(
+							"Saving with workers failed, trying without workers.");
+							ResourcesInjector.loadCodecs();
+					getGGBZipJs(arch, callback, null);
+				}
+			}
+		}));
+	}
+
+	/**
+	 * @return URL of zip worker directory
+	 */
+	public static String zipJSworkerURL() {
+		// FIXME disabled workers in Touch for now
+		if ("tablet".equals(GWT.getModuleName())
+				|| "tabletWin".equals(GWT.getModuleName())) {
+			return "false";
+		}
+		return Browser.webWorkerSupported()
+				? GWT.getModuleBaseURL() + "js/zipjs/" : "false";
+	}
+
+	/**
+	 * @param includeThumbnail
+	 *            whether to include thumbnail
+	 * @param callback
+	 *            callback
+	 */
+	public void getBase64(boolean includeThumbnail, JavaScriptObject callback) {
+
+		getBase64ZipJs(getFileJSON(includeThumbnail), callback,
+				zipJSworkerURL(), false);
+	}
+
+	/**
+	 * Base64 for ggt file
+	 * 
+	 * @param includeThumbnail
+	 *            whether to add thumbnail
+	 * @param callback
+	 *            callback
+	 */
+	public void getMacrosBase64(boolean includeThumbnail,
+			JavaScriptObject callback) {
+		GgbFile archiveContent = createMacrosArchive();
+		JavaScriptObject jso = JavaScriptObject.createObject();
+		getBase64ZipJs(prepareToEntrySet(archiveContent, jso, "", null),
+				callback, zipJSworkerURL(), false);
+	}
+
+	/**
+	 * @param includeThumbnail
+	 *            whether to include thumbnail
+	 * @return native JS object representing the archive
+	 */
+	public JavaScriptObject getFileJSON(boolean includeThumbnail) {
+		JavaScriptObject jso = JavaScriptObject.createObject();
+		PageListControllerInterface pageController = ((AppW) app)
+				.getPageController();
+		if (pageController != null) {
+			HashMap<String, Integer> usage = new HashMap<>();
+			GgbFile shared = new GgbFile();
+			for (int i = 0; i < pageController.getSlideCount(); i++) {
+				countShared(pageController.getSlide(i), usage, shared);
+			}
+			for (int i = 0; i < pageController.getSlideCount(); i++) {
+				GgbFile f = pageController.getSlide(i);
+				prepareToEntrySet(f, jso, GgbFile.SLIDE_PREFIX + i + "/",
+						usage);
+			}
+			prepareToEntrySet(shared, jso, GgbFile.SHARED_PREFIX, null);
+			pushIntoNativeEntry(GgbFile.STRUCTURE_JSON,
+					pageController.getStructureJSON(), jso);
+			return jso;
+		}
+		GgbFile archiveContent = new GgbFile();
+		createArchiveContent(includeThumbnail, archiveContent);
+		return prepareToEntrySet(archiveContent, jso, "", null);
+	}
+
+	private static void countShared(GgbFile slide,
+			HashMap<String, Integer> usage,
+			GgbFile shared) {
+		for (Entry<String, String> entry : slide.entrySet()) {
+			String filename = entry.getKey();
+			if (filename.contains("/")) {
+				Integer currentUsage = usage.get(filename);
+				if (currentUsage != null) {
+					usage.put(filename, currentUsage + 1);
+					shared.put(filename, entry.getValue());
+				} else {
+					usage.put(filename, 1);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Load construction and images from JSON
+	 * 
+	 * @param obj
+	 *            JSON archive
+	 */
+	public void setFileJSON(JavaScriptObject obj) {
+		resetPerspective();
+		ViewW view = ((AppW) app).getViewW();
+		view.processJSON(obj);
+	}
+
+	private static class StoreString implements AsyncOperation<String> {
+		private String result = "";
+
+		protected StoreString() {
+
+		}
+
+		@Override
+		public void callback(String s) {
+			this.result = s;
+		}
+
+		public String getResult() {
+			return result;
+		}
+	}
+
+	@Override
+	public String getBase64(boolean includeThumbnail) {
+		StoreString storeString = new StoreString();
+		JavaScriptObject jso = getFileJSON(includeThumbnail);
+		if (Browser.webWorkerSupported()) {
+			ResourcesInjector.loadCodecs();
+		}
+		getBase64ZipJs(jso, nativeCallback(storeString), "false", true);
+		return storeString.getResult();
+
+	}
+
+	/**
+	 * @return base64 for ggt file
+	 */
+	public String getMacrosBase64() {
+		StoreString storeString = new StoreString();
+		GgbFile archiveContent = createMacrosArchive();
+		JavaScriptObject jso = prepareToEntrySet(archiveContent,
+				JavaScriptObject.createObject(), "", null);
+		if (Browser.webWorkerSupported()) {
+			ResourcesInjector.loadCodecs();
+		}
+		getBase64ZipJs(jso, nativeCallback(storeString), "false", true);
+		return storeString.getResult();
+	}
+
+	/**
+	 * @param includeThumbnail
+	 *            whether to include thumbnail
+	 * @param callback
+	 *            callback
+	 */
+	public void getBase64(boolean includeThumbnail,
+			AsyncOperation<String> callback) {
+		getBase64(includeThumbnail, nativeCallback(callback));
+	}
+
+	/**
+	 * @param includeThumbnail
+	 *            whether to include thumbnail
+	 * @param callback
+	 *            callback
+	 */
+	public void getMacrosBase64(boolean includeThumbnail,
+			AsyncOperation<String> callback) {
+		getMacrosBase64(includeThumbnail, nativeCallback(callback));
+	}
+
+	private native JavaScriptObject nativeCallback(
+			AsyncOperation<String> callback) /*-{
+		return function(b) {
+			callback.@org.geogebra.common.util.AsyncOperation::callback(*)(b);
+		};
+	}-*/;
+
+	private native String addDPI(String base64, double dpi) /*-{
+		var pngHeader = "data:image/png;base64,";
+
+		if (base64.startsWith(pngHeader)) {
+			base64 = base64.substr(pngHeader.length);
+		}
+
+		// convert dots per inch into dots per metre
+		var pixelsPerM = dpi * 100 / 2.54;
+
+		//console.log("base64 = " + base64);
+
+		// encode PNG as Uint8Array
+		var binary_string = $wnd.atob(base64);
+		var len = binary_string.length;
+		//console.log("len = " + len);
+		var bytes = new Uint8Array(len);
+		for (var i = 0; i < len; i++) {
+			bytes[i] = binary_string.charCodeAt(i);
+		}
+
+		// change / add pHYs chunk 
+		// pixels per metre
+		var ppm = Math.round(dpi / 2.54 * 100);
+
+		var b64encoded;
+
+		if (base64.length > 100000) {
+			// slower but works with large images
+			b64encoded = $wnd.rewrite_pHYs_chunk(bytes, ppm, ppm, true);
+		} else {
+			// faster but not good for large images eg 4000 x 4000
+			bytes = $wnd.rewrite_pHYs_chunk(bytes, ppm, ppm, false);
+			b64encoded = btoa(String.fromCharCode.apply(null, bytes));
+		}
+		return 'data:image/png;base64,' + b64encoded;
+
+	}-*/;
+
+	/**
+	 * @param includeThumbnail
+	 *            whether to include thumbnail
+	 * @param archiveContent
+	 *            zip archive
+	 * @return zip archive (as a map)
+	 */
+	public GgbFile createArchiveContent(boolean includeThumbnail,
+			GgbFile archiveContent) {
+		archiveContent.clear();
+		final boolean isSaving = getKernel().isSaving();
+		// return getNativeBase64(includeThumbnail);
+		getKernel().setSaving(true);
+		((ImageManagerW) app.getImageManager())
+				.adjustConstructionImages(getConstruction());
+		String constructionXml = getApplication().getXML();
+		String macroXml = getApplication().getMacroXMLorEmpty();
+		StringBuilder defaults2d = new StringBuilder();
+		StringBuilder defaults3d = null;
+		if (app.is3D()) {
+			defaults3d = new StringBuilder();
+		}
+		getKernel().getConstruction().getConstructionDefaults()
+				.getDefaultsXML(defaults2d, defaults3d);
+		String geogebraJavascript = getKernel().getLibraryJavaScript();
+
+		if (!"".equals(macroXml)) {
+			writeMacroImages(archiveContent);
+			archiveContent.put(MyXMLio.XML_FILE_MACRO, macroXml);
+		}
+
+		if (defaults2d.length() > 0) {
+			archiveContent.put(MyXMLio.XML_FILE_DEFAULTS_2D,
+					defaults2d.toString());
+		}
+
+		if (defaults3d != null && defaults3d.length() > 0) {
+			archiveContent.put(MyXMLio.XML_FILE_DEFAULTS_3D,
+					defaults3d.toString());
+		}
+
+		if (!StringUtil.emptyTrim(geogebraJavascript)) {
+			archiveContent.put(MyXMLio.JAVASCRIPT_FILE, geogebraJavascript);
+		}
+
+		archiveContent.put(MyXMLio.XML_FILE, constructionXml);
+
+		// GGB-1758 write images at the end
+		((ImageManagerW) app.getImageManager())
+				.writeConstructionImages(getConstruction(), "", archiveContent);
+		if (app.getEmbedManager() != null) {
+			app.getEmbedManager().writeEmbeds(getConstruction(),
+					archiveContent);
+		}
+		// write construction thumbnails
+		if (includeThumbnail) {
+			ImageManagerW
+					.addImageToZip(MyXMLio.XML_FILE_THUMBNAIL,
+					((EuclidianViewWInterface) getViewForThumbnail())
+							.getCanvasBase64WithTypeString(),
+					archiveContent);
+		}
+
+		getKernel().setSaving(isSaving);
+		return archiveContent;
+	}
+
+	/**
+	 * @return base64 encoded thumbnail
+	 */
+	public String getThumbnailBase64() {
+		return ((EuclidianViewWInterface) getViewForThumbnail())
+				.getCanvasBase64WithTypeString()
+				.substring(StringUtil.pngMarker.length());
+	}
+
+	/**
+	 * @return view for thumbnail
+	 */
+	public EuclidianViewInterfaceCommon getViewForThumbnail() {
+		EuclidianViewInterfaceCommon ret = getViewForThumbnail(true);
+		if (ret == null) {
+			ret = getViewForThumbnail(false);
+		}
+		if (ret == null) {
+			ret = app.getActiveEuclidianView();
+		}
+		return ret;
+	}
+
+	private EuclidianViewInterfaceCommon getViewForThumbnail(
+			boolean needsObjects) {
+		if (app.isEuclidianView3Dinited() && app.showView(App.VIEW_EUCLIDIAN3D)
+				&& (!needsObjects
+						|| app.getEuclidianView3D().hasVisibleObjects())) {
+			return app.getEuclidianView3D();
+		}
+		if (app.showView(App.VIEW_EUCLIDIAN) && (!needsObjects
+				|| app.getEuclidianView1().hasVisibleObjects())) {
+			return app.getEuclidianView1();
+		}
+		if (app.showView(App.VIEW_EUCLIDIAN2) && (!needsObjects
+				|| app.getEuclidianView2(1).hasVisibleObjects())) {
+			return app.getEuclidianView2(1);
+		}
+		if (app.showView(App.VIEW_PROBABILITY_CALCULATOR)) {
+			return app.getGuiManager().getPlotPanelEuclidanView();
+		}
+		return null;
+	}
+
+	/**
+	 * @return archive with macros + icons
+	 */
+	public GgbFile createMacrosArchive() {
+		GgbFile archiveContent = new GgbFile();
+		writeMacroImages(archiveContent);
+		String macroXml = getApplication().getMacroXMLorEmpty();
+		if (!"".equals(macroXml)) {
+			writeMacroImages(archiveContent);
+			archiveContent.put(MyXMLio.XML_FILE_MACRO, macroXml);
+		}
+		return archiveContent;
+	}
+
+	private static JavaScriptObject prepareToEntrySet(GgbFile archive,
+			JavaScriptObject nativeEntry, String prefix,
+			HashMap<String, Integer> usage) {
+		for (Entry<String, String> entry : archive.entrySet()) {
+			if (usage == null || usage.get(entry.getKey()) == null
+					|| usage.get(entry.getKey()) < 2) {
+				pushIntoNativeEntry(prefix + entry.getKey(), entry.getValue(),
+						nativeEntry);
+			}
+		}
+		return nativeEntry;
+	}
+
+	private static native void pushIntoNativeEntry(String key, String value,
+			JavaScriptObject ne) /*-{
+		if (typeof ne["archive"] === "undefined") { //needed because gwt gives an __objectId key :-(
+			ne["archive"] = [];
+		}
+		var obj = {};
+		obj.fileName = key;
+		obj.fileContent = value;
+		ne["archive"].push(obj);
+	}-*/;
+
+	/**
+	 * @param arch
+	 *            archive
+	 * @param clb
+	 *            callback when zipped
+	 * @param errorClb
+	 *            callback for errors
+	 */
+	native void getGGBZipJs(JavaScriptObject arch, JavaScriptObject clb,
+			JavaScriptObject errorClb) /*-{
+
+		function encodeUTF8(string) {
+			var n, c1, enc, utftext = [], start = 0, end = 0, stringl = string.length;
+			for (n = 0; n < stringl; n++) {
+				c1 = string.charCodeAt(n);
+				enc = null;
+				if (c1 < 128)
+					end++;
+				else if (c1 > 127 && c1 < 2048)
+					enc = String.fromCharCode((c1 >> 6) | 192)
+							+ String.fromCharCode((c1 & 63) | 128);
+				else
+					enc = String.fromCharCode((c1 >> 12) | 224)
+							+ String.fromCharCode(((c1 >> 6) & 63) | 128)
+							+ String.fromCharCode((c1 & 63) | 128);
+				if (enc != null) {
+					if (end > start)
+						utftext += string.slice(start, end);
+					utftext += enc;
+					start = end = n + 1;
+				}
+			}
+			if (end > start)
+				utftext += string.slice(start, stringl);
+			return utftext;
+		}
+
+		function ASCIIReader(text) {
+			var that = this;
+
+			function init(callback, onerror) {
+				that.size = text.length;
+				callback();
+			}
+
+			function readUint8Array(index, length, callback, onerror) {
+				if (text.length <= index) {
+					return new $wnd.Uint8Array(0);
+				} else if (index < 0) {
+					return new $wnd.Uint8Array(0);
+				} else if (length <= 0) {
+					return new $wnd.Uint8Array(0);
+				} else if (text.length < index + length) {
+					length = text.length - index;
+				}
+				var i, data = new $wnd.Uint8Array(length);
+				for (i = index; i < index + length; i++)
+					data[i - index] = text.charCodeAt(i);
+				callback(data);
+			}
+
+			that.size = 0;
+			that.init = init;
+			that.readUint8Array = readUint8Array;
+		}
+		ASCIIReader.prototype = new $wnd.zip.Reader();
+		ASCIIReader.prototype.constructor = ASCIIReader;
+
+		$wnd.zip
+				.createWriter(
+						new $wnd.zip.BlobWriter(),
+						function(zipWriter) {
+
+							function addImage(name, data, callback) {
+								var data2 = data.substr(data.indexOf(',') + 1);
+								zipWriter.add(name,
+										new $wnd.zip.Data64URIReader(data2),
+										callback);
+							}
+
+							function addText(name, data, callback) {
+								zipWriter.add(name, new ASCIIReader(data),
+										callback);
+							}
+
+							function checkIfStillFilesToAdd() {
+								var item, imgExtensions = [ "jpg", "jpeg",
+										"png", "gif", "bmp" ];
+								if (arch.archive.length > 0) {
+									@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("arch.archive.length: "+arch.archive.length);
+									item = arch.archive.shift();
+									var ind = item.fileName.lastIndexOf('.');
+									if (ind > -1
+											&& imgExtensions
+													.indexOf(item.fileName
+															.substr(ind + 1)
+															.toLowerCase()) > -1) {
+										//if (item.fileName.indexOf(".png") > -1) 
+										//@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("image zipped: " + item.fileName);
+										addImage(item.fileName,
+												item.fileContent, function() {
+													checkIfStillFilesToAdd();
+												});
+									} else {
+										//@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("text zipped: " + item.fileName);
+										addText(item.fileName,
+												encodeUTF8(item.fileContent),
+												function() {
+													checkIfStillFilesToAdd();
+												});
+									}
+								} else {
+									zipWriter
+											.close(function(dataURI) {
+												if (typeof clb === "function") {
+													clb(dataURI);
+													// that's right, this truncation is necessary
+													//clb(dataURI.substr(dataURI.indexOf(',')+1));
+												} else {
+													@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("not callback was given");
+													@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)(dataURI);
+												}
+											});
+								}
+							}
+
+							checkIfStillFilesToAdd();
+
+						},
+						function(error) {
+							if (typeof errorClb === "function") {
+								errorClb(error + "");
+							}
+							@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("error occured while creating ggb zip");
+						});
+
+	}-*/;
+
+	/**
+	 * @param arch
+	 *            archive
+	 * @param clb
+	 *            callback for file loaded
+	 * @param workerUrls
+	 *            URL of webworker directory (or "false" to switch them off)
+	 * @param sync
+	 *            whether zip should run synchronously
+	 */
+	void getBase64ZipJs(final JavaScriptObject arch, final JavaScriptObject clb,
+			String workerUrls, boolean sync) {
+		final boolean oldWorkers = setWorkerURL(workerUrls, sync);
+		getBase64ZipJs(arch, clb, nativeCallback(new AsyncOperation<String>() {
+			@Override
+			public void callback(String s) {
+				if (oldWorkers && !isUsingWebWorkers()) {
+					Log.warn(
+							"Saving with workers failed, trying without workers.");
+					ResourcesInjector.loadCodecs();
+					getBase64ZipJs(arch, clb, "false", false);
+				}
+
+			}
+		}));
+	}
+
+	private native void getBase64ZipJs(JavaScriptObject arch,
+			JavaScriptObject clb, JavaScriptObject errorClb) /*-{
+
+		function encodeUTF8(string) {
+			var n, c1, enc, utftext = [], start = 0, end = 0, stringl = string.length;
+			for (n = 0; n < stringl; n++) {
+				c1 = string.charCodeAt(n);
+				enc = null;
+				if (c1 < 128)
+					end++;
+				else if (c1 > 127 && c1 < 2048)
+					enc = String.fromCharCode((c1 >> 6) | 192)
+							+ String.fromCharCode((c1 & 63) | 128);
+				else
+					enc = String.fromCharCode((c1 >> 12) | 224)
+							+ String.fromCharCode(((c1 >> 6) & 63) | 128)
+							+ String.fromCharCode((c1 & 63) | 128);
+				if (enc != null) {
+					if (end > start)
+						utftext += string.slice(start, end);
+					utftext += enc;
+					start = end = n + 1;
+				}
+			}
+			if (end > start)
+				utftext += string.slice(start, stringl);
+			return utftext;
+		}
+
+		function ASCIIReader(text) {
+			var that = this;
+
+			function init(callback, onerror) {
+				that.size = text.length;
+				callback();
+			}
+
+			function readUint8Array(index, length, callback, onerror) {
+				if (text.length <= index) {
+					return new $wnd.Uint8Array(0);
+				} else if (index < 0) {
+					return new $wnd.Uint8Array(0);
+				} else if (length <= 0) {
+					return new $wnd.Uint8Array(0);
+				} else if (text.length < index + length) {
+					length = text.length - index;
+				}
+				var i, data = new $wnd.Uint8Array(length);
+				for (i = index; i < index + length; i++)
+					data[i - index] = text.charCodeAt(i);
+				callback(data);
+			}
+
+			that.size = 0;
+			that.init = init;
+			that.readUint8Array = readUint8Array;
+		}
+		ASCIIReader.prototype = new $wnd.zip.Reader();
+		ASCIIReader.prototype.constructor = ASCIIReader;
+
+		//$wnd.zip.useWebWorkers = false;
+		$wnd.zip
+				.createWriter(
+						new $wnd.zip.Data64URIWriter(
+								"application/vnd.geogebra.file"),
+						function(zipWriter) {
+							function addImage(name, data, callback) {
+								var data2 = data.substr(data.indexOf(',') + 1);
+								zipWriter.add(name,
+										new $wnd.zip.Data64URIReader(data2),
+										callback);
+							}
+
+							function addText(name, data, callback) {
+								zipWriter.add(name, new ASCIIReader(data),
+										callback);
+							}
+
+							function checkIfStillFilesToAdd() {
+								var item, imgExtensions = [ "jpg", "jpeg",
+										"png", "gif", "bmp" ];
+								if (arch.archive.length > 0) {
+									item = arch.archive.shift();
+									var ind = item.fileName.lastIndexOf('.');
+									if (ind > -1
+											&& imgExtensions
+													.indexOf(item.fileName
+															.substr(ind + 1)
+															.toLowerCase()) > -1) {
+
+										@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("image zipped: " + item.fileName);
+										addImage(item.fileName,
+												item.fileContent, function() {
+													checkIfStillFilesToAdd();
+												});
+									} else {
+										@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("text zipped: " + item.fileName);
+										addText(item.fileName,
+												encodeUTF8(item.fileContent),
+												function() {
+													checkIfStillFilesToAdd();
+												});
+									}
+								} else {
+									zipWriter
+											.close(function(dataURI) {
+												if (typeof clb === "function") {
+													// that's right, this truncation is necessary
+													clb(dataURI.substr(dataURI
+															.indexOf(',') + 1));
+												} else {
+													@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("not callback was given");
+													@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)(dataURI);
+												}
+											});
+								}
+							}
+
+							checkIfStillFilesToAdd();
+
+						},
+						function(error) {
+							@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("error occured while creating base64 zip");
+							if (typeof errorClb === "function") {
+								errorClb(error + "");
+							}
+						});
+	}-*/;
+
+	private void writeMacroImages(GgbFile archive) {
+		if (kernel.hasMacros()) {
+			ArrayList<Macro> macros = kernel.getAllMacros();
+			((ImageManagerW) app.getImageManager()).writeMacroImages(macros,
+					archive);
+		}
+	}
+
+	/**
+	 * @param material
+	 *            material ID
+	 */
+	public void openMaterial(final String material) {
+		((AppW) app).openMaterial(material, new AsyncOperation<String>() {
+
+			@Override
+			public void callback(String err) {
+				Log.debug("Loading failed for id" + material + ": " + err);
+			}
+		});
+	}
+
+	/**
+	 * @param width
+	 *            setst the applet width
+	 */
+	public void setWidth(int width) {
+		setArticleParam("width", width);
+		((AppW) app).getAppletFrame().setWidth(width);
+	}
+
+	/**
+	 * @param height
+	 *            sets the applet height
+	 */
+	public void setHeight(int height) {
+		setArticleParam("height", height);
+		((AppW) app).getAppletFrame().setHeight(height);
+	}
+
+	/**
+	 * @param width
+	 *            height
+	 * @param height
+	 *            width
+	 * 
+	 *            Sets the size of the applet
+	 */
+	public void setSize(int width, int height) {
+		setArticleParam("width", width);
+		setArticleParam("height", height);
+		((AppW) app).getAppletFrame().setSize(width, height);
+	}
+
+	private void setArticleParam(String name, int value) {
+		((AppW) app).getArticleElement().attr(name, value + "");
+
+	}
+
+	/**
+	 * @param show
+	 * 
+	 *            wheter show the toolbar in geogebra-web applets or not
+	 */
+	public void showToolBar(boolean show) {
+		if (app.getGuiManager() != null) {
+			((GuiManagerInterfaceW) app.getGuiManager()).showToolBar(show);
+		}
+	}
+
+	/**
+	 * @param show
+	 * 
+	 *            wheter show the menubar in geogebra-web applets or not
+	 */
+	public void showMenuBar(boolean show) {
+		if (app.getGuiManager() != null) {
+			((GuiManagerInterfaceW) app.getGuiManager()).showMenuBar(show);
+		}
+	}
+
+	/**
+	 * @param show
+	 * 
+	 *            whether show the algebrainput in geogebra-web applets or not
+	 */
+	public void showAlgebraInput(boolean show) {
+
+		final AppW appW = (AppW) this.app;
+
+		// from ViewMenuW
+		appW.persistWidthAndHeight();
+
+		appW.setShowAlgebraInput(show, false);
+		appW.setInputPosition(
+				appW.getInputPosition() == InputPosition.algebraView
+						? InputPosition.bottom : InputPosition.algebraView,
+				true);
+		appW.updateSplitPanelHeight();
+
+		appW.updateCenterPanelAndViews();
+		if (appW.getGuiManager() != null
+				&& appW.getGuiManager().getLayout() != null) {
+			appW.getGuiManager().getLayout().getDockManager().resizePanels();
+		}
+
+	}
+
+	/**
+	 * @param show
+	 * 
+	 *            wheter show the reseticon in geogebra-web applets or not
+	 */
+	public void showResetIcon(boolean show) {
+		((AppW) app).getAppletFrame().showResetIcon(show);
+	}
+
+	/**
+	 * @param url
+	 *            image URL
+	 */
+	public void insertImage(String url) {
+		((AppW) app).urlDropHappened(url, 0, 0);
+	}
+
+	/**
+	 * recalculates euclidianviews environments
+	 */
+	public void recalculateEnvironments() {
+		((AppW) app).recalculateEnvironments();
+	}
+
+	/**
+	 * remove applet from the page, and free memory. If applet is the last one,
+	 * it remove the style elements injected by the applet too.
+	 */
+	public void removeApplet() {
+		((AppW) app).getAppletFrame().remove();
+	}
+
+	@Override
+	public void showTooltip(String tooltip) {
+		ToolTipManagerW.sharedInstance().showBottomMessage(tooltip, false,
+				(AppW) app);
+	}
+
+	/**
+	 * If there are Macros or an Exercise present in the current file this can
+	 * be used to check if parts of the construction are equivalent to the
+	 * Macros in the file. <br />
+	 * If you don't want that a Standard Exercise (using all the Macros in the
+	 * Construction and setting each fraction to 100) will be created, check if
+	 * this is a Exercise with {@link #isExercise()} first. <br>
+	 * Hint will be empty unless specified otherwise with the ExerciseBuilder.
+	 * <br />
+	 * Fraction will be 0 or 1 unless specified otherwise with the
+	 * ExerciseBuilder. <br />
+	 * Result will be in {@link Result},i.e: <br />
+	 * CORRECT, The assignment is CORRECT <br />
+	 * WRONG, if the assignment is WRONG and we can't tell why <br />
+	 * NOT_ENOUGH_INPUTS if there are not enough input geos, so we cannot check
+	 * <br />
+	 * WRONG_INPUT_TYPES, if there are enough input geos, but one or more are of
+	 * the wrong type <br />
+	 * WRONG_OUTPUT_TYPE, if there is no output geo matching our macro <br />
+	 * WRONG_AFTER_RANDOMIZE, if the assignment was correct in the first place
+	 * but wrong after randomization <br />
+	 * UNKNOWN, if the assignment could not be checked
+	 * 
+	 * @return JavaScriptObject representation of the exercise result. For
+	 *         Example: "{"Tool1":{ "result":"CORRECT", "hint":"",
+	 *         "fraction":1}}", will be empty if now Macros or Assignments have
+	 *         been found.
+	 */
+	@Override
+	public JavaScriptObject getExerciseResult() {
+		Exercise ex = kernel.getExercise();
+		ex.checkExercise();
+		JSONObject result = new JSONObject();
+		ArrayList<Assignment> parts = ex.getParts();
+		for (Assignment part : parts) {
+			JSONObject partresult = new JSONObject();
+			result.put(part.getDisplayName(), partresult);
+			partresult.put("result", new JSONString(part.getResult().name()));
+			String hint = part.getHint();
+			hint = hint == null ? "" : hint;
+			partresult.put("hint", new JSONString(hint));
+			partresult.put("fraction", new JSONNumber(part.getFraction()));
+		}
+		return result.getJavaScriptObject();
+	}
+
+	public void asyncEvalCommand(String command, JavaScriptObject onSuccess,
+			JavaScriptObject onFailure) {
+		((AppW) app).getAsyncManager().asyncEvalCommand(command, onSuccess, onFailure);
+	}
+
+	public void asyncEvalCommandGetLabels(String command, JavaScriptObject onSuccess,
+			JavaScriptObject onFailure) {
+		((AppW) app).getAsyncManager().asyncEvalCommandGetLabels(command, onSuccess, onFailure);
+	}
+
+	/**
+	 * Try to evaluate command only once, might fail if the command is not loaded
+	 * @param cmdString command to evaluate
+	 * @return whether the evaluation succeeded
+	 */
+	public synchronized boolean evalCommandNoException(String cmdString) {
+		try {
+			return super.evalCommand(cmdString);
+		} catch (CommandNotLoadedError e) {
+			Log.debug("Command not loaded yet. "
+					+ "Please try asyncEvalCommand(cmdString)");
+			throw e;
+		}
+	}
+
+	/**
+	 * Try to evaluate command only once, might fail if the command is not loaded
+	 * @param cmdString command to evaluate
+	 * @return comma separated list of labels of the resulting Geos
+	 */
+	public synchronized String evalCommandGetLabelsNoException(String cmdString) {
+		try {
+			return super.evalCommandGetLabels(cmdString);
+		} catch (CommandNotLoadedError e) {
+			Log.debug("Command not loaded yet. "
+					+ "Please try asyncEvalCommandGetLabels(cmdString, callback)");
+			throw e;
+		}
+	}
+
+	/**
+	 * If you want to make use of the values of random geo a BoolAssignment
+	 * depends on, this is an easy way to retrieve these values and stop
+	 * randomizing them in order to store the same assignment that was presented
+	 * to the student.
+	 * 
+	 * @return JavaScriptObject containing all variables and values of which a
+	 *         BoolAssignment is depending and stops randomizing all these
+	 *         values. Example:
+	 *         "Object {level: 1, randNum: 5, a: 1, b: 1, answer: NaN}"
+	 */
+	public JavaScriptObject startExercise() {
+		ArrayList<GeoNumeric> randomizedVars = app.getKernel().getExercise()
+				.stopRandomizeAndGetValuesForBoolAssignments();
+		JSONObject vars = new JSONObject();
+
+		for (GeoNumeric geo : randomizedVars) {
+			JSONNumber var = new JSONNumber(geo.getDouble());
+			vars.put(geo.getLabelSimple(), var);
+			geo.setRandom(false);
+		}
+
+		return vars.getJavaScriptObject();
+	}
+
+	/**
+	 * Remember where file was stored in WinStore app
+	 * 
+	 * @param s
+	 *            external saving path
+	 */
+	public void setExternalPath(String s) {
+		((AppW) app).setExternalPath(s);
+	}
+
+	/**
+	 * If all content is saved, run immediately, otherwise wait until user
+	 * saves.
+	 * 
+	 * @param callback
+	 *            callback after file is saved
+	 */
+	public void checkSaved(final JavaScriptObject callback) {
+		((AppW) app).checkSaved(new AsyncOperation<Boolean>() {
+			@Override
+			public void callback(Boolean active) {
+				ScriptManagerW.runCallback(callback);
+			}
+		});
+	}
+
+	/**
+	 * @param toolbarString
+	 *            custom toolbar definition
+	 */
+	public void setCustomToolBar(String toolbarString) {
+		GuiManagerInterfaceW gm = ((GuiManagerInterfaceW) app.getGuiManager());
+		gm.setToolBarDefinition(toolbarString);
+		gm.setGeneralToolBarDefinition(toolbarString);
+		gm.updateToolbar();
+	}
+
+	/**
+	 * Make screenshot of the whole app as PNG.
+	 * 
+	 * @param callback
+	 *            callback
+	 */
+	public void getScreenshotBase64(JavaScriptObject callback) {
+		getScreenshotURL(((AppW) app).getPanel().getElement(), callback);
+	}
+
+	/**
+	 * Make a screenshot of given element.
+	 * 
+	 * @param el
+	 *            element
+	 * @param callback
+	 *            callback
+	 */
+	public native void getScreenshotURL(Element el,
+			JavaScriptObject callback)/*-{
+		var canvas = document.createElement("canvas");
+		canvas.height = el.offsetHeight;
+		canvas.width = el.offsetWidth;
+		var context = canvas.getContext('2d');
+		el.className = el.className + " ggbScreenshot";
+		$wnd.domvas.toImage(el, function() {
+			// Look ma, I just converted this element to an image and can now to funky stuff!
+			context.drawImage(this, 0, 0);
+			el.className = el.className.replace(/\bggbScreenshot\b/, '');
+			callback(@org.geogebra.web.html5.main.GgbAPIW::pngBase64(Ljava/lang/String;)(canvas.toDataURL()));
+		});
+	}-*/;
+
+	/**
+	 * @param workerUrls
+	 *            worker folder URL
+	 * @param sync
+	 *            whether to use zipjs synchronously
+	 * @return whether webworkers can be used
+	 */
+	public static native boolean setWorkerURL(String workerUrls,
+			boolean sync) /*-{
+		if (workerUrls === "false" || !workerUrls || sync) {
+			$wnd.zip.useWebWorkers = false;
+			$wnd.zip.synchronous = sync;
+		} else {
+			$wnd.zip.synchronous = false;
+			$wnd.zip.useWebWorkers = true;
+
+			$wnd.zip.workerScripts = {
+				deflater : [ workerUrls + "z-worker.js",
+						workerUrls + "pako1.0.6_min.js",
+						workerUrls + "codecs.js" ],
+				inflater : [ workerUrls + "z-worker.js",
+						workerUrls + "pako1.0.6_min.js",
+						workerUrls + "codecs.js" ]
+			};
+
+		}
+		return $wnd.zip.useWebWorkers;
+	}-*/;
+
+	/**
+	 * @return whether webworkers are used in zipjs
+	 */
+	native boolean isUsingWebWorkers()/*-{
+		return $wnd.zip.useWebWorkers;
+	}-*/;
+
+	/**
+	 * GGB-1780
+	 * 
+	 * @return current construction as SVG
+	 */
+	@Override
+	final public String exportSVG(String filename) {
+		EuclidianView ev = app.getActiveEuclidianView();
+
+		if (ev instanceof EuclidianViewW) {
+			EuclidianViewW evw = (EuclidianViewW) ev;
+
+			String svg = evw.getExportSVG(1, true);
+
+			if (filename != null) {
+				// can't use data:image/svg+xml;utf8 in IE11 / Edge
+				Browser.exportImage(Browser.encodeSVG(svg), filename);
+			}
+
+			return svg;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Experimental GGB-2150
+	 * 
+	 */
+	@Override
+	final public String exportPDF(double scale, String filename,
+			String sliderLabel) {
+
+		String pdf;
+
+		if (app.isWhiteboardActive()) {
+
+			// export each slide as separate page
+			pdf = ((AppW) app).getPageController().exportPDF();
+
+		} else {
+
+			EuclidianView ev = app.getActiveEuclidianView();
+
+			if (ev instanceof EuclidianViewW) {
+
+				EuclidianViewW evw = (EuclidianViewW) ev;
+
+				if (sliderLabel == null) {
+					pdf = evw.getExportPDF(scale);
+				} else {
+					pdf = AnimationExporter.export(kernel.getApplication(), 0,
+							(GeoNumeric) kernel.lookupLabel(sliderLabel), false,
+							filename, scale, Double.NaN, ExportType.PDF_HTML5);
+				}
+
+			} else {
+				return null;
+			}
+		}
+
+		if (filename != null) {
+			Browser.exportImage(pdf, filename);
+		}
+		return pdf;
+	}
+
+	@Override
+	public void exportGIF(String sliderLabel, double scale,
+			double timeBetweenFrames, boolean isLoop, String filename,
+			double rotate) {
+
+		// each frame as ExportType.PNG
+		AnimationExporter.export(kernel.getApplication(), (int) timeBetweenFrames,
+				(GeoNumeric) kernel.lookupLabel(sliderLabel), isLoop, filename,
+				scale, rotate, ExportType.PNG);
+
+	}
+
+	@Override
+	public void exportWebM(String sliderLabel, double scale,
+			double timeBetweenFrames, boolean isLoop, String filename,
+			double rotate) {
+		// each frame as ExportType.WEBP
+		AnimationExporter.export(kernel.getApplication(), (int) timeBetweenFrames,
+				(GeoNumeric) kernel.lookupLabel(sliderLabel), isLoop, filename,
+				scale, rotate, ExportType.WEBP);
+	}
+
+	/**
+	 * @param callback
+	 *            native callback
+	 */
+	public void exportPSTricks(JavaScriptObject callback) {
+		this.exportPSTricks(asyncOperation(callback));
+	}
+
+	/**
+	 * @param callback
+	 *            native callback
+	 */
+	public void exportPGF(JavaScriptObject callback) {
+		this.exportPGF(asyncOperation(callback));
+	}
+
+	/**
+	 * @param callback
+	 *            native callback
+	 */
+	public void exportAsymptote(JavaScriptObject callback) {
+		this.exportAsymptote(asyncOperation(callback));
+	}
+
+	/**
+	 * @param key
+	 *            menu key
+	 * @param callback
+	 *            callback to run when properties loaded
+	 * @return return value
+	 */
+	final public String translate(final String key,
+			final JavaScriptObject callback) {
+		final Localization loc = app.getLocalization();
+		if (callback != null) {
+			((AppW) app).afterLocalizationLoaded(new Runnable() {
+				@Override
+				public void run() {
+					JsEval.runCallback(callback, loc.getMenu(key));
+				}
+			});
+		}
+		return loc.getMenu(key);
+	}
+
+	private static AsyncOperation<String> asyncOperation(
+			final JavaScriptObject callback) {
+		return new AsyncOperation<String>() {
+
+			@Override
+			public void callback(String obj) {
+				JsEval.runCallback(callback, obj);
+			}
+		};
+	}
+
+	/**
+	 * @param columnNamesJS
+	 *            JS string array
+	 * @return exported construction
+	 */
+	public String exportConstruction(JsArrayString columnNamesJS) {
+		String[] columnNames = new String[columnNamesJS.length()];
+		for (int i = 0; i < columnNames.length; i++) {
+			columnNames[i] = columnNamesJS.get(i);
+		}
+		return this.exportConstruction(columnNames);
+	}
+
+	/**
+	 * @param token
+	 *            token
+	 * @param showUI
+	 *            whether to show UI when token is invalid
+	 */
+	public void login(String token, boolean showUI) {
+		if (showUI && (StringUtil.empty(token) || StringUtil.isNaN(token))) {
+			app.getLoginOperation().showLoginDialog();
+		} else {
+			login(token);
+		}
+	}
+
+}

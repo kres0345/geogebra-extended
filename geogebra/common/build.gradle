@@ -1,0 +1,96 @@
+plugins {
+    id 'java'
+    id 'pmd'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '1.6.9'
+    id 'ca.coglinc.javacc' version '2.4.0'
+}
+
+project.setDescription('Common parts of GeoGebra for various platforms')
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+	compile project(':editor-base')
+	compile project(':renderer-base')
+    compile 'com.google.j2objc:annotations:1.0.2'
+    compile ("com.google.code.findbugs:annotations:3.0.1") {
+        exclude module: 'jsr305'
+        exclude module: 'jcip-annotations'
+    }
+}
+
+sourceSets {
+    nonfree
+    gpl
+    main {
+        java {
+            srcDir compileJavacc.outputDirectory
+            srcDir compileJavacc.inputDirectory
+        }
+        resources {
+            if (project.hasProperty("usegpl")) {
+                srcDirs += gpl.resources.srcDirs
+            } else {
+                srcDirs += nonfree.resources.srcDirs
+            }
+        }
+    }
+}
+if(hasProperty("eclipse")){
+	eclipse.classpath.sourceSets.removeAll { it.name == 'nonfree' || it.name == 'gpl'}
+}
+
+compileJavacc {
+	arguments = [static: 'false', JAVA_TEMPLATE_TYPE: 'modern']
+}
+
+task cleanJavacc(type: Delete) {
+	description 'Cleans the javacc generated files.'
+	delete compileJavacc
+}
+
+import java.text.*
+task versionBump(){
+	doLast{
+		def version = "undef"
+		def constants = file('../common/src/main/java/org/geogebra/common/GeoGebraConstants.java')
+	    constants.eachLine { line ->
+	        def pattern = ~/ VERSION_STRING = "(.*)"/
+	        def matcher = (line =~ pattern)
+	        if (matcher) {
+	            version = line.substring(matcher.start(1), matcher.end(1))
+	        }
+	    }
+	    def parts = version.split("\\.").collect({f->Integer.parseInt(f)});
+	    parts[2]++;
+	    parts[3]=0;
+	    version = parts[0]+"."+parts[1]+"."+parts[2]+"."+parts[3];
+		String t = constants.getText();
+		DateFormat df = new SimpleDateFormat("dd MMMM Y", Locale.US);
+		t = t.replaceAll("BUILD_DATE.*","BUILD_DATE = \""+df.format(new Date())+"\";");
+		t = t.replaceAll("final String VERSION_STRING.*","final String VERSION_STRING = \""+version+"\";");
+		constants.text = t;
+	}
+}
+
+test {
+     ignoreFailures = true
+}
+
+spotbugs {
+    ignoreFailures = true
+    excludeFilter = file("config/findbugs.xml")
+    jvmArgs = ['-Dfindbugs.sf.comment=true']
+}
+
+pmd {
+    ignoreFailures = true
+    ruleSets = []
+    ruleSetFiles = files("config/pmd.xml")
+}
+
+checkstyle {
+    toolVersion = "8.8"
+}

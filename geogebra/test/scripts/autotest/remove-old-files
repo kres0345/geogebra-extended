@@ -1,0 +1,23 @@
+#!/bin/sh
+# Removes old .cache.js files
+# This should be put into the crontab on www.geogebra.org on a daily basis
+
+NEWEST=4
+EXT=cache.js
+
+COUNT=`find . -name '*'.$EXT | wc -l`
+if [ $COUNT -gt $NEWEST ]; then
+ echo "Removing .$EXT files, leaving the last $NEWEST only"
+ FROM=`expr $NEWEST + 1`
+ ls -1 -t *.$EXT | tail -n +$FROM | xargs rm
+ fi
+
+# Removes obsolete deferredjs/ subdirectories
+
+COUNT=`find deferredjs -type d | wc -l`
+if [ $COUNT -gt $NEWEST ]; then
+ echo "Removing deferredjs/ subdirectories, leaving the last $NEWEST only"
+ FROM=`expr $NEWEST + 1`
+ cd deferredjs
+ ls -1 -t | tail -n +$FROM | xargs rm -fR
+ fi

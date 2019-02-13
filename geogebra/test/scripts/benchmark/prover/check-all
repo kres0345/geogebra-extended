@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Checks the output of runtests-all and reports if a regression occurred.
+# Only the number of correct tests is counted. This should be improved.
+
+exitcode=0
+
+r() {
+ echo "Regression in $1"
+ exitcode=1
+ }
+
+MYDIR=`pwd $0`
+cd $MYDIR
+for i in jar-paper giac-test ndg Prove-desktop-web ProveDetails-desktop-web; do
+ cat html/$i.html | grep \"summary | grep -v Summary | cut -f2 -db | tr '></' '   ' | awk {'printf "%s ", $1'} > tmp/$i.summary.out
+ done
+
+t=jar-paper
+read e1 e2 e2g e3a e3b a < tmp/$t.summary.out
+if ((e1 < 33)); then r "$t: Engine 1"; fi
+if ((e2 < 176)); then r "$t: Engine 2"; fi
+if ((e2g < 135)); then r "$t: Engine 2, Giac"; fi
+if ((e3a < 86)); then r "$t: Engine 3a"; fi
+if ((e3b < 67)); then r "$t: Engine 3b"; fi
+if ((a < 154)); then r "$t: Auto"; fi
+
+t=ndg
+read b bg ow a < tmp/$t.summary.out
+if ((b < 164)); then r "$t: Botana"; fi
+if ((bg < 164)); then r "$t: BotanaGiac"; fi
+if ((ow < 87)); then r "$t: OpenGeoProver Wu"; fi
+if ((a < 164)); then r "$t: Auto"; fi
+
+t=Prove-desktop-web
+read a w < tmp/$t.summary.out
+if ((w < 131)); then r "$t: Web"; fi
+
+t=ProveDetails-desktop-web
+read a w < tmp/$t.summary.out
+if ((w < 144)); then r "$t: Web"; fi
+
+exit $exitcode

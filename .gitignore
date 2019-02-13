@@ -1,3 +1,7 @@
+geogebra/.gradle
+geogebra/.svn
+geogebra/.metadata
+
 # Compiled class file
 *.class
 

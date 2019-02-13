@@ -1,0 +1,37 @@
+#!/bin/sh
+# Checks if the current build works properly (basic checks)
+
+# 1. Start and loading configuration
+test -r autotest.conf || {
+ echo "$0: Cannot find autotest.conf (make sure you edit autotest.conf.dist first)"
+ exit 127
+ }
+test -r autotest.conf && . ./autotest.conf
+
+MYDIR=$SVNDIR/geogebra/test/scripts/autotest
+
+REVISION=`./myrevision`
+
+cd $REVDIR/$REVISION || exit 1 # Build problem
+
+test -r geogebra.jar || exit 2 # Non-existing JAR
+
+# Testing no-3D version:
+xvfb-run --auto-servernum timeout -k $SIMPLETESTTIMEOUT $SIMPLETESTTIMEOUT \
+ $JAVA_HOME/bin/java -cp geogebra.jar geogebra.GeoGebra3D \
+  --regressionFile=simpletest.out --logFile=simpletest.log $MYDIR/simpletest.ggb \
+  >simpletest.stdout 2>simpletest.stderr
+
+diff simpletest.out $MYDIR/simpletest.out || exit 3 # Problem with simple testing
+
+ECJERROR=`cat ecjerrors`
+if [ "$ECJERROR" != "" ]; then
+ exit 4 # Compilation error (but GeoGebra started)
+ fi
+
+WEBERROR=`cat weberrors`
+if [ "$WEBERROR" != "" ]; then
+ exit 5 # Compilation error (but GeoGebra started)
+ fi
+
+exit 0 # No error

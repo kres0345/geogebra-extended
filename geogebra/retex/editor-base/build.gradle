@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'pmd'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '1.6.9'
+    id 'ca.coglinc.javacc' version '2.3.1'
+}
+
+
+group 'com.himamis.retex'
+version '0.1'
+
+publishing {
+	publications {
+		library(MavenPublication) {
+			from components.java
+		}
+	}
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+	compile project(':renderer-base')
+}
+
+sourceSets.main.java.srcDirs += [compileJavacc.outputDirectory, compileJavacc.inputDirectory]
+
+compileJavacc {
+	arguments = [static: 'false', grammar_encoding: 'UTF-8', unicode_input : 'true',  JAVA_TEMPLATE_TYPE: 'modern']
+}
+
+task cleanJavacc(type: Delete) {
+	description 'Cleans the javacc generated files.'
+	delete compileJavacc
+}
+
+pmd {
+     ignoreFailures = true
+     ruleSets = []
+     ruleSetFiles = files("config/pmd.xml")
+}
+
+checkstyle {
+    toolVersion = "8.8"
+}
+
+spotbugs {
+    ignoreFailures = true
+    excludeFilter = file("../../common/config/findbugs.xml")
+}
