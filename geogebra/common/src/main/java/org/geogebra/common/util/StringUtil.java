@@ -182,6 +182,11 @@ public class StringUtil extends com.himamis.retex.editor.share.input.Character {
 	 * unicode value of the character)
 	 * 
 	 * @author Markus Hohenwarter
+	 * @param str
+	 *            unicode string
+	 * @param encodeLTGT
+	 *            whether to encode &lt; &gt;
+	 * @return HTML string
 	 */
 	final public static String toHTMLString(String str, boolean encodeLTGT) {
 		if (str == null) {
@@ -247,13 +252,14 @@ public class StringUtil extends com.himamis.retex.editor.share.input.Character {
 	 * Converts the given unicode string to a string where special characters
 	 * are converted to <code>&#encoding;</code> sequences . The resulting
 	 * string can be used in XML files.
+	 * 
+	 * @param str
+	 *            unicode string
+	 * @return XML string
 	 */
 	public static String encodeXML(String str) {
-
 		StringBuilder sb = new StringBuilder(str.length());
-
 		encodeXML(sb, str);
-
 		return sb.toString();
 	}
 
@@ -329,7 +335,6 @@ public class StringUtil extends com.himamis.retex.editor.share.input.Character {
 	 * @return whether it's left to right Unicode character
 	 */
 	protected boolean isRightToLeftChar(char c) {
-
 		return false;
 	}
 
@@ -356,6 +361,12 @@ public class StringUtil extends com.himamis.retex.editor.share.input.Character {
 	/**
 	 * Replaces special unicode letters (e.g. greek letters) in str by LaTeX
 	 * strings.
+	 * 
+	 * @param str
+	 *            unicode string
+	 * @param convertGreekLetters
+	 *            whether to convert unicode alpha to \alpha
+	 * @return latex string
 	 */
 	public static synchronized String toLaTeXString(String str,
 			boolean convertGreekLetters) {
@@ -1137,16 +1148,13 @@ public class StringUtil extends com.himamis.retex.editor.share.input.Character {
 		}
 
 		StringBuilder sb1 = new StringBuilder();
-		if (tpl == StringTemplate.giacTemplateInternal && kernel != null) {
-			sb1.append("(");
-			long[] l = kernel.doubleToRational(x);
-			sb1.append(l[0] + "/" + l[1]);
-			sb1.append(')');
-		} else {
-			sb1.append("exact(");
-			sb1.append(s);
-			sb1.append(')');
+		if (tpl == StringTemplate.giacTemplateInternal) {
+			return tpl.convertScientificNotationGiac(s0);
 		}
+
+		sb1.append("exact(");
+		sb1.append(s);
+		sb1.append(')');
 
 		return sb1.toString();
 	}
@@ -1793,8 +1801,13 @@ public class StringUtil extends com.himamis.retex.editor.share.input.Character {
 		return str.length() == 1 && isCurrency(str.charAt(0));
 	}
 
-	public static boolean emptyOrZero(String tubeId) {
-		return empty(tubeId) || "0".equals(tubeId);
+	/**
+	 * @param text
+	 *            tested string
+	 * @return whether text is empty or equal to "0"
+	 */
+	public static boolean emptyOrZero(String text) {
+		return empty(text) || "0".equals(text);
 	}
 
 	/**
@@ -1851,10 +1864,23 @@ public class StringUtil extends com.himamis.retex.editor.share.input.Character {
 
 	/**
 	 * @param value
-	 * 			the String value to test
-	 * @return True if the value contains only numbers, false otherwise/
+	 *            the String value to test
+	 * @return true if the value contains only numbers, false otherwise/
 	 */
 	public static boolean isSimpleNumber(String value) {
 		return value.matches("[1234567890\\-.]+");
 	}
+
+	/**
+	 * Used to decide whether to use serif or sans serif eg axis labels
+	 * 
+	 * @param string
+	 *            text
+	 * @return if string starts with eg \mathrm
+	 */
+	public static boolean startsWithFormattingCommand(String string) {
+		return string != null && string.length() > 6
+				&& string.startsWith("$\\math");
+	}
+
 }

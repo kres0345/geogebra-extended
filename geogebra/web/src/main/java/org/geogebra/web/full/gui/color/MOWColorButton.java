@@ -1,7 +1,7 @@
 package org.geogebra.web.full.gui.color;
 
 import org.geogebra.common.gui.util.SelectionTable;
-import org.geogebra.common.kernel.geos.GeoElement.FillType;
+import org.geogebra.common.kernel.geos.properties.FillType;
 import org.geogebra.common.main.Feature;
 import org.geogebra.common.main.GeoGebraColorConstants;
 import org.geogebra.web.full.gui.util.ButtonPopupMenu;
@@ -74,7 +74,7 @@ public class MOWColorButton extends ColorPopupMenuButton {
 	 */
 	public void setFillEnabled(boolean b) {
 		fillTable.setVisible(b);
-		if (b && !app.has(Feature.MOW_COLORPOPUP_IMPROVEMENTS)) {
+		if (b) {
 			getMyPopup().setHeight("125px");
 		}
 	}

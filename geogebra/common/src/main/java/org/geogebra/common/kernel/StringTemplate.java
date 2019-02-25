@@ -99,9 +99,10 @@ public class StringTemplate implements ExpressionNodeConstants {
 	static {
 		prefixedDefault.localizeCmds = false;
 		prefixedDefault.internationalizeDigits = false;
-		prefixedDefault.forceNF = true;
+		prefixedDefault.forceSF = true;
 		prefixedDefault.usePrefix = true;
-		prefixedDefault.nf = FormatFactory.getPrototype().getNumberFormat(15);
+		prefixedDefault.sf = FormatFactory.getPrototype()
+				.getScientificFormat(15, 20, false);
 	}
 
 	/**
@@ -3457,15 +3458,6 @@ public class StringTemplate implements ExpressionNodeConstants {
 	 */
 	public void setLocalizeCmds(boolean localizeCmds) {
 		this.localizeCmds = localizeCmds;
-	}
-
-	/**
-	 * Set to true to print ~ 3.1415 as pi.
-	 *
-	 * @param allowPiHack true to print pi symbolically
-	 */
-	public void setAllowPiHack(boolean allowPiHack) {
-		this.allowPiHack = allowPiHack;
 	}
 
 	/**

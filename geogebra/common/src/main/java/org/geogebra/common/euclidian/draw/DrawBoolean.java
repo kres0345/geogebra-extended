@@ -15,6 +15,7 @@ package org.geogebra.common.euclidian.draw;
 import org.geogebra.common.awt.GBasicStroke;
 import org.geogebra.common.awt.GColor;
 import org.geogebra.common.awt.GDimension;
+import org.geogebra.common.awt.GEllipse2DDouble;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.GPoint;
 import org.geogebra.common.awt.GRectangle;
@@ -28,6 +29,7 @@ import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.geos.GeoBoolean;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.main.App;
+import org.geogebra.common.util.StringUtil;
 
 /**
  * Checkbox for free GeoBoolean object.
@@ -36,7 +38,7 @@ import org.geogebra.common.main.App;
  */
 public final class DrawBoolean extends Drawable {
 
-	private static final int LABEL_MARGIN = 9;
+	private static final int LABEL_MARGIN = 14;
 
 	private GeoBoolean geoBool;
 
@@ -137,10 +139,15 @@ public final class DrawBoolean extends Drawable {
 				App app = view.getApplication();
 				g2.setPaint(geo.getObjectColor());
 				g2.setColor(GColor.RED);
+
+				String caption = geoBool
+						.getCaption(StringTemplate.defaultTemplate);
+
 				app.getDrawEquation().drawEquation(app, geoBool, g2, posX, posY,
-						geoBool.getCaption(StringTemplate.defaultTemplate),
-						g2.getFont(), false, geoBool.getObjectColor(),
-						geoBool.getBackgroundColor(), false, false,
+						caption, g2.getFont(),
+						StringUtil.startsWithFormattingCommand(caption),
+						geoBool.getObjectColor(), geoBool.getBackgroundColor(),
+						false, false,
 						view.getCallBack(geo, firstCall));
 				firstCall = false;
 			} else {
@@ -231,9 +238,15 @@ public final class DrawBoolean extends Drawable {
 		private static GBasicStroke stroke13 = null;
 		private static GBasicStroke stroke26 = null;
 
-		/** background color when highlighted */
-		public static final GColor highlightBackground = GColor.newColor(248,
-				248, 248);
+		// colours for the highlight circle and outline
+		private static final GColor highlightBackground = GColor.newColor(0, 0,
+				0, 50);
+		private static final GColor highlightOutline = GColor.newColor(255, 255,
+				255, 128);
+
+		// highlight circle
+		private static GEllipse2DDouble highlightCircle = AwtFactory
+				.getPrototype().newEllipse2DDouble();
 
 		/**
 		 * Creates new checkbox icon
@@ -267,50 +280,64 @@ public final class DrawBoolean extends Drawable {
 		static public void paintIcon(boolean checked, boolean highlighted,
 				GGraphics2D g, int x, int y, int csize) {
 
-			{
-				// outer bevel
-				// Draw rounded border
-				g.setColor(GColor.DARK_GRAY);
-				g.drawRoundRect(x, y, csize, csize, csize / 5, csize / 5);
+			if (highlighted) {
+				// size of circle when checkbox has focus
+				int highlightSize = csize * 3 / 2;
 
-				// Draw rectangle with rounded borders
-				if (highlighted) {
-					g.setColor(highlightBackground);
-				} else {
-					g.setColor(GColor.WHITE);
-				}
-				g.fillRoundRect(x + 1, y + 1, csize - 2, csize - 2, csize / 5,
-						csize / 5);
+				// white border for so it works with all background colours
+				int outlineWidth = 4;
 
-				g.setColor(GColor.DARK_GRAY);
+				// outline
+				g.setColor(highlightOutline);
+				highlightCircle.setFrameFromCenter(x + csize / 2, y + csize / 2,
+						x + highlightSize + outlineWidth,
+						y + highlightSize + outlineWidth);
+				g.fill(highlightCircle);
 
-				// paint check
+				// fill
+				g.setColor(highlightBackground);
+				highlightCircle.setFrameFromCenter(x + csize / 2, y + csize / 2,
+						x + highlightSize, y + highlightSize);
+				g.fill(highlightCircle);
+			}
 
-				if (checked) {
-					if (csize == 13) {
+			// outer bevel
+			// Draw rounded border
+			g.setColor(GColor.DARK_GRAY);
+			g.drawRoundRect(x, y, csize, csize, csize / 5, csize / 5);
 
-						if (stroke13 == null) {
-							stroke13 = AwtFactory.getPrototype().newBasicStroke(
-									2f, GBasicStroke.CAP_ROUND,
-									GBasicStroke.JOIN_ROUND);
-						}
+			g.setColor(GColor.WHITE);
+			g.fillRoundRect(x + 1, y + 1, csize - 2, csize - 2, csize / 5,
+					csize / 5);
 
-						g.setStroke(stroke13);
-						g.drawLine(x + 2, y + 7, x + 5, y + 10);
-						g.drawLine(x + 5, y + 10, x + 10, y + 3);
+			g.setColor(GColor.DARK_GRAY);
 
-					} else { // csize == 26
+			// paint check
 
-						if (stroke26 == null) {
-							stroke26 = AwtFactory.getPrototype().newBasicStroke(
-									4f, GBasicStroke.CAP_ROUND,
-									GBasicStroke.JOIN_ROUND);
-						}
-						g.setStroke(stroke26);
-						g.drawLine(x + 5, y + 15, x + 10, y + 20);
-						g.drawLine(x + 10, y + 20, x + 20, y + 6);
+			if (checked) {
+				if (csize == 13) {
 
+					if (stroke13 == null) {
+						stroke13 = AwtFactory.getPrototype().newBasicStroke(2f,
+								GBasicStroke.CAP_ROUND,
+								GBasicStroke.JOIN_ROUND);
 					}
+
+					g.setStroke(stroke13);
+					g.drawLine(x + 2, y + 7, x + 5, y + 10);
+					g.drawLine(x + 5, y + 10, x + 10, y + 3);
+
+				} else { // csize == 26
+
+					if (stroke26 == null) {
+						stroke26 = AwtFactory.getPrototype().newBasicStroke(4f,
+								GBasicStroke.CAP_ROUND,
+								GBasicStroke.JOIN_ROUND);
+					}
+					g.setStroke(stroke26);
+					g.drawLine(x + 5, y + 15, x + 10, y + 20);
+					g.drawLine(x + 10, y + 20, x + 20, y + 6);
+
 				}
 			}
 		}

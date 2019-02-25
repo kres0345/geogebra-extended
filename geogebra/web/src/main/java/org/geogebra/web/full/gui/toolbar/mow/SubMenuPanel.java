@@ -6,7 +6,6 @@ import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.gui.SetLabels;
 import org.geogebra.common.gui.toolbar.ToolBar;
 import org.geogebra.common.gui.toolbar.ToolbarItem;
-import org.geogebra.common.main.Feature;
 import org.geogebra.web.full.gui.toolbar.ToolButton;
 import org.geogebra.web.full.main.AppWFull;
 import org.geogebra.web.html5.gui.FastClickHandler;
@@ -177,9 +176,7 @@ public abstract class SubMenuPanel extends FlowPanel
 		if (app.isMenuShowing()) {
 			app.toggleMenu();
 		}
-		if (app.has(Feature.MOW_MULTI_PAGE)) {
-			((AppWFull) app).getAppletFrame().getPageControlPanel().close();
-		}
+		((AppWFull) app).getAppletFrame().getPageControlPanel().close();
 	}
 
 	/**

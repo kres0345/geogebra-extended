@@ -10,9 +10,9 @@
 	$floatingbtn-appear-transition: width 0.2s, height 0.2s, right 0.2s, margin-bottom 0.2s, visibility 0.2s;
 	$floatingbtn-img-appear-transition: width 0.2s, height 0.2s, padding 0.2s;
 	
-	$shadow-elevation-2: 0px 3px 1px -2px $black-2, 0px 2px 2px 0px $black-14, 0px 1px 5px 0px $black-12;
-	$shadow-elevation-8: 0px 5px 5px -3px $black-2, 0px 8px 10px 1px $black-14, 0px 3px 14px 2px $black-12;
-	$shadow-elevation-16: 0px 8px 10px -5px $black-2, 0px 16px 24px 2px $black-14, 0px 6px 30px 5px $black-12;
+	$shadow-elevation-2: 0px 3px 1px -2px $black-20, 0px 2px 2px 0px $black-14, 0px 1px 5px 0px $black-12;
+	$shadow-elevation-8: 0px 5px 5px -3px $black-20, 0px 8px 10px 1px $black-14, 0px 3px 14px 2px $black-12;
+	$shadow-elevation-16: 0px 8px 10px -5px $black-20, 0px 16px 24px 2px $black-14, 0px 6px 30px 5px $black-12;
 	
 	// comes from youtube player, you must not change this.
 	$z_mow_video: 50;
@@ -38,10 +38,6 @@
 		    border-radius: 5px;
 		    height: 22px;
 		    width: 22px;
-		}
-		.ButtonPopupMenu .panelRow2 {
-			/*padding-bottom: 8px;
-			padding-top: 4px;*/
 		}
 	}
 	
@@ -132,7 +128,15 @@
 		}
 		.plusButton:hover {
 			border: 1px solid $mow_highlight !important;
-		}
+        }
+        
+        .panelRow.panelRow2.showSlider {
+             width: 180px !important;
+
+             input[type=range] {
+                width: calc(100% - 74px);
+             }
+        }
 	}
 	
 /*****************
@@ -203,7 +207,7 @@
     	z-index: 99;
  
     	background-color: $mow_highlight;
-    	box-shadow: 0px 2px 10px $black-3, 0px 0px 1px $black-10, inset 0px 1px 0px $white-25, inset 0px -1px 0px $black-15;
+    	box-shadow: 0px 2px 10px $black-30, 0px 0px 1px $black-10, inset 0px 1px 0px $white-25, inset 0px -1px 0px $black-15;
     	transition: $floatingbtn-hover-transition, $mowsubmenu-transition;
     	
     	&:hover {

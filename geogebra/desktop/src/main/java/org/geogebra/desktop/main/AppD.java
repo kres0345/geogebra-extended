@@ -4750,11 +4750,6 @@ public class AppD extends App implements KeyEventDispatcher, AppDI {
 		return loc;
 	}
 
-	@Override
-	public double getMillisecondTime() {
-		return System.nanoTime() / 1000000d;
-	}
-
 	/**
 	 * Initializes the sign in Operation and tries to login in the user with the
 	 * stored token
@@ -5277,7 +5272,8 @@ public class AppD extends App implements KeyEventDispatcher, AppDI {
 
 	@Override
 	public GeoImage createImageFromString(final String imgFileName,
-			String imgBase64, GeoImage imageOld, boolean autoCorners) {
+			String imgBase64, GeoImage imageOld, boolean autoCorners, String c1,
+			String c2, String c4) {
 		GeoImage geoImage = imageOld != null ? imageOld
 				: new GeoImage(getKernel().getConstruction());
 

@@ -1,5 +1,6 @@
 @import 'colors';
 @import 'shared';
+@import 'header';
 
 .GeoGebraFrame {
 	.providers {
@@ -327,49 +328,13 @@
 	
 	/* +++ OPEN FILE VIEW CONTENT +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 	
-	$header_shadow: 0 2px 2px 0 $black-14, 0 1px 5px 0 $black-12, 0 3px 1px -2px $black-2;
-	$header_height: 64px;
-	$button_height: 36px;
-	$button_hover_transition: background-color 0.15s;
-	
 	.openFileView {
 		background-color: white;
 	
-		.openFileViewHeader {
-			position: absolute;
-			top: 0px;
-			left: 0px;
-			width: 100%;
-			height: $header_height;
-			z-index: 200;
-			background-color: white;
-			box-shadow: $header_shadow;
-			
-			.headerBackButton {
-				cursor: pointer;
-				float: left;
-				width: 24px;
-				height: 24px;
-				padding: 12px;
-				margin: 8px 12px 8px 12px;
-				opacity: 0.54;
-				&:hover {
-					opacity: 0.87;
-				}
-			}
-			.headerCaption {
-				font-size: 125%;
-				color: $text-primary;
-				letter-spacing: 0.25px;
-				margin: 22px 0px;
-			}
-		}
-	
 		.fileViewContentPanel {
 			position: absolute;
-			top: calc(#{$header_height} - 20px);
 			width: 100%;
-		    height: calc(100% - #{$header_height} + 20px);
+		    height: 100%;
 		    padding-top: 24px;
 		    overflow-y: auto;
 		    box-sizing: border-box;
@@ -461,12 +426,12 @@
    					height: 206px;
    					width: 232px;
     				background-color: $mow_material_card_bgd;
-    				box-shadow: 0 1px 1px 0 $black-14, 0 2px 1px -1px $black-12, 0 1px 3px 0 $black-2;
+    				box-shadow: 0 1px 1px 0 $black-14, 0 2px 1px -1px $black-12, 0 1px 3px 0 $black-20;
     				transition: box-shadow .25s;
     				cursor: pointer;
     				
     				&:hover {
-    					box-shadow: 0 8px 10px 1px $black-14, 0 3px 14px 2px $black-12, 0 5px 5px -3px $black-2;
+    					box-shadow: 0 8px 10px 1px $black-14, 0 3px 14px 2px $black-12, 0 5px 5px -3px $black-20;
     				}
     				
 		    		.cardImgPanel {
@@ -591,7 +556,7 @@
    					min-width: 64px;
    					height: 48px;
    					border-radius: 2px;
-				    box-shadow: 0 1px 3px 0px $black-2;
+				    box-shadow: 0 1px 3px 0px $black-20;
 				    transition: $button_hover_transition;
    					vertical-align: middle;
    					display: table-cell;

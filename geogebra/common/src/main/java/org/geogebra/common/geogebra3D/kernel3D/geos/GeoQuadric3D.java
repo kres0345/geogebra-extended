@@ -62,6 +62,9 @@ public class GeoQuadric3D extends GeoQuadricND implements Functional2Var,
 	private static String[] vars3D = { "x\u00b2", "y\u00b2", "z\u00b2", "x y",
 			"x z", "y z", "x", "y", "z" };
 
+	private static String[] vars3DCAS = { "x\u00b2", "y\u00b2", "z\u00b2",
+			"x*y", "x*z", "y*z", "x", "y", "z" };
+
 	private CoordMatrix4x4 eigenMatrix = CoordMatrix4x4.identity();
 	/** helper for 2d projection */
 	protected double[] tmpDouble2 = new double[2];
@@ -1395,17 +1398,18 @@ public class GeoQuadric3D extends GeoQuadricND implements Functional2Var,
 			double mu, Coords v) {
 
 		// lines are dependents
+		// eigen value mu is not zero
 
 		// first try, result maybe 0 if lines 1 & 2 are dependent
-		v.set(m[5] * (m[1] - mu) - m[4] * m[6],
-				m[6] * (m[0] - mu) - m[4] * m[5],
-				m[4] * m[4] - (m[0] - mu) * (m[1] - mu));
+		v.set(m[5] / mu * (m[1] / mu - 1) - m[4] / mu * m[6] / mu,
+				m[6] / mu * (m[0] / mu - 1) - m[4] / mu * m[5] / mu,
+				m[4] / mu * m[4] / mu - (m[0] / mu - 1) * (m[1] / mu - 1));
 
 		if (v.isZero()) {
 			// second try, result maybe 0 if lines 1 & 3 are dependent
-			v.set(m[5] * m[6] - m[4] * (m[2] - mu),
-					(m[0] - mu) * (m[2] - mu) - m[5] * m[5],
-					m[4] * m[5] - m[6] * (m[0] - mu));
+			v.set(m[5] / mu * m[6] / mu - m[4] / mu * (m[2] / mu - 1),
+					(m[0] / mu - 1) * (m[2] / mu - 1) - m[5] / mu * m[5] / mu,
+					m[4] / mu * m[5] / mu - m[6] / mu * (m[0] / mu - 1));
 
 			if (v.isZero()) {
 				// third try: lines 2 & 3 are not dependent, so line 1 equals 0
@@ -1970,8 +1974,11 @@ public class GeoQuadric3D extends GeoQuadricND implements Functional2Var,
 		coeffs[7] = 2 * matrix[8]; // y
 		coeffs[8] = 2 * matrix[9]; // z
 
-		return kernel.buildImplicitEquation(coeffs, vars3D, false, true, true,
-				'=', tpl, true);
+		String[] vars = tpl.getStringType().isGiac() ? vars3DCAS : vars3D;
+
+		// for cas, want "...=0" style
+		return kernel.buildImplicitEquation(coeffs, vars, false, true, true,
+				'=', tpl, !tpl.getStringType().isGiac());
 	}
 
 	/** to be able to fill it with an alpha value */

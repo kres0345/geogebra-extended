@@ -8,10 +8,12 @@ import org.geogebra.common.move.ggtapi.events.LoginEvent;
 import org.geogebra.common.move.views.EventRenderable;
 import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.web.html5.Browser;
+import org.geogebra.web.html5.gui.GeoGebraFrameW;
 import org.geogebra.web.html5.gui.util.ClickStartHandler;
 import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.util.Dom;
+import org.geogebra.web.html5.util.Visibility;
 import org.geogebra.web.shared.view.button.ActionButton;
 import org.geogebra.web.shared.view.button.DisappearingActionButton;
 
@@ -41,6 +43,7 @@ public class GlobalHeader implements EventRenderable {
 	private AppW app;
 	private Label timer;
 	private StandardButton examInfoBtn;
+	private GeoGebraFrameW frame;
 
 	private String oldHref;
 
@@ -155,18 +158,19 @@ public class GlobalHeader implements EventRenderable {
 	public void initSettingButtonIfOnHeader() {
 		ActionButton settingsButton = getActionButton("settingsButton");
 		if (settingsButton != null) {
-			settingsButton.setTitle("Settings");
+			setTitle(settingsButton, "Settings");
 			settingsButton.setAction(new Runnable() {
 				@Override
 				public void run() {
-					if (getButtonElement().getParentElement() != null) {
-						getButtonElement().getParentElement().getStyle()
-								.setDisplay(Display.NONE);
-					}
-					getApp().getGuiManager().showSciSettingsView();
+					app.getGuiManager().showSciSettingsView();
 				}
 			});
 		}
+	}
+
+	private void setTitle(ActionButton settingsButton, String string) {
+		settingsButton.setTitle(string);
+		app.getLocalization().registerLocalizedUI(settingsButton);
 	}
 
 	/**
@@ -183,7 +187,7 @@ public class GlobalHeader implements EventRenderable {
 	private ActionButton getUndoButton() {
 		ActionButton undoButton = getActionButton("undoButton");
 		if (undoButton != null) {
-			undoButton.setTitle("Undo");
+			setTitle(undoButton, "Undo");
 		}
 		return undoButton;
 	}
@@ -191,7 +195,7 @@ public class GlobalHeader implements EventRenderable {
 	private ActionButton getRedoButton() {
 		ActionButton undoButton = getDisappearingActionButton("redoButton");
 		if (undoButton != null) {
-			undoButton.setTitle("Redo");
+			setTitle(undoButton, "Redo");
 		}
 		return undoButton;
 	}
@@ -212,7 +216,7 @@ public class GlobalHeader implements EventRenderable {
 		return null;
 	}
 
-	private RootPanel getViewById(String viewId) {
+	private static RootPanel getViewById(String viewId) {
 		return RootPanel.get(viewId);
 	}
 
@@ -220,24 +224,24 @@ public class GlobalHeader implements EventRenderable {
 	 * remove exam timer and put back button panel
 	 */
 	public void resetAfterExam() {
-		forceVisible(false);
+		forceVisible(Visibility.HIDDEN);
 		getExamPanel().getElement().removeFromParent();
-		getButtonElement().getStyle()
-				.setDisplay(Display.FLEX);
+		getButtonElement().getStyle().setDisplay(Display.FLEX);
 		getHomeLink().setHref(oldHref);
 	}
 
-	private void forceVisible(boolean visible) {
-		app.getArticleElement().attr("marginTop", visible ? "+64" : "0");
+	private void forceVisible(Visibility visible) {
+		app.getArticleElement().attr("marginTop",
+				visible == Visibility.VISIBLE ? "64" : "0");
 		// takes care of both header visibility and menu button placement
-		app.fitSizeToScreen();
+		frame.forceHeaderVisibility(visible);
 	}
 
 	/**
 	 * switch right buttons with exam timer and info button
 	 */
 	public void addExamTimer() {
-		forceVisible(true);
+		forceVisible(Visibility.VISIBLE);
 		// remove other buttons
 		getButtonElement().getStyle()
 				.setDisplay(Display.NONE);
@@ -302,6 +306,17 @@ public class GlobalHeader implements EventRenderable {
 	 */
 	public void setApp(AppW app) {
 		this.app = app;
+	}
+
+	public void setFrame(GeoGebraFrameW frame) {
+		this.frame = frame;
+	}
+
+	/**
+	 * @return whether there is a header in DOM
+	 */
+	public static boolean isInDOM() {
+		return RootPanel.get("headerID") != null;
 	}
 
 }

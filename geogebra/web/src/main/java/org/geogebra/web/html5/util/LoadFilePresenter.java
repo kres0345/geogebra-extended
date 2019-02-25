@@ -97,6 +97,7 @@ public class LoadFilePresenter {
 		String language = view.getDataParamLanguage();
 		if (StringUtil.empty(language)) {
 			language = app.getLanguageFromCookie();
+
 			if (!StringUtil.empty(language) && app.getLAF() != null) {
 				app.getLAF().storeLanguage(language, app);
 			}
@@ -110,7 +111,6 @@ public class LoadFilePresenter {
 				app.setLanguage(language, country);
 			}
 		}
-
 		app.setUseBrowserForJavaScript(view.getDataParamUseBrowserForJS());
 		app.setLabelDragsEnabled(view.getDataParamEnableLabelDrags());
 		app.setUndoRedoEnabled(view.getDataParamEnableUndoRedo());
@@ -268,7 +268,7 @@ public class LoadFilePresenter {
 		if (p != null) {
 			app.setActivePerspective(p.getDefaultID() - 1);
 		}
-		app.updateHeaderVisible();
+		app.getAppletFrame().updateHeaderVisible();
 		app.setPreferredSize(
 				new GDimensionW(app.getAppletWidth(), app.getAppletHeight()));
 		if (app.has(Feature.CENTER_STANDARD_VIEW)) {

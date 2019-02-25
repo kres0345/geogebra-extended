@@ -77,6 +77,8 @@ import org.geogebra.common.kernel.arithmetic.Traversing;
 import org.geogebra.common.kernel.arithmetic.ValueType;
 import org.geogebra.common.kernel.commands.Commands;
 import org.geogebra.common.kernel.commands.EvalInfo;
+import org.geogebra.common.kernel.geos.properties.Auxiliary;
+import org.geogebra.common.kernel.geos.properties.FillType;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.kernelND.GeoVectorND;
@@ -206,7 +208,8 @@ public abstract class GeoElement extends ConstructionElement
 	public int labelOffsetX = 0;
 	/** offset for label in EV */
 	public int labelOffsetY = 0;
-	private boolean auxiliaryObject = false;
+
+	private Auxiliary auxiliaryObject = Auxiliary.NO_DEFAULT;
 	private boolean selectionAllowed = true;
 	// on change: see setVisualValues()
 
@@ -300,81 +303,6 @@ public abstract class GeoElement extends ConstructionElement
 	protected AlgorithmSet algoUpdateSet;
 
 	private LabelManager labelManager;
-
-	/**
-	 * Fill types of elements
-	 * 
-	 * @author Giulliano Bellucci
-	 */
-	public enum FillType {
-
-		/**
-		 * Simple fill (color+opacity)
-		 * 
-		 * need to be in menu order here
-		 * 
-		 * the integer is used in the XML so can't be changed
-		 */
-		STANDARD(0, false),
-		/**
-		 * Hatched fill
-		 */
-		HATCH(1, true),
-		/**
-		 * Crosshatched fill
-		 */
-		CROSSHATCHED(2, true),
-		/**
-		 * Chessboard fill, upright or diagonal
-		 */
-		CHESSBOARD(3, true),
-		/**
-		 * Dotted fill
-		 */
-		DOTTED(4, true),
-		/**
-		 * Honeycomb fill
-		 */
-		HONEYCOMB(5, true),
-		/**
-		 * Brick fill
-		 */
-		BRICK(6, true),
-		/**
-		 * Weaving fill
-		 */
-		WEAVING(9, true),
-		/**
-		 * Unicode symbols fill
-		 */
-		SYMBOLS(7, true),
-		/**
-		 * Image background
-		 */
-		IMAGE(8, false);
-
-		private int value;
-		private boolean hatch;
-
-		/**
-		 * @return value for XML
-		 */
-		public int getValue() {
-			return value;
-		}
-
-		private FillType(int value, boolean hatch) {
-			this.value = value;
-			this.hatch = hatch;
-		}
-
-		/**
-		 * @return whether this is hatch or something else (image, standard)
-		 */
-		public boolean isHatch() {
-			return hatch;
-		}
-	}
 
 	/** fill type */
 	protected FillType fillType = FillType.STANDARD;
@@ -869,7 +797,7 @@ public abstract class GeoElement extends ConstructionElement
 	 * Set visual style from defaults
 	 */
 	final public void setConstructionDefaults() {
-		setConstructionDefaults(true);
+		setConstructionDefaults(true, true);
 	}
 
 	/**
@@ -877,14 +805,17 @@ public abstract class GeoElement extends ConstructionElement
 	 * 
 	 * @param setEuclidianVisible
 	 *            If eucldianVisible should be set
+	 * @param setAuxiliaryProperty
+	 *            if auxiliary property should be set
 	 */
-	final public void setConstructionDefaults(boolean setEuclidianVisible) {
+	final public void setConstructionDefaults(boolean setEuclidianVisible,
+			boolean setAuxiliaryProperty) {
 
 		if (useVisualDefaults) {
 			final ConstructionDefaults consDef = cons.getConstructionDefaults();
 			if (consDef != null) {
 				consDef.setDefaultVisualStyles(this, false,
-						setEuclidianVisible);
+						setEuclidianVisible, setAuxiliaryProperty);
 			}
 		}
 	}
@@ -1288,11 +1219,28 @@ public abstract class GeoElement extends ConstructionElement
 	@Override
 	final public void setAllVisualProperties(final GeoElement geo,
 			final boolean keepAdvanced) {
+		setAllVisualProperties(geo, keepAdvanced, true);
+	}
+
+	/**
+	 * Sets all visual values from given GeoElement. This will also affect
+	 * tracing, label location and the location of texts for example.
+	 * 
+	 * @param geo
+	 *            source geo
+	 * @param keepAdvanced
+	 *            true to skip copying color function and visibility condition
+	 * @param setAuxiliaryProperty
+	 *            if sets auxiliary property
+	 */
+	final public void setAllVisualProperties(final GeoElement geo,
+			final boolean keepAdvanced, final boolean setAuxiliaryProperty) {
 
 		euclidianVisible = geo.euclidianVisible;
 		visibleInView3D = geo.visibleInView3D;
 		algebraLabelVisible = geo.algebraLabelVisible;
-		setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced);
+		setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced,
+				setAuxiliaryProperty);
 	}
 
 	/**
@@ -1306,13 +1254,15 @@ public abstract class GeoElement extends ConstructionElement
 	 *            source geo
 	 * @param keepAdvanced
 	 *            true to skip copying color function and visibility condition
+	 * @param setAuxiliaryProperty
+	 *            if sets auxiliary property
 	 */
 	public void setAllVisualPropertiesExceptEuclidianVisible(
-			final GeoElement geo, final boolean keepAdvanced) {
+			final GeoElement geo, final boolean keepAdvanced, boolean setAuxiliaryProperty) {
 		if (keepAdvanced) {
-			setVisualStyle(geo);
+			setVisualStyle(geo, setAuxiliaryProperty);
 		} else {
-			setAdvancedVisualStyle(geo);
+			setAdvancedVisualStyle(geo, setAuxiliaryProperty);
 		}
 
 		algebraVisible = geo.algebraVisible;
@@ -1365,7 +1315,20 @@ public abstract class GeoElement extends ConstructionElement
 	}
 
 	@Override
-	public void setVisualStyle(final GeoElement geo) {
+	final public void setVisualStyle(final GeoElement geo) {
+		setVisualStyle(geo, true);
+	}
+
+	/**
+	 * set visual style to geo
+	 * 
+	 * @param geo
+	 *            geo
+	 * @param setAuxiliaryProperty
+	 *            if setting auxiliary property
+	 */
+	public void setVisualStyle(final GeoElement geo,
+			boolean setAuxiliaryProperty) {
 
 		// label style
 		labelVisible = geo.getLabelVisible();
@@ -1392,8 +1355,10 @@ public abstract class GeoElement extends ConstructionElement
 		setDecorationType(geo.getDecorationType());
 		setLineOpacity(geo.getLineOpacity());
 
-		// set whether it's an auxilliary object
-		setAuxiliaryObject(geo.isAuxiliaryObject());
+		if (setAuxiliaryProperty) {
+			// set whether it's an auxilliary object
+			setAuxiliaryObject(geo.isAuxiliaryObject());
+		}
 
 		// set fixed
 		setFixedFrom(geo);
@@ -1460,7 +1425,20 @@ public abstract class GeoElement extends ConstructionElement
 
 	@Override
 	public void setAdvancedVisualStyle(final GeoElement geo) {
-		setVisualStyle(geo);
+		setAdvancedVisualStyle(geo, true);
+	}
+
+	/**
+	 * Also copy advanced settings of this object.
+	 *
+	 * @param geo
+	 *            source geo
+	 * @param setAuxiliaryProperty
+	 *            if setting auxiliary property
+	 */
+	public void setAdvancedVisualStyle(final GeoElement geo,
+			boolean setAuxiliaryProperty) {
+		setVisualStyle(geo, setAuxiliaryProperty);
 
 		// set layer
 		setLayer(geo.getLayer());
@@ -1704,7 +1682,7 @@ public abstract class GeoElement extends ConstructionElement
 
 	@Override
 	final public boolean isAuxiliaryObject() {
-		return auxiliaryObject;
+		return auxiliaryObject.isOn();
 	}
 
 	/**
@@ -1721,9 +1699,25 @@ public abstract class GeoElement extends ConstructionElement
 
 	@Override
 	public void setAuxiliaryObject(final boolean flag) {
-		if (auxiliaryObject != flag) {
-			auxiliaryObject = flag;
+		if (auxiliaryObject.isOn() != flag) {
+			auxiliaryObject = auxiliaryObject.toggle();
 			if (isLabelSet()) {
+				notifyUpdateAuxiliaryObject();
+			}
+		}
+	}
+
+	/**
+	 * set auxiliary property
+	 * 
+	 * @param flag
+	 *            flag
+	 */
+	public void setAuxiliaryObject(final Auxiliary flag) {
+		if (auxiliaryObject != flag) {
+			boolean oldIsOn = auxiliaryObject.isOn();
+			auxiliaryObject = flag;
+			if (isLabelSet() && oldIsOn != flag.isOn()) {
 				notifyUpdateAuxiliaryObject();
 			}
 		}
@@ -3133,7 +3127,7 @@ public abstract class GeoElement extends ConstructionElement
 						&& !((FromMeta) this).getMetas()[0].isGeoPolygon()) {
 					int counter = 0;
 					String str;
-					final String name = getLoc().getPlainLabel("edge"); // Name.edge
+					final String name = getLoc().getPlainLabel("edge", "edge"); // Name.edge
 					do {
 						counter++;
 						str = name + kernel.internationalizeDigits(counter + "",
@@ -3202,7 +3196,7 @@ public abstract class GeoElement extends ConstructionElement
 
 	private String defaultNumberedLabel(final String plainKey,
 			boolean allowNoSuffix) {
-		String trans = getLoc().getPlainLabel(plainKey);
+		String trans = getLoc().getPlainLabel(plainKey, plainKey);
 		if (allowNoSuffix && cons.isFreeLabel(trans)) {
 			return trans;
 		}
@@ -5188,24 +5182,19 @@ public abstract class GeoElement extends ConstructionElement
 	 */
 	protected final void getAuxiliaryXML(final StringBuilder sb) {
 		if (!isAuxiliaryObjectByDefault()) {
-			if (auxiliaryObject) {
+			if (auxiliaryObject.needsSaveToXML()) {
 				sb.append("\t<auxiliary val=\"");
-				sb.append("true");
+				sb.append(auxiliaryObject.isOn());
 				sb.append("\"/>\n");
-			} else if (getMetasLength() > 0) { // force save "not auxiliary" for
-												// e.g. segments created by
-												// polygon algo
-				sb.append("\t<auxiliary val=\"");
-				sb.append("false");
-				sb.append("\"/>\n");
+			} else if (getMetasLength() > 0 && !auxiliaryObject.isOn()) {
+				// force save "not auxiliary" for e.g. segments created by
+				// polygon algo
+				sb.append("\t<auxiliary val=\"false\"/>\n");
 			}
-		} else { // needed for eg GeoTexts (in Algebra View but Auxilliary by
-					// default from ggb 4.0)
-			if (!auxiliaryObject) {
-				sb.append("\t<auxiliary val=\"");
-				sb.append("false");
-				sb.append("\"/>\n");
-			}
+		} else if (!auxiliaryObject.isOn()) {
+				// needed for eg GeoTexts (in Algebra View but Auxilliary by
+				// default from ggb 4.0)
+			sb.append("\t<auxiliary val=\"false\"/>\n");
 		}
 	}
 
@@ -5225,21 +5214,11 @@ public abstract class GeoElement extends ConstructionElement
 	 */
 	protected void appendObjectColorXML(StringBuilder sb) {
 		sb.append("\t<objColor");
-		sb.append(" r=\"");
-		sb.append(objColor.getRed());
-		sb.append("\"");
-		sb.append(" g=\"");
-		sb.append(objColor.getGreen());
-		sb.append("\"");
-		sb.append(" b=\"");
-		sb.append(objColor.getBlue());
-		sb.append("\"");
+		XMLBuilder.appendRGB(sb, objColor);
 		sb.append(" alpha=\"");
-
 		// changed from alphavalue (don't want alpha="-1.0" in XML)
 		// see GeoList
 		sb.append(getAlphaValue());
-
 		sb.append("\"");
 		StringTemplate tpl = StringTemplate.xmlTemplate;
 		if ((colFunction != null) && kernel.getSaveScriptsToXML()) {
@@ -7004,7 +6983,7 @@ public abstract class GeoElement extends ConstructionElement
 	}
 
 	/** Used by TraceDialog for "Trace as... value of/copy of */
-	static public enum TraceModesEnum {
+	public enum TraceModesEnum {
 		/** no value for this geo, only copy */
 		ONLY_COPY,
 		/** one value / copy (e.g. text) */

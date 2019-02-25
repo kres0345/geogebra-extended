@@ -15,6 +15,7 @@ import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.gui.Editing;
 import org.geogebra.common.gui.GuiManager;
 import org.geogebra.common.gui.Layout;
+import org.geogebra.common.gui.SetLabels;
 import org.geogebra.common.gui.inputfield.HasLastItem;
 import org.geogebra.common.gui.layout.DockPanel;
 import org.geogebra.common.gui.toolbar.ToolBar;
@@ -58,6 +59,7 @@ import org.geogebra.web.full.euclidian.DynamicStyleBar;
 import org.geogebra.web.full.euclidian.EuclidianStyleBarW;
 import org.geogebra.web.full.gui.app.GGWMenuBar;
 import org.geogebra.web.full.gui.app.GGWToolBar;
+import org.geogebra.web.full.gui.applet.GeoGebraFrameBoth;
 import org.geogebra.web.full.gui.browser.BrowseGUI;
 import org.geogebra.web.full.gui.dialog.DialogManagerW;
 import org.geogebra.web.full.gui.dialog.options.OptionsTab.ColorPanel;
@@ -68,6 +70,7 @@ import org.geogebra.web.full.gui.laf.GLookAndFeel;
 import org.geogebra.web.full.gui.layout.DockPanelW;
 import org.geogebra.web.full.gui.layout.DockSplitPaneW;
 import org.geogebra.web.full.gui.layout.LayoutW;
+import org.geogebra.web.full.gui.layout.panels.AnimatingPanel;
 import org.geogebra.web.full.gui.layout.panels.CASDockPanelW;
 import org.geogebra.web.full.gui.layout.panels.ConstructionProtocolDockPanelW;
 import org.geogebra.web.full.gui.layout.panels.DataAnalysisViewDockPanelW;
@@ -122,6 +125,7 @@ import org.geogebra.web.html5.gui.util.NoDragImage;
 import org.geogebra.web.html5.gui.view.browser.BrowseViewI;
 import org.geogebra.web.html5.javax.swing.GOptionPaneW;
 import org.geogebra.web.html5.main.AppW;
+import org.geogebra.web.html5.util.Visibility;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -136,7 +140,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 //@SuppressWarnings("javadoc")
 public class GuiManagerW extends GuiManager
-		implements GuiManagerInterfaceW, EventRenderable {
+		implements GuiManagerInterfaceW, EventRenderable, SetLabels {
 
 	/**
 	 * container for the Popup that only one exist for a given type
@@ -169,6 +173,7 @@ public class GuiManagerW extends GuiManager
 	private ToolBarW toolbarForUpdate = null;
 	private DataCollectionView dataCollectionView;
 	private VirtualKeyboardGUI onScreenKeyboard;
+	private GeoGebraFrameBoth frame;
 
 	private int activeViewID;
 
@@ -185,7 +190,7 @@ public class GuiManagerW extends GuiManager
 
 	private GGWMenuBar mainMenuBar;
 
-	private ScientificSettingsView sciSettingsView;
+	private AnimatingPanel sciSettingsView;
 
 	/**
 	 *
@@ -199,7 +204,7 @@ public class GuiManagerW extends GuiManager
 
 		this.loc = app.getLocalization();
 		this.device = device;
-
+		frame = getApp().getAppletFrame();
 	}
 
 	@Override
@@ -218,9 +223,7 @@ public class GuiManagerW extends GuiManager
 
 	@Override
 	public void updateActions() {
-		if (mainMenuBar != null && mainMenuBar.getMenubar() != null) {
-			mainMenuBar.getMenubar().updateSelection();
-		}
+		updateMenubarSelection();
 
 		if (getApp().isWhiteboardActive()) {
 			(getApp().getAppletFrame()).updateUndoRedoMOW();
@@ -577,9 +580,17 @@ public class GuiManagerW extends GuiManager
 	@Override
 	public void showSciSettingsView() {
 		if (sciSettingsView == null) {
-			sciSettingsView = new ScientificSettingsView();
+			sciSettingsView = new ScientificSettingsView(getApp());
+			getApp().getLocalization().registerLocalizedUI(sciSettingsView);
 		}
-		getApp().getAppletFrame().showBrowser(sciSettingsView);
+		frame.forceHeaderVisibility(Visibility.HIDDEN);
+		getApp().setCloseBrowserCallback(new Runnable() {
+			@Override
+			public void run() {
+				frame.forceHeaderVisibility(Visibility.NOT_SET);
+			}
+		});
+		frame.showPanel(sciSettingsView);
 	}
 
 	@Override
@@ -1433,7 +1444,7 @@ public class GuiManagerW extends GuiManager
 			this.dataCollectionView.setLabels();
 		}
 
-		((DialogManagerW) getApp().getDialogManager()).setLabels();
+		getApp().getDialogManager().setLabels();
 		if (browseGUIwasLoaded()) {
 			getBrowseView().setLabels();
 		}
@@ -1451,8 +1462,7 @@ public class GuiManagerW extends GuiManager
 	@Override
 	public void resetMenuIfScreenChanged() {
 		if (mainMenuBar != null && mainMenuBar.getMenubar() != null
-				&& mainMenuBar.getMenubar().smallScreen != AppW
-				.smallScreen(((AppW) app).getArticleElement())) {
+				&& mainMenuBar.getMenubar().smallScreen != frame.shouldHaveSmallScreenLayout()) {
 			mainMenuBar.removeMenus();
 			mainMenuBar.init(getApp());
 			updateGlobalOptions();
@@ -1744,7 +1754,7 @@ public class GuiManagerW extends GuiManager
 
 	@Override
 	public void logout() {
-		if (app.has(Feature.MOW_OPEN_FILE_VIEW)) {
+		if (app.isWhiteboardActive()) {
 			this.browseGUI = null;
 		}
 	}
@@ -1899,7 +1909,7 @@ public class GuiManagerW extends GuiManager
 	public void detachView(final int viewId) {
 		if (viewId == App.VIEW_FUNCTION_INSPECTOR) {
 			Log.debug("Detaching VIEW_FUNCTION_INSPECTOR");
-			((DialogManagerW) getApp().getDialogManager()).getFunctionInspector()
+			getApp().getDialogManager().getFunctionInspector()
 			.setInspectorVisible(false);
 		} else {
 			super.detachView(viewId);
@@ -2361,9 +2371,9 @@ public class GuiManagerW extends GuiManager
 	@Override
 	public void replaceInputSelection(String string) {
 		if (getApp().showView(App.VIEW_ALGEBRA)
-				&& ((AlgebraViewW) getApp().getAlgebraView())
+				&& getApp().getAlgebraView()
 				.getInputTreeItem() != null) {
-			RadioTreeItem input = ((AlgebraViewW) getApp().getAlgebraView())
+			RadioTreeItem input = getApp().getAlgebraView()
 					.getInputTreeItem();
 			input.autocomplete(string);
 			input.setFocus(true, true);
@@ -2377,10 +2387,10 @@ public class GuiManagerW extends GuiManager
 	@Override
 	public void setInputText(String string) {
 		if (getApp().showView(App.VIEW_ALGEBRA)
-				&& ((AlgebraViewW) getApp().getAlgebraView())
+				&& getApp().getAlgebraView()
 				.getInputTreeItem() != null
 				&& getApp().getInputPosition() == InputPosition.algebraView) {
-			RadioTreeItem input = ((AlgebraViewW) getApp().getAlgebraView())
+			RadioTreeItem input = getApp().getAlgebraView()
 					.getInputTreeItem();
 			input.setText(string);
 			input.setFocus(true, true);

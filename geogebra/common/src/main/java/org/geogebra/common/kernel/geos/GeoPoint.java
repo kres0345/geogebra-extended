@@ -457,6 +457,28 @@ public class GeoPoint extends GeoVec3D implements VectorValue, PathOrPoint,
 			endPosition = getInhomCoords().add(rwTransVec);
 		}
 
+		// move Point like curve(slider)
+		if (isPointOnCurveWithSlider()) {
+
+			GeoPoint p = new GeoPoint(cons, endPosition.getX(),
+					endPosition.getY(), 1);
+
+			AlgoDependentPoint algo = (AlgoDependentPoint) this
+					.getParentAlgorithm();
+			ExpressionNode exp = algo.getExpression();
+
+			GeoCurveCartesian curve = (GeoCurveCartesian) exp.getLeft();
+			GeoNumeric param = (GeoNumeric) exp.getRight();
+
+			double t = curve.getClosestParameter(p, param.getValue());
+
+			param.setValue(t);
+			param.updateRepaint();
+
+			return true;
+
+		}
+
 		// translate x and y coordinates by changing the parent coords
 		// accordingly
 		ArrayList<NumberValue> freeCoordNumbers = getCoordParentNumbers();
@@ -562,6 +584,10 @@ public class GeoPoint extends GeoVec3D implements VectorValue, PathOrPoint,
 			return false;
 		}
 
+		if (isPointOnCurveWithSlider()) {
+			return true;
+		}
+
 		ArrayList<NumberValue> coords = getCoordParentNumbers();
 		if (coords.size() == 0) {
 			return false;
@@ -603,6 +629,34 @@ public class GeoPoint extends GeoVec3D implements VectorValue, PathOrPoint,
 						&& ((GeoNumeric) num2).isPointerChangeable());
 
 		return ret;
+	}
+
+	/**
+	 * 
+	 * @return true if we are a Point on a Curve defined like c(a) for Curve a,
+	 *         Slider a
+	 */
+	private boolean isPointOnCurveWithSlider() {
+		
+		if (!(getParentAlgorithm() instanceof AlgoDependentPoint)) {
+			return false;
+		}
+	
+		AlgoDependentPoint algo = (AlgoDependentPoint) this
+				.getParentAlgorithm();
+		ExpressionNode exp = algo.getExpression();
+
+		ExpressionValue left = exp.getLeft();
+		ExpressionValue right = exp.getRight();
+		Operation op = exp.getOperation();
+
+		if (op == Operation.VEC_FUNCTION && left instanceof GeoCurveCartesian
+				&& right instanceof GeoNumeric
+				&& ((GeoNumeric) right).isSlider()) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -1973,8 +2027,8 @@ public class GeoPoint extends GeoVec3D implements VectorValue, PathOrPoint,
 	}
 
 	@Override
-	public void setVisualStyle(GeoElement geo) {
-		super.setVisualStyle(geo);
+	public void setVisualStyle(GeoElement geo, boolean setAuxiliaryProperty) {
+		super.setVisualStyle(geo, setAuxiliaryProperty);
 		if (geo.isGeoPoint()) {
 			setPointSize(((GeoPointND) geo).getPointSize());
 			pointStyle = ((GeoPointND) geo).getPointStyle();

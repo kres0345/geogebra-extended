@@ -2,6 +2,7 @@ package org.geogebra.web.shared.ggtapi;
 
 import org.geogebra.common.GeoGebraConstants;
 import org.geogebra.common.main.Feature;
+import org.geogebra.common.move.events.BaseEvent;
 import org.geogebra.common.move.ggtapi.models.GeoGebraTubeUser;
 import org.geogebra.common.move.ggtapi.models.MarvlAPI;
 import org.geogebra.common.move.ggtapi.operations.BackendAPI;
@@ -29,9 +30,20 @@ import com.google.gwt.user.client.ui.RootPanel;
  * @author stefan
  */
 public class LoginOperationW extends LogInOperation {
-
 	private AppW app;
 	private BackendAPI api;
+
+	private class EventViewW extends BaseEventView {
+		@Override
+		public void onEvent(BaseEvent event) {
+			super.onEvent(event);
+			if (isLoggedIn()) {
+				app.setLanguage(getUserLanguage());
+			} else {
+				app.setLabels();
+			}
+		}
+	}
 
 	/**
 	 * Initializes the SignInOperation for Web by creating the corresponding
@@ -43,7 +55,7 @@ public class LoginOperationW extends LogInOperation {
 	public LoginOperationW(AppW appWeb) {
 		super();
 		this.app = appWeb;
-		setView(new BaseEventView());
+		setView(new EventViewW());
 		setModel(new AuthenticationModelW(appWeb));
 
 		iniNativeEvents();
@@ -79,7 +91,8 @@ public class LoginOperationW extends LogInOperation {
 			if (!StringUtil
 					.empty(app.getArticleElement().getParamBackendURL())) {
 				this.api = new MarvlAPI(
-						app.getArticleElement().getParamBackendURL());
+						app.getArticleElement().getParamBackendURL(),
+						new MarvlURLChecker());
 			} else {
 				this.api = new GeoGebraTubeAPIW(app.getClientInfo(),
 						app.has(Feature.TUBE_BETA), app.getArticleElement());

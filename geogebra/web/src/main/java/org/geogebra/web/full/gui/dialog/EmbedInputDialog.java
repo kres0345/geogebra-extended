@@ -6,13 +6,13 @@ import java.util.List;
 import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.kernel.ModeSetter;
 import org.geogebra.common.kernel.geos.GeoEmbed;
-import org.geogebra.common.media.EmbedURLChecker;
-import org.geogebra.common.media.EmbedURLChecker.URLStatus;
 import org.geogebra.common.media.GeoGebraURLParser;
 import org.geogebra.common.media.MediaURLParser;
 import org.geogebra.common.move.ggtapi.models.Chapter;
 import org.geogebra.common.move.ggtapi.models.GeoGebraTubeAPI;
 import org.geogebra.common.move.ggtapi.models.Material;
+import org.geogebra.common.move.ggtapi.operations.URLChecker;
+import org.geogebra.common.move.ggtapi.operations.URLStatus;
 import org.geogebra.common.move.ggtapi.requests.MaterialCallbackI;
 import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.web.html5.main.AppW;
@@ -29,12 +29,15 @@ import com.google.gwt.user.client.DOM;
 public class EmbedInputDialog extends MediaDialog
 		implements AsyncOperation<URLStatus> {
 
+	private URLChecker urlChecker;
+
 	/**
 	 * @param app
 	 *            see {@link AppW}
 	 */
-	public EmbedInputDialog(AppW app) {
+	public EmbedInputDialog(AppW app, URLChecker urlChecker) {
 		super(app.getPanel(), app);
+		this.urlChecker = urlChecker;
 	}
 
 	/**
@@ -57,7 +60,7 @@ public class EmbedInputDialog extends MediaDialog
 
 	/**
 	 * Adds the GeoEmbed instance.
-	 * 
+	 *
 	 * @param input
 	 *            embed URL or code
 	 */
@@ -86,8 +89,7 @@ public class EmbedInputDialog extends MediaDialog
 						}
 					});
 		} else {
-			new EmbedURLChecker(appW.getArticleElement().getParamBackendURL())
-					.checkEmbedURL(url.replace("+", "%2B"), this);
+			urlChecker.check(url.replace("+", "%2B"), this);
 		}
 	}
 

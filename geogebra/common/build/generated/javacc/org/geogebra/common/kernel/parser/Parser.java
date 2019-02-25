@@ -33,7 +33,7 @@ public class Parser implements ParserInterface, ParserConstants {
     private boolean GeoGebraCASParsing = false;
     private boolean ExternalCASParsing = false;
     private boolean GiacParsing = false;
-    private boolean enableVectors = true;
+    private boolean enableStructures = true;
     private FunctionParser functionParser;
     private ArrayList<ExpressionNode > undecided = new ArrayList<ExpressionNode >();
 
@@ -52,14 +52,14 @@ public class Parser implements ParserInterface, ParserConstants {
 
     // reset for new parsing
     public void myReInit(String parseString) throws ParseException {
-        if(!kernel.getConstruction().isFileLoading() && StringUtil.checkBracketsBackward(StringUtil.ignoreIndices(parseString))>=0){
+        if (!kernel.getConstruction().isFileLoading() && StringUtil.checkBracketsBackward(StringUtil.ignoreIndices(parseString))>=0) {
           throw new BracketsError(loc,parseString);
         }
       ReInit(new StringProvider(StringUtil.fixVerticalBars(parseString)));
       GeoGebraCASParsing = false;
       ExternalCASParsing = false;
       GiacParsing = false;
-      enableVectors = kernel.getAlgebraProcessor().enableStructures();
+      enableStructures = kernel.getAlgebraProcessor().enableStructures();
       undecided.clear();
     }
 
@@ -148,48 +148,58 @@ public class Parser implements ParserInterface, ParserConstants {
         myReInit(parseString );
         return label().image;
     }
-    private ExpressionNode makePower(ExpressionValue v,ExpressionValue e){
-      if(v.isExpressionNode() && ((ExpressionNode)v).getOperation()
-        ==Operation.MULTIPLY_OR_FUNCTION && !((ExpressionNode)v).hasBrackets()){
-        return new ExpressionNode(kernel,((ExpressionNode)v).getLeft(),Operation.MULTIPLY,
-          new ExpressionNode(kernel,((ExpressionNode)v).getRight(),Operation.POWER,e));
-      }
-      return new ExpressionNode(kernel,v,Operation.POWER,e);
-  }
 
-  private void processUndecided(){
-    for(ExpressionNode en: undecided)
-      en.setOperation(Operation.MULTIPLY);
-    undecided.clear();
-   }
+    private ExpressionNode makePower(ExpressionValue v, ExpressionValue e) {
+        if (v.isExpressionNode()
+                && ((ExpressionNode) v)
+                        .getOperation() == Operation.MULTIPLY_OR_FUNCTION
+                && !((ExpressionNode) v).hasBrackets()) {
+            return new ExpressionNode(kernel, ((ExpressionNode) v).getLeft(),
+                    Operation.MULTIPLY,
+                    new ExpressionNode(kernel, ((ExpressionNode) v).getRight(),
+                            Operation.POWER, e));
+        }
+        return new ExpressionNode(kernel, v, Operation.POWER, e);
+    }
 
-   private ExpressionValue ifVectorsEnabled(ExpressionValue def){
-     return enableVectors ? def : new MyDouble(kernel,Double.NaN);
- }
+    private void processUndecided() {
+        for (ExpressionNode en: undecided) {
+            en.setOperation(Operation.MULTIPLY);
+        }
+        undecided.clear();
+    }
 
-        private MyDouble parseDouble(String image, boolean percent) {
-                double val = MyDouble.parseDouble(loc, image);
-                if (percent) {
-                        val = val * 0.01;
-                }
-                if (ExternalCASParsing || GeoGebraCASParsing) {
-                        // preserve string from CAS: it may have higher
-                        // precision than double
-                        return new MySpecialDouble(kernel, val, percent ? image + "%" : image);
-                }
+    private <T extends ExpressionValue> T ifStructuresEnabled(T def)
+            throws MyError {
+        if (enableStructures) {
+            return def;
+        }
+        throw new MyError(loc, "InvalidInput");
+    }
 
-                return new MyDouble(kernel, val);
+    private MyDouble parseDouble(String image, boolean percent) {
+        double val = MyDouble.parseDouble(loc, image);
+        if (percent) {
+            val = val * 0.01;
+        }
+        if (ExternalCASParsing || GeoGebraCASParsing) {
+            // preserve string from CAS: it may have higher
+            // precision than double
+            return new MySpecialDouble(kernel, val, percent ? image + "%" : image);
         }
 
-        private double parseDouble(Token c) {
-                return MyDouble.parseDouble(loc, c.image);
-        }
+        return new MyDouble(kernel, val);
+    }
 
-        private MyDouble newSpecialDegree() {
-                MyDouble d = new MySpecialDouble(kernel, Math.PI / 180.0d, "\u00b0");
-                d.setAngle();
-                return d;
-        }
+    private double parseDouble(Token c) {
+        return MyDouble.parseDouble(loc, c.image);
+    }
+
+    private MyDouble newSpecialDegree() {
+        MyDouble d = new MySpecialDouble(kernel, Math.PI / 180.0d, "\u00b0");
+        d.setAngle();
+        return d;
+    }
 
 /**
  * for GeoGebra input field
@@ -226,9 +236,9 @@ public class Parser implements ParserInterface, ParserConstants {
       ve = expressionOrEquation();
     } else if (jj_2_4(2147483647)) {
       ve = expressionOrEquation();
-if(ve instanceof Equation)
+if (ve instanceof Equation)
           {
-                        ve = ((Equation)ve).equationOrAssignment();
+            ve = ((Equation)ve).equationOrAssignment();
           }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case COMMA:{
@@ -324,7 +334,7 @@ if (ve.labelCount() == 0)
 // remember label
       if (l.image != null)
       {
-          if(":".equals(assign.image) &&
+          if (":".equals(assign.image) &&
           GeoElementSpreadsheet.isSpreadsheetLabel(ve.toString(StringTemplate.defaultTemplate)))
           {
             ExpressionNode startCell = new ExpressionNode(kernel, new Variable(kernel, l.image));
@@ -335,8 +345,8 @@ if (ve.labelCount() == 0)
     {if ("" != null) return cmd;}
           }
           ve.addLabel(l.image);
-          if(cell != null){
-                cell.setAssignmentType(assign.kind == DELAYED_ASSIGNMENT?AssignmentType.DELAYED:AssignmentType.DEFAULT);
+          if (cell != null) {
+              cell.setAssignmentType(assign.kind == DELAYED_ASSIGNMENT?AssignmentType.DELAYED:AssignmentType.DEFAULT);
           }
        }
         {if ("" != null) return ve;}
@@ -660,7 +670,7 @@ localVars = new ArrayList<String>(); localVars.add(varName.image);
       jj_consume_token(COMMA);
       varName = casVar();
 localVars.add(varName.image);
-       kernel.getConstruction().registerFunctionVariable(varName.image);
+            kernel.getConstruction().registerFunctionVariable(varName.image);
     }
     jj_consume_token(77);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -688,34 +698,30 @@ localVars.add(varName.image);
       ;
     }
 // allow f(y) in CAS but not in GeoGebra
-    //  if (!ExternalCASParsing && !GeoGebraCASParsing && "y".equals(varName.image))
-      //      throw new MyError(app, "InvalidInput");
-        if(cond != null)
-        {
-                        rhs = new ExpressionNode(kernel, cond, Operation.IF_SHORT, rhs);
+            //  if (!ExternalCASParsing && !GeoGebraCASParsing && "y".equals(varName.image))
+            //      throw new MyError(app, "InvalidInput");
+        if (cond != null) {
+            rhs = new ExpressionNode(kernel, cond, Operation.IF_SHORT, rhs);
         }
         String funLabel = funName.image.substring(0,funName.image.length()-1);
 
-      // command without variables: return expressionnode
-      // only check for function variables outside of command, eg Derivative[f(x)]+x #4533
+        // command without variables: return expressionnode
+        // only check for function variables outside of command, eg Derivative[f(x)]+x #4533
         if (rhs.getLeft() instanceof Command && !rhs.containsFreeFunctionVariable(null)) {
-        rhs.setLabel(funLabel);
-        {if ("" != null) return rhs;}
-      }
-
+            rhs.setLabel(funLabel);
+            {if ("" != null) return rhs;}
+        }
 
         // function: wrap function in ExpressionNode
       // number of vars
       int n = localVars.size();
       Operation op = app.getParserFunctions().get(funLabel,n);
-      if(op!=null)
-      {
-        if(n==1)
-        {
-          {if ("" != null) return new Equation(kernel,new FunctionVariable(kernel,localVars.get(0)).wrap().apply(op),rhs).wrap();}
+      if (op != null) {
+        if (n == 1) {
+          {if ("" != null) return new Equation(kernel,new FunctionVariable(kernel, localVars.get(0)).wrap().apply(op), rhs).wrap();}
         }
         MyList vars = new MyList(kernel, n);
-        for (int i=0;i<n; i++){
+        for (int i = 0; i<n; i++) {
           FunctionVariable funVar = new FunctionVariable(kernel,localVars.get(i));
           vars.addListElement(funVar);
         }
@@ -811,10 +817,10 @@ localVars.add(varName.image);
       jj_la1[20] = jj_gen;
       ;
     }
-if(cond != null)
-        {
-                        rhs = new ExpressionNode(kernel, cond, Operation.IF_SHORT, rhs);
-        }
+if (cond != null)
+          {
+            rhs = new ExpressionNode(kernel, cond, Operation.IF_SHORT, rhs);
+          }
         String funLabel = funName.image.substring(0,funName.image.length()-1);
 
       // number of vars
@@ -829,16 +835,16 @@ if(cond != null)
             case 1: // single variable function
         Function fun = new Function(rhs, funVar[0]);
         fun.setLabel(funLabel);
-        if(cell != null){
-                cell.setAssignmentType(assign.kind == DELAYED_ASSIGNMENT?AssignmentType.DELAYED:AssignmentType.DEFAULT);
+        if (cell != null) {
+              cell.setAssignmentType(assign.kind == DELAYED_ASSIGNMENT?AssignmentType.DELAYED:AssignmentType.DEFAULT);
         }
         {if ("" != null) return fun;}
 
              default: // multi variable function
              FunctionNVar funn = new FunctionNVar(rhs, funVar);
         funn.setLabel(funLabel);
-        if(cell != null){
-                cell.setAssignmentType(assign.kind == DELAYED_ASSIGNMENT?AssignmentType.DELAYED:AssignmentType.DEFAULT);
+        if (cell != null) {
+              cell.setAssignmentType(assign.kind == DELAYED_ASSIGNMENT?AssignmentType.DELAYED:AssignmentType.DEFAULT);
         }
         {if ("" != null) return funn;}
           }
@@ -905,7 +911,7 @@ ExpressionNode en;
       jj_la1[23] = jj_gen;
       ;
     }
-if(rrhs!=null)
+if (rrhs!=null)
     {
       {if ("" != null) return new MyVecNode(kernel, new Equation(kernel, en, rhs), new Equation(kernel, en, rrhs)).wrap();}
     }
@@ -1140,23 +1146,22 @@ if (andList != null) {
         throw new ParseException();
       }
       f = multterm();
-if (x.kind == PLUS){
+if (x.kind == PLUS) {
                 ret = new ExpressionNode(kernel, ret, Operation.PLUS, f);
-            } else if (x.kind == PLUSMINUS){
+            } else if (x.kind == PLUSMINUS) {
                 ret = new ExpressionNode(kernel, ret, Operation.PLUSMINUS, f);
             }
             else {
-              if(ret.isExpressionNode() && ( (ExpressionNode)ret).isStringAddition() )
-              {
+              if (ret.isExpressionNode() && ((ExpressionNode) ret).isStringAddition()) {
                 ((ExpressionNode) ret).setRight(new ExpressionNode(kernel,
-                                                        ((ExpressionNode) ret).getRight(), Operation.MINUS,
-                                                        f));
+                            ((ExpressionNode) ret).getRight(), Operation.MINUS,
+                            f));
               }
               else
               {
                  ret = new ExpressionNode(kernel, ret, Operation.MINUS, f);
               }
-                }
+            }
     }
 //ret.simplifyLeafs();
       {if ("" != null) return ret;}
@@ -1272,13 +1277,11 @@ if (x.kind == MULTIPLY) {
         if (getToken(1).kind != VERTICAL_BAR) {
           f = powerdivterm();
 ExpressionValue special = ExpressionNode.multiplySpecial(ret, f, kernel, GiacParsing);
-
-                  if(special == null)
-                  {
-                      ret = new ExpressionNode(kernel, ret, Operation.MULTIPLY, f);
-                  }else {
-                          ret = special;
-                  }
+            if (special == null) {
+                ret = new ExpressionNode(kernel, ret, Operation.MULTIPLY, f);
+            } else {
+                ret = special;
+            }
         } else {
           jj_consume_token(-1);
           throw new ParseException();
@@ -1466,15 +1469,15 @@ f = new MyDouble(kernel, c.image);
         }
         f = enfactorial();
 // -f  = -1*f
-      if (c != null && c.kind == MINUS) {
-             f = ExpressionNode.unaryMinus(kernel, f);
-             c = null; // make sure we forget minus for next exponent
-       }
+            if (c != null && c.kind == MINUS) {
+                f = ExpressionNode.unaryMinus(kernel, f);
+                c = null; // make sure we forget minus for next exponent
+            }
 
-      // collect exponents
-      if (exponentList == null) {
-          exponentList = new ArrayList<ExpressionValue>();
-        }
+            // collect exponents
+            if (exponentList == null) {
+                exponentList = new ArrayList<ExpressionValue>();
+            }
             exponentList.add(f);
         break;
         }
@@ -1484,19 +1487,19 @@ f = new MyDouble(kernel, c.image);
         throw new ParseException();
       }
     }
-if (exponentList == null)
-      {if ("" != null) return ret;}
+if (exponentList == null) {
+            {if ("" != null) return ret;}
+        }
 
-
-      // GeoGebra / Giac etc : right associative: a^b^c = a^(b^c)
-      int size = exponentList.size();
-      ExpressionValue tempEV = exponentList.get(size-1); // last exponent, e.g. c
-      for (int i=size-2; i >= 0; i--) {
-          ExpressionValue prevExponent = exponentList.get(i);
-          tempEV = makePower(prevExponent,tempEV);
-      }
-      ret = makePower(ret, tempEV);
-      {if ("" != null) return ret;}
+        // GeoGebra / Giac etc : right associative: a^b^c = a^(b^c)
+        int size = exponentList.size();
+        ExpressionValue tempEV = exponentList.get(size-1); // last exponent, e.g. c
+        for (int i=size-2; i >= 0; i--) {
+            ExpressionValue prevExponent = exponentList.get(i);
+            tempEV = makePower(prevExponent,tempEV);
+        }
+        ret = makePower(ret, tempEV);
+        {if ("" != null) return ret;}
     throw new Error("Missing return statement in function");
   }
 
@@ -1508,16 +1511,14 @@ if (exponentList == null)
     en = ensqrt();
     if (jj_2_12(2147483647)) {
       jj_consume_token(FACTORIAL);
-if(en.isExpressionNode() && ((ExpressionNode)en).getOperation()==Operation.MULTIPLY_OR_FUNCTION
-             && !((ExpressionNode)en).hasBrackets())
-             {
-               en = new ExpressionNode(kernel, ((ExpressionNode)en).getLeft(),
-                 Operation.MULTIPLY,
-                 new ExpressionNode(kernel, ((ExpressionNode)en).getRight(), Operation.FACTORIAL, null)
-                 );
-             }
-             else
-              en = new ExpressionNode(kernel, en, Operation.FACTORIAL, null);
+if (en.isExpressionNode() && ((ExpressionNode)en).getOperation()==Operation.MULTIPLY_OR_FUNCTION
+                    && !((ExpressionNode)en).hasBrackets()) {
+                en = new ExpressionNode(kernel, ((ExpressionNode)en).getLeft(),
+                        Operation.MULTIPLY,
+                        new ExpressionNode(kernel, ((ExpressionNode)en).getRight(), Operation.FACTORIAL, null));
+            } else {
+                en = new ExpressionNode(kernel, en, Operation.FACTORIAL, null);
+            }
     } else {
       ;
     }
@@ -1530,18 +1531,15 @@ if(en.isExpressionNode() && ((ExpressionNode)en).getOperation()==Operation.MULTI
     case SQRT_SHORT:{
       jj_consume_token(SQRT_SHORT);
       en = NOTterm();
-if(en.isExpressionNode() && ((ExpressionNode)en).getOperation()==Operation.MULTIPLY_OR_FUNCTION
-             && !((ExpressionNode)en).hasBrackets())
-             {
-               en = new ExpressionNode(kernel,
-               new ExpressionNode(kernel, ((ExpressionNode)en).getLeft(), Operation.SQRT_SHORT, null),
-                 Operation.MULTIPLY,
-               ((ExpressionNode)en).getRight()
-                 );
-             }
-             else
-              en = new ExpressionNode(kernel, en, Operation.SQRT_SHORT, null);
-              {if ("" != null) return en;}
+if (en.isExpressionNode() && ((ExpressionNode)en).getOperation()==Operation.MULTIPLY_OR_FUNCTION
+                && !((ExpressionNode)en).hasBrackets()) {
+            en = new ExpressionNode(kernel,
+            new ExpressionNode(kernel, ((ExpressionNode)en).getLeft(), Operation.SQRT_SHORT, null),
+                    Operation.MULTIPLY, ((ExpressionNode)en).getRight());
+        } else {
+            en = new ExpressionNode(kernel, en, Operation.SQRT_SHORT, null);
+            {if ("" != null) return en;}
+        }
       break;
       }
     case VERTICAL_BAR:
@@ -1738,7 +1736,7 @@ if(en.isExpressionNode() && ((ExpressionNode)en).getOperation()==Operation.MULTI
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case 80:{
       jj_consume_token(80);
-{if ("" != null) return ifVectorsEnabled(new MyList(kernel));}
+{if ("" != null) return ifStructuresEnabled(new MyList(kernel));}
       break;
       }
     case VERTICAL_BAR:
@@ -1796,7 +1794,7 @@ myList = new MyList(kernel);
 myList.addListElement(ev);
       }
       jj_consume_token(80);
-{if ("" != null) return ifVectorsEnabled(myList);}
+{if ("" != null) return ifStructuresEnabled(myList);}
       break;
       }
     default:
@@ -1812,29 +1810,29 @@ myList.addListElement(ev);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case VARX:{
       c = jj_consume_token(VARX);
-if (GeoGebraCASParsing)
-       {if ("" != null) return new Variable(kernel, c.image);}
-    else
-          {if ("" != null) return new FunctionVariable(kernel, c.image);}
+if (GeoGebraCASParsing) {
+            {if ("" != null) return new Variable(kernel, c.image);}
+        }
+        {if ("" != null) return new FunctionVariable(kernel, c.image);}
       break;
       }
     case VARY:{
       c = jj_consume_token(VARY);
-if (GeoGebraCASParsing)
-       {if ("" != null) return new Variable(kernel, c.image);}
-    else
-          {if ("" != null) return new FunctionVariable(kernel, c.image);}
+if (GeoGebraCASParsing) {
+            {if ("" != null) return new Variable(kernel, c.image);}
+        }
+        {if ("" != null) return new FunctionVariable(kernel, c.image);}
       break;
       }
     case VARZ:{
       c = jj_consume_token(VARZ);
 // check for CAS parsing or if z is defined in kernel
         if (GeoGebraCASParsing || kernel.lookupLabel("z") != null) {
-       {if ("" != null) return new Variable(kernel, c.image);}
-    } else {
-       // z is not defined: treat as equation variable for 3D view
-        {if ("" != null) return new FunctionVariable(kernel, c.image);}
-       }
+            {if ("" != null) return new Variable(kernel, c.image);}
+        } else {
+            // z is not defined: treat as equation variable for 3D view
+            {if ("" != null) return new FunctionVariable(kernel, c.image);}
+        }
       break;
       }
     default:
@@ -1861,41 +1859,34 @@ if (GeoGebraCASParsing)
             throw new ParseException();
           }
 // should we read e for Euler constant and i for imaginary unit?
-    boolean lookforEulerImaginary = false;
+        boolean lookforEulerImaginary = false;
 
-    if (GeoGebraCASParsing)
-    {
-        // leave e and i untouched in GeoGebraCAS view
-        lookforEulerImaginary = false;
-    }
-    else if (ExternalCASParsing)
-    {  // Giac does not need it either, may need changing for other CASes
-        lookforEulerImaginary = false;
-    }
-    else
-    {   // GeoGebraCAS or GeoGebra parsing
-      // only treat e or i specially when they are undefined in GeoGebra
-      lookforEulerImaginary = true;
-    }
+        if (GeoGebraCASParsing) {
+            // leave e and i untouched in GeoGebraCAS view
+            lookforEulerImaginary = false;
+        }
+        else if (ExternalCASParsing) {
+            // Giac does not need it either, may need changing for other CASes
+            lookforEulerImaginary = false;
+        } else { // GeoGebraCAS or GeoGebra parsing
+            // only treat e or i specially when they are undefined in GeoGebra
+            lookforEulerImaginary = true;
+        }
 
         // return defined variables immediately
-    if (lookforEulerImaginary)
-    {
-      // TREAT e and i specially
-      // e for Euler constant
-      if (c.image.equals("e") && kernel.lookupLabel(c.image) == null)
-      {
-        {if ("" != null) return kernel.getEulerNumber();}
-      }
-      // i for imaginary unit
-      else if (c.image.equals("i") && kernel.lookupLabel(c.image) == null)
-      {
-          {if ("" != null) return kernel.getImaginaryUnit();}
-      }
-    }
-
-       // standard case for variables
-       {if ("" != null) return new Variable(kernel, c.image);}
+        if (lookforEulerImaginary) {
+            // TREAT e and i specially
+            // e for Euler constant
+            if (c.image.equals("e") && kernel.lookupLabel(c.image) == null) {
+                {if ("" != null) return kernel.getEulerNumber();}
+            }
+            // i for imaginary unit
+            else if (c.image.equals("i") && kernel.lookupLabel(c.image) == null) {
+                {if ("" != null) return kernel.getImaginaryUnit();}
+            }
+        }
+        // standard case for variables
+        {if ("" != null) return new Variable(kernel, c.image);}
           break;
           }
         default:
@@ -2068,51 +2059,51 @@ if (GeoGebraCASParsing)
         }
       }
 String image = c.image.replaceFirst("e", "E");
-         boolean isAngle = false;
-         boolean hasDegrees = false, hasMinutes = false, hasSeconds = false;
-         double vd = 0, vm = 0, vs = 0;
-         if (degree != null) {
+        boolean isAngle = false;
+        boolean hasDegrees = false, hasMinutes = false, hasSeconds = false;
+        double vd = 0, vm = 0, vs = 0;
+        if (degree != null) {
                 // if e.g. 3° (no minute no second) we need to do 3*° for CAS 
-                if (c2 == null) {
-                    d = newSpecialDegree();
-                        {if ("" != null) return new ExpressionNode(kernel, parseDouble(image, false), Operation.MULTIPLY, d);}
-                }
-                // at least 3°5' or 3°5'' (or 3°5'7'')
-                isAngle = true;
-                vd = MyDouble.parseDouble(loc, image);
-                hasDegrees = true;
-                if (minutes != null) {
-                        vm = parseDouble(c2);
-                        hasMinutes = true;
-                        if (s == null) {
-                                vs = 0;
-                        } else {
-                                vs = parseDouble(s);
-                                hasSeconds = true;
-                        }
-                } else {
-                        vs = parseDouble(c2);
-                        hasSeconds = true;
-                }
-         } else if (minutes != null) {
-                isAngle = true;
-                vm = MyDouble.parseDouble(loc, image);
+            if (c2 == null) {
+                d = newSpecialDegree();
+                {if ("" != null) return new ExpressionNode(kernel, parseDouble(image, false), Operation.MULTIPLY, d);}
+            }
+             // at least 3°5' or 3°5'' (or 3°5'7'')
+            isAngle = true;
+            vd = MyDouble.parseDouble(loc, image);
+            hasDegrees = true;
+            if (minutes != null) {
+                vm = parseDouble(c2);
                 hasMinutes = true;
                 if (s == null) {
-                        vs = 0;
+                    vs = 0;
                 } else {
-                        vs = parseDouble(s);
-                        hasSeconds = true;
+                    vs = parseDouble(s);
+                    hasSeconds = true;
                 }
-         } else if (seconds != null) {
-                isAngle = true;
-                vs = MyDouble.parseDouble(loc, image);
+            } else {
+                vs = parseDouble(c2);
                 hasSeconds = true;
-         }
-         if (isAngle) {
-                {if ("" != null) return new MyDoubleDegreesMinutesSeconds(kernel, vd, hasDegrees, vm, hasMinutes, vs, hasSeconds);}
-         }
-     {if ("" != null) return parseDouble(image, percent != null);}
+            }
+        } else if (minutes != null) {
+            isAngle = true;
+            vm = MyDouble.parseDouble(loc, image);
+            hasMinutes = true;
+            if (s == null) {
+                vs = 0;
+            } else {
+                vs = parseDouble(s);
+                hasSeconds = true;
+            }
+        } else if (seconds != null) {
+            isAngle = true;
+            vs = MyDouble.parseDouble(loc, image);
+            hasSeconds = true;
+        }
+        if (isAngle) {
+            {if ("" != null) return new MyDoubleDegreesMinutesSeconds(kernel, vd, hasDegrees, vm, hasMinutes, vs, hasSeconds);}
+        }
+        {if ("" != null) return parseDouble(image, percent != null);}
     } else {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case FLOAT:
@@ -2152,12 +2143,12 @@ String image = c.image.replaceFirst("e", "E");
           throw new ParseException();
         }
 // constant for degree to radians
-    if(c.image.length() ==3)
+    if (c.image.length() ==3)
     {
-                GeoElement geo = kernel.lookupLabel(c.image);
-                if(geo != null) {
-                        {if ("" != null) return geo;}
-                }
+        GeoElement geo = kernel.lookupLabel(c.image);
+        if (geo != null)    {
+            {if ("" != null) return geo;}
+        }
     }
         {if ("" != null) return newSpecialDegree();}
         break;
@@ -2166,9 +2157,9 @@ String image = c.image.replaceFirst("e", "E");
         jj_consume_token(RAD);
 // constant for radians to radians
         GeoElement geo = kernel.lookupLabel("rad");
-                if(geo != null) {
-                        {if ("" != null) return geo;}
-                }
+        if (geo != null)    {
+            {if ("" != null) return geo;}
+        }
         d = new MySpecialDouble(kernel, 1.0d, "rad");
         d.setAngle();
         {if ("" != null) return d;}
@@ -2245,14 +2236,11 @@ String image = c.image.replaceFirst("e", "E");
         jj_consume_token(-1);
         throw new ParseException();
       }
-if (GeoGebraCASParsing)
-        {
-                {if ("" != null) return Command.xyzCAS(en, 0,!ExternalCASParsing, undecided);}
-        }
-        else
-        {
-          // standard GeoGebra input bar: x(...) is interpreted as "x-coordinate of"
-          {if ("" != null) return new ExpressionNode(kernel, en, Operation.XCOORD, null);}
+if (GeoGebraCASParsing) {
+            {if ("" != null) return Command.xyzCAS(en, 0,!ExternalCASParsing, undecided);}
+        } else {
+            // standard GeoGebra input bar: x(...) is interpreted as "x-coordinate of"
+            {if ("" != null) return new ExpressionNode(kernel, en, Operation.XCOORD, null);}
         }
       break;
       }
@@ -2273,15 +2261,12 @@ if (GeoGebraCASParsing)
         jj_consume_token(-1);
         throw new ParseException();
       }
-if (GeoGebraCASParsing)
-        {
+if (GeoGebraCASParsing) {
             // GeoGebra CAS view: y(...) is interpreted as a function
-            {if ("" != null) return Command.xyzCAS(en, 1,!ExternalCASParsing, undecided);}
-        }
-        else
-        {
-          // standard GeoGebra input bar: y(...) is interpreted as "y-coordinate of"
-          {if ("" != null) return new ExpressionNode(kernel, en, Operation.YCOORD, null);}
+            {if ("" != null) return Command.xyzCAS(en, 1, !ExternalCASParsing, undecided);}
+        } else {
+            // standard GeoGebra input bar: y(...) is interpreted as "y-coordinate of"
+            {if ("" != null) return new ExpressionNode(kernel, en, Operation.YCOORD, null);}
         }
       break;
       }
@@ -2302,21 +2287,18 @@ if (GeoGebraCASParsing)
         jj_consume_token(-1);
         throw new ParseException();
       }
-if (GeoGebraCASParsing)
-        {
-            {if ("" != null) return Command.xyzCAS(en,2,!ExternalCASParsing, undecided);}
-        }
-        else
-        {
+if (GeoGebraCASParsing) {
+            {if ("" != null) return Command.xyzCAS(en, 2, !ExternalCASParsing, undecided);}
+        } else {
             // standard GeoGebra input bar: z(...) is interpreted as user function z or "z-coordinate of"
-              GeoElement userFun = kernel.lookupLabel("z");
-       if (userFun instanceof Evaluatable) {
-          // user defined function z
-        {if ("" != null) return new ExpressionNode(kernel, userFun, Operation.FUNCTION, en);}
+            GeoElement userFun = kernel.lookupLabel("z");
+            if (userFun instanceof Evaluatable) {
+                // user defined function z
+                {if ("" != null) return new ExpressionNode(kernel, userFun, Operation.FUNCTION, en);}
             } else {
-         // internal function z
-        {if ("" != null) return new ExpressionNode(kernel, en, Operation.ZCOORD, null);}
-           }
+                // internal function z
+                {if ("" != null) return new ExpressionNode(kernel, en, Operation.ZCOORD, null);}
+            }
         }
       break;
       }
@@ -2338,30 +2320,31 @@ if (GeoGebraCASParsing)
         throw new ParseException();
       }
 int pos = c.image.length()-2;
-             while(pos >=0 && (Unicode.isSuperscriptDigit(c.image.charAt(pos))||
-             Unicode.SUPERSCRIPT_MINUS==c.image.charAt(pos))){
-               pos--;
-             }
-             ExpressionNode ret = kernel.handleTrigPower(c.image, en, c.image.substring(0,pos+1));
-             if(ret.getOperation()==Operation.MULTIPLY_OR_FUNCTION)
-               undecided.add(ret);
-             {if ("" != null) return ret;}
+        while (pos >=0 && (Unicode.isSuperscriptDigit(c.image.charAt(pos))
+                || Unicode.SUPERSCRIPT_MINUS==c.image.charAt(pos))) {
+            pos--;
+        }
+        ExpressionNode ret = kernel.handleTrigPower(c.image, en, c.image.substring(0,pos+1));
+        if (ret.getOperation() == Operation.MULTIPLY_OR_FUNCTION) {
+            undecided.add(ret);
+        }
+        {if ("" != null) return ret;}
       break;
       }
     case RANDOM_FUNC:{
       jj_consume_token(RANDOM_FUNC);
 Construction cons = kernel.getConstruction();
-         GeoNumeric randNum = new GeoNumeric(cons);
-         cons.addRandomGeo(randNum);
-         randNum.setValue(app.getRandomNumber());
-         {if ("" != null) return new ExpressionNode(kernel, randNum, Operation.RANDOM, null);}
+        GeoNumeric randNum = new GeoNumeric(cons);
+        cons.addRandomGeo(randNum);
+        randNum.setValue(app.getRandomNumber());
+        {if ("" != null) return new ExpressionNode(kernel, randNum, Operation.RANDOM, null);}
       break;
       }
     case FUNCTION_LABEL:{
       c = jj_consume_token(FUNCTION_LABEL);
       en = expressionOrEquation();
 myList = new MyList(kernel, true);
-            myList.addListElement(en);
+        myList.addListElement(en);
       label_19:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -2392,7 +2375,7 @@ myList.addListElement(en);
         throw new ParseException();
       }
 // remove the opening parenthesis
-          {if ("" != null) return functionParser.makeFunctionNode(c.image,myList, undecided, GiacParsing);}
+        {if ("" != null) return functionParser.makeFunctionNode(c.image,myList, undecided, GiacParsing);}
       break;
       }
     default:
@@ -2474,33 +2457,27 @@ myList.addListElement(en);
       ;
     }
     jj_consume_token(77);
-if(y == null)
-      {
-
-         if(GiacParsing)
-        {
-          x = x.unwrap();
+if (y == null) {
+            if (GiacParsing) {
+                x = x.unwrap();
+            }
+            if (x instanceof ExpressionNode) {
+                ((ExpressionNode)x).setBrackets(true);
+            }
+            {if ("" != null) return x;}
+        } else if (z == null) {
+            MyVecNode ret = new MyVecNode(kernel, x, y);
+            if (sep.kind == POLAR_SEPARATOR) {
+                ret.setPolarCoords(x,y);
+            }
+            {if ("" != null) return ifStructuresEnabled(ret);}
+        } else {
+            MyVec3DNode ret = new MyVec3DNode(kernel, x, y, z);
+            if (sep.kind == POLAR_SEPARATOR) {
+                ret.setSphericalPolarCoords(x,y,z);
+            }
+            {if ("" != null) return ifStructuresEnabled(ret);}
         }
-         if(x instanceof ExpressionNode)
-        {
-          ((ExpressionNode)x).setBrackets(true);
-        }
-        {if ("" != null) return x;}
-      }
-      else if(z == null) {
-               MyVecNode ret = new MyVecNode(kernel, x, y);
-               if(sep.kind == POLAR_SEPARATOR){
-                     ret.setPolarCoords(x,y);
-               }
-               {if ("" != null) return ifVectorsEnabled(ret);}
-      }
-      else {
-          MyVec3DNode ret = new MyVec3DNode(kernel, x, y, z);
-          if(sep.kind == POLAR_SEPARATOR){
-             ret.setSphericalPolarCoords(x,y,z);
-           }
-           {if ("" != null) return ifVectorsEnabled(ret);}
-       }
     throw new Error("Missing return statement in function");
   }
 
@@ -2514,13 +2491,9 @@ if(y == null)
     jj_consume_token(VERTICAL_BAR);
     y = expressionNoFreeVars();
     jj_consume_token(77);
-if(!enableVectors)
-      {
-        {if ("" != null) return new ExpressionNode(kernel, Double.NaN);}
-      }
-          ExpressionNode en =  new ExpressionNode(kernel, new MyVecNode(kernel, x, y));
+ExpressionNode en =  new ExpressionNode(kernel, new MyVecNode(kernel, x, y));
           en.setLabel(l.image.substring(0,l.image.length()-1));
-          {if ("" != null) return en;}
+          {if ("" != null) return ifStructuresEnabled(en);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2533,13 +2506,9 @@ if(!enableVectors)
     jj_consume_token(VERTICAL_BAR);
     z = expressionNoFreeVars();
     jj_consume_token(77);
-if(!enableVectors)
-      {
-        {if ("" != null) return new ExpressionNode(kernel, Double.NaN);}
-      }
-          ExpressionNode en =  new ExpressionNode(kernel, new MyVec3DNode(kernel, x, y, z));
+ExpressionNode en =  new ExpressionNode(kernel, new MyVec3DNode(kernel, x, y, z));
           en.setLabel(l.image.substring(0,l.image.length()-1));
-          {if ("" != null) return en;}
+          {if ("" != null) return ifStructuresEnabled(en);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2553,15 +2522,11 @@ if(!enableVectors)
     jj_consume_token(POLAR_SEPARATOR);
     phi = expressionNoFreeVars();
     jj_consume_token(77);
-if(!enableVectors)
-      {
-        {if ("" != null) return new ExpressionNode(kernel, Double.NaN);}
-      }
-            MyVecNode v = new MyVecNode(kernel);
+MyVecNode v = new MyVecNode(kernel);
             v.setPolarCoords(r, phi);
-          ExpressionNode en =  new ExpressionNode(kernel, v);
-          en.setLabel(l.image.substring(0,l.image.length()-1));
-          {if ("" != null) return en;}
+            ExpressionNode en =  new ExpressionNode(kernel, v);
+            en.setLabel(l.image.substring(0,l.image.length()-1));
+            {if ("" != null) return ifStructuresEnabled(en);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2749,10 +2714,10 @@ if(!enableVectors)
     finally { jj_save(22, xla); }
   }
 
-  private boolean jj_3R_91()
+  private boolean jj_3R_81()
  {
-    if (jj_scan_token(IS_ELEMENT_OF)) return true;
-    if (jj_3R_90()) return true;
+    if (jj_scan_token(POLAR_SEPARATOR)) return true;
+    if (jj_3R_36()) return true;
     return false;
   }
 
@@ -2762,30 +2727,22 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_25()
+  private boolean jj_3R_80()
+ {
+    if (jj_scan_token(VERTICAL_BAR)) return true;
+    if (jj_3R_36()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26()
  {
     if (jj_scan_token(FUNCTION_LABEL)) return true;
     if (jj_3R_45()) return true;
     if (jj_scan_token(VERTICAL_BAR)) return true;
     if (jj_3R_45()) return true;
+    if (jj_scan_token(VERTICAL_BAR)) return true;
+    if (jj_3R_45()) return true;
     if (jj_scan_token(77)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_87()
- {
-    if (jj_3R_90()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_91()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_59()
- {
-    if (jj_scan_token(VARZ)) return true;
     return false;
   }
 
@@ -2807,9 +2764,16 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_58()
+  private boolean jj_3R_59()
  {
-    if (jj_scan_token(VARY)) return true;
+    if (jj_scan_token(VARZ)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_79()
+ {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_36()) return true;
     return false;
   }
 
@@ -2817,6 +2781,29 @@ if(!enableVectors)
  {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_29()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_58()
+ {
+    if (jj_scan_token(VARY)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_25()
+ {
+    if (jj_scan_token(FUNCTION_LABEL)) return true;
+    if (jj_3R_45()) return true;
+    if (jj_scan_token(VERTICAL_BAR)) return true;
+    if (jj_3R_45()) return true;
+    if (jj_scan_token(77)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_108()
+ {
+    if (jj_scan_token(SEQUENCE_OPERATOR)) return true;
+    if (jj_3R_107()) return true;
     return false;
   }
 
@@ -2846,13 +2833,6 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_108()
- {
-    if (jj_scan_token(SEQUENCE_OPERATOR)) return true;
-    if (jj_3R_107()) return true;
-    return false;
-  }
-
   private boolean jj_3R_104()
  {
     if (jj_3R_107()) return true;
@@ -2861,57 +2841,6 @@ if(!enableVectors)
       xsp = jj_scanpos;
       if (jj_3R_108()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3R_65()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_73()) {
-    jj_scanpos = xsp;
-    if (jj_3R_74()) {
-    jj_scanpos = xsp;
-    if (jj_3R_75()) return true;
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_73()
- {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_23()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_79()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_74()
- {
-    if (jj_scan_token(VERTICAL_BAR)) return true;
-    if (jj_3R_23()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_80()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_75()
- {
-    if (jj_scan_token(POLAR_SEPARATOR)) return true;
-    if (jj_3R_23()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_81()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_70()
- {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -2947,14 +2876,10 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_37()
+  private boolean jj_3R_70()
  {
-    if (jj_scan_token(82)) return true;
+    if (jj_scan_token(COMMA)) return true;
     if (jj_3R_23()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_65()) jj_scanpos = xsp;
-    if (jj_scan_token(77)) return true;
     return false;
   }
 
@@ -2967,6 +2892,94 @@ if(!enableVectors)
       if (jj_3R_70()) { jj_scanpos = xsp; break; }
     }
     if (jj_scan_token(80)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_74()
+ {
+    if (jj_scan_token(VERTICAL_BAR)) return true;
+    if (jj_3R_23()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_80()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_75()
+ {
+    if (jj_scan_token(POLAR_SEPARATOR)) return true;
+    if (jj_3R_23()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_81()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_67()
+ {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_36()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_65()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_73()) {
+    jj_scanpos = xsp;
+    if (jj_3R_74()) {
+    jj_scanpos = xsp;
+    if (jj_3R_75()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_73()
+ {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_23()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_79()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_44()
+ {
+    Token xsp;
+    if (jj_3R_67()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_67()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_114()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(27)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(28)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(29)) return true;
+    }
+    }
+    if (jj_3R_113()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_107()
+ {
+    if (jj_3R_113()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_114()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -2988,54 +3001,14 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_67()
+  private boolean jj_3R_37()
  {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_36()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_114()
- {
+    if (jj_scan_token(82)) return true;
+    if (jj_3R_23()) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(27)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(28)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(29)) return true;
-    }
-    }
-    if (jj_3R_113()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_44()
- {
-    Token xsp;
-    if (jj_3R_67()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_67()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_107()
- {
-    if (jj_3R_113()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_114()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_69()
- {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_23()) return true;
+    if (jj_3R_65()) jj_scanpos = xsp;
+    if (jj_scan_token(77)) return true;
     return false;
   }
 
@@ -3048,6 +3021,47 @@ if(!enableVectors)
   private boolean jj_3_18()
  {
     if (jj_3R_37()) return true;
+    return false;
+  }
+
+  private boolean jj_3_17()
+ {
+    if (jj_scan_token(VERTICAL_BAR)) return true;
+    if (jj_3R_36()) return true;
+    if (jj_scan_token(VERTICAL_BAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_69()
+ {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_23()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_101()
+ {
+    if (jj_scan_token(PERPENDICULAR)) return true;
+    if (jj_3R_87()) return true;
+    return false;
+  }
+
+  private boolean jj_3_16()
+ {
+    if (jj_3R_35()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_100()
+ {
+    if (jj_scan_token(PARALLEL)) return true;
+    if (jj_3R_87()) return true;
+    return false;
+  }
+
+  private boolean jj_3_15()
+ {
+    if (jj_3R_34()) return true;
     return false;
   }
 
@@ -3068,11 +3082,16 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3_17()
+  private boolean jj_3R_99()
  {
-    if (jj_scan_token(VERTICAL_BAR)) return true;
-    if (jj_3R_36()) return true;
-    if (jj_scan_token(VERTICAL_BAR)) return true;
+    if (jj_scan_token(GREATER_EQUAL)) return true;
+    if (jj_3R_87()) return true;
+    return false;
+  }
+
+  private boolean jj_3_14()
+ {
+    if (jj_3R_33()) return true;
     return false;
   }
 
@@ -3082,22 +3101,35 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3_16()
+  private boolean jj_3_13()
  {
-    if (jj_3R_35()) return true;
+    if (jj_3R_32()) return true;
     return false;
   }
 
-  private boolean jj_3_15()
+  private boolean jj_3R_98()
  {
-    if (jj_3R_34()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_101()
- {
-    if (jj_scan_token(PERPENDICULAR)) return true;
+    if (jj_scan_token(LESS_EQUAL)) return true;
     if (jj_3R_87()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_111()
+ {
+    if (jj_3R_115()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_97()
+ {
+    if (jj_scan_token(GREATER)) return true;
+    if (jj_3R_87()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_110()
+ {
+    if (jj_scan_token(FALSE)) return true;
     return false;
   }
 
@@ -3111,51 +3143,6 @@ if(!enableVectors)
     jj_scanpos = xsp;
     if (jj_scan_token(78)) return true;
     }
-    return false;
-  }
-
-  private boolean jj_3R_100()
- {
-    if (jj_scan_token(PARALLEL)) return true;
-    if (jj_3R_87()) return true;
-    return false;
-  }
-
-  private boolean jj_3_14()
- {
-    if (jj_3R_33()) return true;
-    return false;
-  }
-
-  private boolean jj_3_13()
- {
-    if (jj_3R_32()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_111()
- {
-    if (jj_3R_115()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_99()
- {
-    if (jj_scan_token(GREATER_EQUAL)) return true;
-    if (jj_3R_87()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_110()
- {
-    if (jj_scan_token(FALSE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_98()
- {
-    if (jj_scan_token(LESS_EQUAL)) return true;
-    if (jj_3R_87()) return true;
     return false;
   }
 
@@ -3200,26 +3187,6 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_51()
- {
-    if (jj_scan_token(Z_FUNC)) return true;
-    if (jj_3R_23()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(77)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(78)) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_97()
- {
-    if (jj_scan_token(GREATER)) return true;
-    if (jj_3R_87()) return true;
-    return false;
-  }
-
   private boolean jj_3R_96()
  {
     if (jj_scan_token(LESS)) return true;
@@ -3240,9 +3207,16 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_50()
+  private boolean jj_3R_94()
  {
-    if (jj_scan_token(Y_FUNC)) return true;
+    if (jj_scan_token(IS_SUBSET_OF)) return true;
+    if (jj_3R_87()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_51()
+ {
+    if (jj_scan_token(Z_FUNC)) return true;
     if (jj_3R_23()) return true;
     Token xsp;
     xsp = jj_scanpos;
@@ -3259,10 +3233,17 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_94()
+  private boolean jj_3R_93()
  {
-    if (jj_scan_token(IS_SUBSET_OF)) return true;
+    if (jj_scan_token(NOT_EQUAL)) return true;
     if (jj_3R_87()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_56()
+ {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -3289,16 +3270,81 @@ if(!enableVectors)
     return false;
   }
 
+  private boolean jj_3R_55()
+ {
+    if (jj_3R_23()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_92()
+ {
+    if (jj_scan_token(EQUAL_BOOLEAN)) return true;
+    if (jj_3R_87()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_50()
+ {
+    if (jj_scan_token(Y_FUNC)) return true;
+    if (jj_3R_23()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(77)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(78)) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_88()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_92()) {
+    jj_scanpos = xsp;
+    if (jj_3R_93()) {
+    jj_scanpos = xsp;
+    if (jj_3R_94()) {
+    jj_scanpos = xsp;
+    if (jj_3R_95()) {
+    jj_scanpos = xsp;
+    if (jj_3R_96()) {
+    jj_scanpos = xsp;
+    if (jj_3R_97()) {
+    jj_scanpos = xsp;
+    if (jj_3R_98()) {
+    jj_scanpos = xsp;
+    if (jj_3R_99()) {
+    jj_scanpos = xsp;
+    if (jj_3R_100()) {
+    jj_scanpos = xsp;
+    if (jj_3R_101()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
   private boolean jj_3R_86()
  {
     if (jj_3R_89()) return true;
     return false;
   }
 
-  private boolean jj_3R_93()
+  private boolean jj_3R_83()
  {
-    if (jj_scan_token(NOT_EQUAL)) return true;
     if (jj_3R_87()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_88()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -3338,78 +3384,6 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_56()
- {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_23()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_92()
- {
-    if (jj_scan_token(EQUAL_BOOLEAN)) return true;
-    if (jj_3R_87()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_55()
- {
-    if (jj_3R_23()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_88()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_92()) {
-    jj_scanpos = xsp;
-    if (jj_3R_93()) {
-    jj_scanpos = xsp;
-    if (jj_3R_94()) {
-    jj_scanpos = xsp;
-    if (jj_3R_95()) {
-    jj_scanpos = xsp;
-    if (jj_3R_96()) {
-    jj_scanpos = xsp;
-    if (jj_3R_97()) {
-    jj_scanpos = xsp;
-    if (jj_3R_98()) {
-    jj_scanpos = xsp;
-    if (jj_3R_99()) {
-    jj_scanpos = xsp;
-    if (jj_3R_100()) {
-    jj_scanpos = xsp;
-    if (jj_3R_101()) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_83()
- {
-    if (jj_3R_87()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_88()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_126()
- {
-    if (jj_scan_token(UNDEFINED)) return true;
-    return false;
-  }
-
   private boolean jj_3R_33()
  {
     if (jj_scan_token(FUNCTION_LABEL)) return true;
@@ -3446,28 +3420,10 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_125()
- {
-    if (jj_scan_token(INFINITY)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_124()
- {
-    if (jj_scan_token(IMAGINARY)) return true;
-    return false;
-  }
-
   private boolean jj_3R_72()
  {
     if (jj_scan_token(OR)) return true;
     if (jj_3R_71()) return true;
-    return false;
-  }
-
-  private boolean jj_3_12()
- {
-    if (jj_scan_token(FACTORIAL)) return true;
     return false;
   }
 
@@ -3482,15 +3438,15 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_123()
+  private boolean jj_3_12()
  {
-    if (jj_scan_token(E)) return true;
+    if (jj_scan_token(FACTORIAL)) return true;
     return false;
   }
 
-  private boolean jj_3R_122()
+  private boolean jj_3R_126()
  {
-    if (jj_scan_token(EULER_GAMMA)) return true;
+    if (jj_scan_token(UNDEFINED)) return true;
     return false;
   }
 
@@ -3514,24 +3470,9 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_135()
+  private boolean jj_3R_125()
  {
-    if (jj_scan_token(FACTORIAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_121()
- {
-    if (jj_scan_token(PI)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_76()
- {
-    if (jj_3R_82()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_135()) jj_scanpos = xsp;
+    if (jj_scan_token(INFINITY)) return true;
     return false;
   }
 
@@ -3549,10 +3490,37 @@ if(!enableVectors)
     return false;
   }
 
+  private boolean jj_3R_135()
+ {
+    if (jj_scan_token(FACTORIAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_124()
+ {
+    if (jj_scan_token(IMAGINARY)) return true;
+    return false;
+  }
+
   private boolean jj_3R_78()
  {
     if (jj_scan_token(XOR)) return true;
     if (jj_3R_77()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_76()
+ {
+    if (jj_3R_82()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_135()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_123()
+ {
+    if (jj_scan_token(E)) return true;
     return false;
   }
 
@@ -3567,15 +3535,15 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_120()
+  private boolean jj_3R_122()
  {
-    if (jj_scan_token(GRADIAN)) return true;
+    if (jj_scan_token(EULER_GAMMA)) return true;
     return false;
   }
 
-  private boolean jj_3R_119()
+  private boolean jj_3R_121()
  {
-    if (jj_scan_token(RAD)) return true;
+    if (jj_scan_token(PI)) return true;
     return false;
   }
 
@@ -3583,6 +3551,12 @@ if(!enableVectors)
  {
     if (jj_scan_token(AND)) return true;
     if (jj_3R_83()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_120()
+ {
+    if (jj_scan_token(GRADIAN)) return true;
     return false;
   }
 
@@ -3597,14 +3571,9 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_118()
+  private boolean jj_3R_47()
  {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(44)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(43)) return true;
-    }
+    if (jj_3R_44()) return true;
     return false;
   }
 
@@ -3619,20 +3588,9 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_47()
+  private boolean jj_3R_119()
  {
-    if (jj_3R_44()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_117()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(58)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(59)) return true;
-    }
+    if (jj_scan_token(RAD)) return true;
     return false;
   }
 
@@ -3653,6 +3611,26 @@ if(!enableVectors)
     return false;
   }
 
+  private boolean jj_3R_118()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(44)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(43)) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_23()
+ {
+    if (jj_3R_36()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_43()) jj_scanpos = xsp;
+    return false;
+  }
+
   private boolean jj_3R_137()
  {
     if (jj_scan_token(POWER)) return true;
@@ -3663,12 +3641,20 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_23()
+  private boolean jj_3R_117()
  {
-    if (jj_3R_36()) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_43()) jj_scanpos = xsp;
+    if (jj_scan_token(58)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(59)) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_10()
+ {
+    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -3686,12 +3672,6 @@ if(!enableVectors)
     jj_scanpos = xsp;
     if (jj_3R_137()) return true;
     }
-    return false;
-  }
-
-  private boolean jj_3_10()
- {
-    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -3759,27 +3739,9 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_39()
+  private boolean jj_3_7()
  {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(46)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(50)) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_22()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(46)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(50)) return true;
-    }
-    if (jj_scan_token(FLOAT)) return true;
-    if (jj_scan_token(ANGLE_SECONDS)) return true;
+    if (jj_3R_27()) return true;
     return false;
   }
 
@@ -3790,27 +3752,9 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_38()
+  private boolean jj_3_5()
  {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(46)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(50)) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_20()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(46)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(50)) return true;
-    }
-    if (jj_scan_token(FLOAT)) return true;
-    if (jj_scan_token(ANGLE_SECONDS)) return true;
+    if (jj_3R_25()) return true;
     return false;
   }
 
@@ -3838,9 +3782,70 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3_7()
+  private boolean jj_3_6()
  {
-    if (jj_3R_27()) return true;
+    if (jj_3R_26()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24()
+ {
+    if (jj_3R_44()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_39()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(46)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(50)) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_22()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(46)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(50)) return true;
+    }
+    if (jj_scan_token(FLOAT)) return true;
+    if (jj_scan_token(ANGLE_SECONDS)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_38()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(46)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(50)) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_20()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(46)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(50)) return true;
+    }
+    if (jj_scan_token(FLOAT)) return true;
+    if (jj_scan_token(ANGLE_SECONDS)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_133()
+ {
+    if (jj_scan_token(DIVIDE)) return true;
+    if (jj_3R_127()) return true;
     return false;
   }
 
@@ -3860,15 +3865,36 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3_5()
+  private boolean jj_3_4()
  {
-    if (jj_3R_25()) return true;
+    if (jj_3R_23()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_24()) jj_scanpos = xsp;
     return false;
   }
 
-  private boolean jj_3_6()
+  private boolean jj_3R_48()
  {
-    if (jj_3R_26()) return true;
+    if (jj_3R_68()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_133()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3_3()
+ {
+    if (jj_3R_22()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(76)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(5)) return true;
+    }
+    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -3938,63 +3964,10 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_24()
- {
-    if (jj_3R_44()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_133()
- {
-    if (jj_scan_token(DIVIDE)) return true;
-    if (jj_3R_127()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_48()
- {
-    if (jj_3R_68()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_133()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3_4()
- {
-    if (jj_3R_23()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_24()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_3()
- {
-    if (jj_3R_22()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(76)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(5)) return true;
-    }
-    if (jj_3R_23()) return true;
-    return false;
-  }
-
   private boolean jj_3R_46()
  {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_29()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_128()
- {
-    if (jj_scan_token(DIVIDE)) return true;
-    if (jj_3R_127()) return true;
     return false;
   }
 
@@ -4010,6 +3983,13 @@ if(!enableVectors)
     return false;
   }
 
+  private boolean jj_3R_128()
+ {
+    if (jj_scan_token(DIVIDE)) return true;
+    if (jj_3R_127()) return true;
+    return false;
+  }
+
   private boolean jj_3R_116()
  {
     if (jj_3R_127()) return true;
@@ -4018,14 +3998,6 @@ if(!enableVectors)
       xsp = jj_scanpos;
       if (jj_3R_128()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3R_21()
- {
-    if (jj_scan_token(SPREADSHEET_LABEL)) return true;
-    if (jj_scan_token(76)) return true;
-    if (jj_scan_token(SPREADSHEET_LABEL)) return true;
     return false;
   }
 
@@ -4054,19 +4026,17 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_27()
- {
-    if (jj_scan_token(FUNCTION_LABEL)) return true;
-    if (jj_3R_45()) return true;
-    if (jj_scan_token(POLAR_SEPARATOR)) return true;
-    if (jj_3R_45()) return true;
-    if (jj_scan_token(77)) return true;
-    return false;
-  }
-
   private boolean jj_3R_42()
  {
     if (jj_3R_44()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_21()
+ {
+    if (jj_scan_token(SPREADSHEET_LABEL)) return true;
+    if (jj_scan_token(76)) return true;
+    if (jj_scan_token(SPREADSHEET_LABEL)) return true;
     return false;
   }
 
@@ -4113,42 +4083,26 @@ if(!enableVectors)
     return false;
   }
 
-  private boolean jj_3R_26()
- {
-    if (jj_scan_token(FUNCTION_LABEL)) return true;
-    if (jj_3R_45()) return true;
-    if (jj_scan_token(VERTICAL_BAR)) return true;
-    if (jj_3R_45()) return true;
-    if (jj_scan_token(VERTICAL_BAR)) return true;
-    if (jj_3R_45()) return true;
-    if (jj_scan_token(77)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_81()
- {
-    if (jj_scan_token(POLAR_SEPARATOR)) return true;
-    if (jj_3R_36()) return true;
-    return false;
-  }
-
   private boolean jj_3R_40()
  {
     if (jj_3R_22()) return true;
     return false;
   }
 
-  private boolean jj_3R_80()
+  private boolean jj_3R_27()
  {
-    if (jj_scan_token(VERTICAL_BAR)) return true;
-    if (jj_3R_36()) return true;
+    if (jj_scan_token(FUNCTION_LABEL)) return true;
+    if (jj_3R_45()) return true;
+    if (jj_scan_token(POLAR_SEPARATOR)) return true;
+    if (jj_3R_45()) return true;
+    if (jj_scan_token(77)) return true;
     return false;
   }
 
-  private boolean jj_3R_79()
+  private boolean jj_3R_91()
  {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_36()) return true;
+    if (jj_scan_token(IS_ELEMENT_OF)) return true;
+    if (jj_3R_90()) return true;
     return false;
   }
 
@@ -4159,6 +4113,17 @@ if(!enableVectors)
     if (jj_scan_token(62)) {
     jj_scanpos = xsp;
     if (jj_scan_token(63)) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_87()
+ {
+    if (jj_3R_90()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_91()) { jj_scanpos = xsp; break; }
     }
     return false;
   }

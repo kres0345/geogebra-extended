@@ -19,10 +19,17 @@ public class AlgebraViewVisibilityDelegate {
     /**
      * constructor
      */
-    public AlgebraViewVisibilityDelegate(boolean isViewVisibleAtStart) {
+    public AlgebraViewVisibilityDelegate() {
         geosToAdd = new TreeSet<>();
         geosToRemove = new TreeSet<>();
-        isViewVisible = isViewVisibleAtStart;
+    }
+
+    /**
+     * set view current visibility
+     * @param flag flag
+     */
+    public void setViewVisible(boolean flag) {
+        isViewVisible = flag;
     }
 
 	/**

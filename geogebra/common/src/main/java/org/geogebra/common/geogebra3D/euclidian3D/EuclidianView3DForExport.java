@@ -12,6 +12,7 @@ import org.geogebra.common.geogebra3D.euclidian3D.openGL.RendererForExport;
 import org.geogebra.common.geogebra3D.euclidian3D.printer3D.ExportToPrinter3D;
 import org.geogebra.common.geogebra3D.euclidian3D.printer3D.Format;
 import org.geogebra.common.geogebra3D.euclidian3D.printer3D.Geometry3DGetterManager;
+import org.geogebra.common.gui.dialog.Export3dDialogInterface;
 import org.geogebra.common.javax.swing.GBox;
 import org.geogebra.common.kernel.arithmetic.NumberValue;
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -158,6 +159,19 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 	 * @return 3D export
 	 */
 	public StringBuilder export3D(Format format) {
+		return export3D(format, null);
+	}
+
+	/**
+	 * 
+	 * @param format
+	 *            3D format
+	 * @param dialog
+	 *            settings dialog
+	 * @return 3D export
+	 */
+	public StringBuilder export3D(final Format format,
+			final Export3dDialogInterface dialog) {
 		settingsChanged(getSettings());
 		useSpecificThickness = false;
 		updateScene();
@@ -179,30 +193,45 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 					// 1unit = 10mm
 					scale = ((NumberValue) scaleGeo).getDouble() * 10;
 				}
+				double[] dimensions = new double[3];
+				for (int i = 0; i < 3; i++) {
+					dimensions[i] = (boundsMax.get(i + 1)
+							- boundsMin.get(i + 1))
+							* getScale(i) / getXscale();
+				}
 				if (scale < 0) {
-					double d = boundsMax.getX() - boundsMin.getX();
-					for (int i = 2; i <= 3; i++) {
-						double val = (boundsMax.get(i) - boundsMin.get(i))
-								* getScale(i - 1) / getXscale();
-						if (val > d) {
-							d = val;
+					double d = dimensions[0];
+					for (int i = 1; i < 3; i++) {
+						if (d < dimensions[i]) {
+							d = dimensions[i];
 						}
 					}
 					scale = EDGE_FOR_PRINT / d;
 				}
-				specificThicknessForLines = (float) (thickness / scale
-						* getXscale());
-				specificThicknessForSurfaces = (float) ((thickness
-						+ SHIFT_LINE_TO_SURFACE_THICKNESS) / scale
-						* getXscale());
-				specificSizeForPoints = (float) ((thickness
-						+ SHIFT_LINE_THICKNESS_TO_POINT_SIZE) / scale
-						* getXscale());
-				specificThicknessForLines /= PlotterBrush.LINE3D_THICKNESS;
-				specificSizeForPoints /= DrawPoint3D.DRAW_POINT_FACTOR;
-				format.setScale(scale);
-				reset();
-				updateScene();
+
+				if (dialog != null) {
+					dialog.show(dimensions[0] * scale, dimensions[1] * scale,
+							dimensions[2] * scale, scale, thickness * 2,
+							new Runnable() {
+						public void run() {
+									setThicknessAndScale(format,
+											dialog.getCurrentThickness() / 2,
+											dialog.getCurrentScale());
+									ExportToPrinter3D exportToPrinter = new ExportToPrinter3D(
+											EuclidianView3DForExport.this,
+											renderer.getGeometryManager());
+									getApplication().getKernel().detach(
+											EuclidianView3DForExport.this);
+									getApplication().exportStringToFile(
+											format.getExtension(),
+											exportToPrinter.export(format)
+													.toString());
+						}
+					});
+					return null;
+				}
+
+				setThicknessAndScale(format, thickness, scale);
 			} else {
 				format.setScale(10); // default value: 1unit = 10mm
 			}
@@ -210,6 +239,30 @@ public class EuclidianView3DForExport extends EuclidianView3D {
 		ExportToPrinter3D exportToPrinter = new ExportToPrinter3D(this,
 				renderer.getGeometryManager());
 		return exportToPrinter.export(format);
+	}
+
+	/**
+	 * set thickness and scale
+	 * 
+	 * @param format
+	 *            export format
+	 * @param thickness
+	 *            thickness
+	 * @param scale
+	 *            scale
+	 */
+	void setThicknessAndScale(Format format, double thickness,
+			double scale) {
+		specificThicknessForLines = (float) (thickness / scale * getXscale());
+		specificThicknessForSurfaces = (float) ((thickness
+				+ SHIFT_LINE_TO_SURFACE_THICKNESS) / scale * getXscale());
+		specificSizeForPoints = (float) ((thickness
+				+ SHIFT_LINE_THICKNESS_TO_POINT_SIZE) / scale * getXscale());
+		specificThicknessForLines /= PlotterBrush.LINE3D_THICKNESS;
+		specificSizeForPoints /= DrawPoint3D.DRAW_POINT_FACTOR;
+		format.setScale(scale);
+		reset();
+		updateScene();
 	}
 
 	@Override

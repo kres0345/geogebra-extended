@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.geogebra.common.awt.GPoint;
-import org.geogebra.common.main.Feature;
 import org.geogebra.common.move.ggtapi.models.Chapter;
 import org.geogebra.common.move.ggtapi.models.Material;
 import org.geogebra.common.move.ggtapi.requests.MaterialCallbackI;
@@ -14,7 +13,6 @@ import org.geogebra.web.full.gui.dialog.MaterialRenameDialog;
 import org.geogebra.web.full.gui.util.ContextMenuButtonCard;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.shared.ShareDialogMow;
-import org.geogebra.web.shared.ShareDialogMow2;
 
 import com.google.gwt.user.client.Command;
 
@@ -103,43 +101,22 @@ public class ContextMenuButtonMaterialCard extends ContextMenuButtonCard {
 	 * execute share action
 	 */
 	protected void onShare() {
-		if (app.has(Feature.MOW_JOINT_SHARE_DIALOG)) {
-			ShareDialogMow2 dialog = new ShareDialogMow2(app,
-					app.getCurrentURL(material.getSharingKey(), true),
-					material);
-			dialog.setCallback(new MaterialCallbackI() {
+		ShareDialogMow dialog = new ShareDialogMow(app,
+				app.getCurrentURL(material.getSharingKey(), true), material);
+		dialog.setCallback(new MaterialCallbackI() {
 
-				@Override
-				public void onLoaded(List<Material> result,
-						ArrayList<Chapter> meta) {
-					updateCardVisibility(result);
-				}
+			@Override
+			public void onLoaded(List<Material> result,
+					ArrayList<Chapter> meta) {
+				updateCardVisibility(result);
+			}
 
-				@Override
-				public void onError(Throwable exception) {
-					Log.debug(exception);
-				}
-			});
-			dialog.show();
-		} else {
-			ShareDialogMow dialog = new ShareDialogMow(app,
-					app.getCurrentURL(material.getSharingKey(), true),
-					material);
-			dialog.setCallback(new MaterialCallbackI() {
-
-				@Override
-				public void onLoaded(List<Material> result,
-						ArrayList<Chapter> meta) {
-					updateCardVisibility(result);
-				}
-
-				@Override
-				public void onError(Throwable exception) {
-					Log.debug(exception);
-				}
-			});
-			dialog.show();
-		}
+			@Override
+			public void onError(Throwable exception) {
+				Log.debug(exception);
+			}
+		});
+		dialog.show();
 	}
 
 	/**
@@ -155,8 +132,8 @@ public class ContextMenuButtonMaterialCard extends ContextMenuButtonCard {
 	 */
 	protected void onRename() {
 		hide();
-		MaterialRenameDialog renameDialog = new MaterialRenameDialog(app.getPanel(),
-				app, card);
+		MaterialRenameDialog renameDialog = new MaterialRenameDialog(
+				app.getPanel(), app, card);
 		renameDialog.center();
 	}
 

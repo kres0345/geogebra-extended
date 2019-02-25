@@ -25,7 +25,9 @@ import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.kernel.geos.GeoPolygon;
 import org.geogebra.common.kernel.geos.GeoSegment;
 import org.geogebra.common.kernel.geos.GeoVector;
+import org.geogebra.common.kernel.geos.Lineable2D;
 import org.geogebra.common.kernel.kernelND.GeoConicND;
+import org.geogebra.common.kernel.kernelND.GeoCoordSys2D;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.kernelND.GeoLineND;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
@@ -288,6 +290,18 @@ public class EuclidianControllerCompanion {
 	 *            line
 	 * @return line orthogonal to the given one, going through a point
 	 */
+	protected GeoElement[] orthogonal(GeoPointND point, Lineable2D line) {
+		return new GeoElement[] { ec.getAlgoDispatcher().orthogonalLine(null,
+				(GeoPoint) point, line) };
+	}
+
+	/**
+	 * @param point
+	 *            point
+	 * @param line
+	 *            line
+	 * @return line orthogonal to the given one, going through a point
+	 */
 	protected GeoElement[] orthogonal(GeoPointND point, GeoLineND line) {
 		return new GeoElement[] { ec.getAlgoDispatcher().orthogonalLine(null,
 				(GeoPoint) point, (GeoLine) line) };
@@ -376,10 +390,12 @@ public class EuclidianControllerCompanion {
 	 *            second point
 	 * @param value
 	 *            n vertices
+	 * @param direction
+	 *            direction
 	 * @return regular polygon
 	 */
 	public GeoElement[] regularPolygon(GeoPointND geoPoint1,
-			GeoPointND geoPoint2, GeoNumberValue value) {
+			GeoPointND geoPoint2, GeoNumberValue value, GeoCoordSys2D direction) {
 		ec.kernel.addingPolygon();
 		GeoElement[] elms = ec.getAlgoDispatcher().regularPolygon(null,
 				geoPoint1, geoPoint2, value);

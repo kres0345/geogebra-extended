@@ -325,11 +325,23 @@ public class AlgebraItem {
 		}
 	}
 
-	private static void buildDefinitionString(
-			GeoElement geoElement,
-			IndexHTMLBuilder stringBuilder,
-			StringTemplate stringTemplate) {
-		geoElement.addLabelTextOrHTML(geoElement.getDefinition(stringTemplate), stringBuilder);
+	/**
+	 * @param geoElement
+	 *            construction element
+	 * @param stringBuilder
+	 *            builder
+	 * @param stringTemplate
+	 *            template
+	 */
+	public static void buildDefinitionString(GeoElement geoElement,
+			IndexHTMLBuilder stringBuilder, StringTemplate stringTemplate) {
+		String desc = geoElement.getDefinition(stringTemplate);
+		if (geoElement.isAlgebraLabelVisible()) {
+			geoElement.addLabelTextOrHTML(desc, stringBuilder);
+		} else {
+			IndexHTMLBuilder.convertIndicesToHTML(desc, stringBuilder);
+		}
+
 	}
 
 	/**
@@ -524,8 +536,7 @@ public class AlgebraItem {
 						.getAlgebraStyle() != Kernel.ALGEBRA_STYLE_DEFINITION_AND_VALUE)) {
 			if (geo1.isIndependent()) {
 				return getLatexStringValue(geo1, limit);
-			} else if (geo1.getParentAlgorithm()
-					.getClassName() == Algos.Expression) {
+			} else if (Algos.isUsedFor(Algos.Expression, geo1)) {
 				return geo1.getAssignmentLHS(StringTemplate.latexTemplate)
 					+ geo1.getLabelDelimiter()
 					+ geo1.getDefinition(StringTemplate.latexTemplateHideLHS);

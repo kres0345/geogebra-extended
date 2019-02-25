@@ -742,4 +742,47 @@ public abstract class RendererWithImpl extends Renderer
 	public void createDummyTexture() {
 		rendererImpl.createDummyTexture();
 	}
+
+	/**
+	 * set AR to end
+	 */
+	public void setARShouldEnd() {
+		killARSession();
+		view3D.setARDrawing(false);
+		view3D.setAREnabled(false);
+		view3D.resetViewFromAR();
+	}
+
+	/**
+	 * kill AR session
+	 */
+	protected void killARSession() {
+		// not used here
+	}
+
+    @Override
+    public void drawTarget(CoordMatrix4x4 dotMatrix,
+                           CoordMatrix4x4 circleMatrix) {
+	    rendererImpl.setNormalToNone();
+	    super.drawTarget(dotMatrix, circleMatrix);
+    }
+
+    @Override
+    public void drawCursor(int cursorType) {
+        rendererImpl.setNormalToNone();
+        super.drawCursor(cursorType);
+    }
+
+    @Override
+    public void drawCompletingCursor(double value, boolean out) {
+        rendererImpl.setNormalToNone();
+        super.drawCompletingCursor(value, out);
+    }
+
+    @Override
+    public void drawMouseCursor() {
+        rendererImpl.setNormalToNone();
+        super.drawMouseCursor();
+    }
+
 }

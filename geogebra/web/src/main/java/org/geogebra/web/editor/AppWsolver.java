@@ -1,6 +1,7 @@
 package org.geogebra.web.editor;
 
 import org.geogebra.common.GeoGebraConstants;
+import org.geogebra.common.gui.view.algebra.AlgebraView;
 import org.geogebra.common.kernel.View;
 import org.geogebra.common.main.DialogManager;
 import org.geogebra.common.main.Feature;
@@ -12,7 +13,6 @@ import org.geogebra.web.html5.gui.GeoGebraFrameW;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.main.FontManagerW;
 import org.geogebra.web.html5.main.GeoGebraTubeAPIWSimple;
-import org.geogebra.web.html5.main.HasAppletProperties;
 import org.geogebra.web.html5.util.ArticleElement;
 import org.geogebra.web.html5.util.ArticleElementInterface;
 import org.geogebra.web.shared.GlobalHeader;
@@ -27,6 +27,9 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.himamis.retex.editor.web.MathFieldW;
 
+/**
+ * App for solver
+ */
 public class AppWsolver extends AppW implements HasKeyboard {
     private GeoGebraFrameW frame;
 	private MathFieldW mathField;
@@ -82,6 +85,9 @@ public class AppWsolver extends AppW implements HasKeyboard {
 		});
 	}
 
+	/**
+	 * @return equation editor
+	 */
 	protected MathFieldW getMathField() {
 		return mathField;
 	}
@@ -121,7 +127,7 @@ public class AppWsolver extends AppW implements HasKeyboard {
     }
 
     @Override
-    public HasAppletProperties getAppletFrame() {
+    public GeoGebraFrameW getAppletFrame() {
         return frame;
     }
 
@@ -130,7 +136,7 @@ public class AppWsolver extends AppW implements HasKeyboard {
         return getToolbar() != null;
     }
 
-    @Override
+	@Override
     public void setLanguage(final String browserLang) {
         // no localization support needed in webSimple
     }
@@ -145,6 +151,10 @@ public class AppWsolver extends AppW implements HasKeyboard {
         Log.debug("unimplemented");
     }
 
+	/**
+	 * @param mathField
+	 *            equation editor
+	 */
 	public void setMathField(MathFieldW mathField) {
 		this.mathField = mathField;
 	}
@@ -179,5 +189,10 @@ public class AppWsolver extends AppW implements HasKeyboard {
 		} else {
 			return width;
 		}
+	}
+
+	@Override
+	public AlgebraView getAlgebraView() {
+		return null;
 	}
 }

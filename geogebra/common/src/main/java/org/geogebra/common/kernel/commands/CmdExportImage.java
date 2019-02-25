@@ -1,7 +1,6 @@
 package org.geogebra.common.kernel.commands;
 
 import org.geogebra.common.euclidian.EuclidianView;
-import org.geogebra.common.kernel.CircularDefinitionException;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.arithmetic.Command;
@@ -296,10 +295,7 @@ public class CmdExportImage extends CmdScripting {
 	}
 
 	private void addImageToConstruction(String label, String imageStr,
-			GeoPoint corner_0, GeoPoint corner2_0, boolean svg) {
-
-		GeoPoint corner = corner_0;
-		GeoPoint corner2 = corner2_0;
+			GeoPoint corner1, GeoPoint corner2, boolean svg) {
 
 		final GeoImage geoImage;
 		GeoImage oldImage = (GeoImage) kernel.lookupLabel(label);
@@ -308,23 +304,15 @@ public class CmdExportImage extends CmdScripting {
 				+ "/image."
 				+ (svg ? "svg" : "png");
 
+		StringTemplate tpl = StringTemplate.defaultTemplate;
+
+		String c1 = corner1 == null ? "(0,0)" : corner1.getLabel(tpl);
+		String c2 = corner2 == null ? "(1,0)" : corner2.getLabel(tpl);
+
 		geoImage = app.createImageFromString(imageFilename,
 				svg ? imageStr : StringUtil.pngMarker + imageStr, oldImage,
-				false);
+				false, c1, c2, null);
 
-		if (corner == null) {
-			corner = new GeoPoint(cons, null, 0, 0, 1);
-		}
-		if (corner2 == null) {
-			corner2 = new GeoPoint(cons, null, 1, 0, 1);
-		}
-		try {
-			geoImage.setStartPoint(corner);
-			geoImage.setCorner(corner2, 1);
-
-		} catch (CircularDefinitionException e) {
-			e.printStackTrace();
-		}
 		geoImage.setLabel(label);
 
 		// invokeLater needed in web to make sure image appears

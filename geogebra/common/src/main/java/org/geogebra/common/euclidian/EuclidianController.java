@@ -68,6 +68,7 @@ import org.geogebra.common.kernel.algos.AlgoTranslate;
 import org.geogebra.common.kernel.algos.AlgoVector;
 import org.geogebra.common.kernel.algos.AlgoVectorPoint;
 import org.geogebra.common.kernel.algos.AlgoVertexConic;
+import org.geogebra.common.kernel.algos.Algos;
 import org.geogebra.common.kernel.arithmetic.BooleanValue;
 import org.geogebra.common.kernel.arithmetic.ExpressionNode;
 import org.geogebra.common.kernel.arithmetic.ExpressionValue;
@@ -112,6 +113,7 @@ import org.geogebra.common.kernel.geos.GeoText;
 import org.geogebra.common.kernel.geos.GeoVector;
 import org.geogebra.common.kernel.geos.GeoVideo;
 import org.geogebra.common.kernel.geos.GeoWidget;
+import org.geogebra.common.kernel.geos.Lineable2D;
 import org.geogebra.common.kernel.geos.MoveGeos;
 import org.geogebra.common.kernel.geos.PointProperties;
 import org.geogebra.common.kernel.geos.PointRotateable;
@@ -925,50 +927,48 @@ public abstract class EuclidianController implements SpecialPointsListener {
 		}
 
 		if (ms == ModeSetter.TOOLBAR) {
-			if (app.has(Feature.MOW_IMAGE_DIALOG_UNBUNDLED)) {
-				if (newMode == EuclidianConstants.MODE_CAMERA) {
-					webcam();
+			if (app.getGuiManager() != null) {
+				switch (newMode) {
+				case EuclidianConstants.MODE_CAMERA:
+					app.getGuiManager().loadWebcam();
 					return;
-				}
-			}
-			if (newMode == EuclidianConstants.MODE_AUDIO
-					&& app.has(Feature.MOW_AUDIO_TOOL)) {
-				if (app.getGuiManager() != null) {
+					
+				case EuclidianConstants.MODE_AUDIO:
 					getDialogManager().showAudioInputDialog();
-				}
-			}
-			if (newMode == EuclidianConstants.MODE_VIDEO
-					&& app.has(Feature.MOW_VIDEO_TOOL)) {
-				if (app.getGuiManager() != null) {
+					break;
+					
+				case EuclidianConstants.MODE_VIDEO:
 					getDialogManager().showVideoInputDialog();
-				}
-			}
-			if (newMode == EuclidianConstants.MODE_PDF
-					&& app.has(Feature.MOW_PDF_TOOL)) {
-				if (app.getGuiManager() != null) {
+					break;
+					
+				case EuclidianConstants.MODE_PDF:
 					getDialogManager().showPDFInputDialog();
-				}
-			}
-			if (newMode == EuclidianConstants.MODE_EXTENSION) {
-				if (app.getGuiManager() != null) {
+					break;
+					
+				case EuclidianConstants.MODE_EXTENSION:
 					getDialogManager().showEmbedDialog();
-				}
+					break;
+					
+				default:
+					break;
+				}	
 			}
-			if (newMode == EuclidianConstants.MODE_GRAPHING
-					&& app.has(Feature.MOW_GEOGEBRA_TOOL)) {
-				GeoEmbed ge = new GeoEmbed(kernel.getConstruction());
-				ge.initPosition(view);
-				ge.setEmbedId(app.getEmbedManager().nextID());
-				ge.setLabel(null);
-				app.invokeLater(new Runnable() {
 
-					@Override
-					public void run() {
-						app.setMode(EuclidianConstants.MODE_SELECT_MOW,
-								ModeSetter.DOCK_PANEL);
-					}
-				});
+			if (newMode == EuclidianConstants.MODE_GRAPHING) {
+				if (app.getEmbedManager() != null) {
+					GeoEmbed ge = new GeoEmbed(kernel.getConstruction());
+					ge.initPosition(view);
+					ge.setEmbedId(app.getEmbedManager().nextID());
+					ge.setLabel(null);
+					app.invokeLater(new Runnable() {
 
+						@Override
+						public void run() {
+							app.setMode(EuclidianConstants.MODE_SELECT_MOW,
+									ModeSetter.DOCK_PANEL);
+						}
+					});
+				}
 			}
 			if (newMode == EuclidianConstants.MODE_IMAGE) {
 				image(view.getHits().getOtherHits(TestGeo.GEOIMAGE, tempArrayList),
@@ -1847,7 +1847,7 @@ public abstract class EuclidianController implements SpecialPointsListener {
 	}
 
 	/**
-	 * 0/1/-1 if nothing happened / geo selected / geo unselected
+	 * @return 0/1/-1 if nothing happened / geo selected / geo unselected
 	 */
 	public int handleAddSelected(Hits hits, int max, boolean addMore,
 			ArrayList<? extends GeoElementND> list, TestGeo geoClass,
@@ -2628,6 +2628,9 @@ public abstract class EuclidianController implements SpecialPointsListener {
 			if (selVectors() == 0) {
 				addSelectedLine(hits, 1, false, selPreview);
 			}
+			if (selFunctions() == 0) {
+				addSelectedFunction(hits, 1, false, selPreview);
+			}
 		}
 
 		if (selPoints() == 1) {
@@ -2648,7 +2651,7 @@ public abstract class EuclidianController implements SpecialPointsListener {
 				}
 				return ret;
 			} else if (selLines() == 1) {
-				// fetch selected point and vector
+				// fetch selected point and line
 				GeoPointND[] points = getSelectedPointsND();
 				GeoLineND[] lines = getSelectedLinesND();
 				// create new line
@@ -2659,6 +2662,13 @@ public abstract class EuclidianController implements SpecialPointsListener {
 					ret[0] = getAlgoDispatcher().line(null,
 							(GeoPoint) points[0], (GeoLine) lines[0]);
 				}
+				return ret;
+			} else if (selFunctions() == 1) {
+				// fetch selected point and (linear) function
+				GeoPointND[] points = getSelectedPointsND();
+				GeoFunction[] lines = getSelectedFunctions();
+				ret[0] = getAlgoDispatcher().line(null, (GeoPoint) points[0],
+						(Lineable2D) lines[0]);
 				return ret;
 			}
 		}
@@ -2708,6 +2718,9 @@ public abstract class EuclidianController implements SpecialPointsListener {
 			if (selVectors() == 0) {
 				addSelectedLine(hits, 1, false, selPreview);
 			}
+			if (selFunctions() == 0) {
+				addSelectedFunction(hits, 1, false, selPreview);
+			}
 		}
 
 		if (selPoints() == 1) {
@@ -2730,6 +2743,12 @@ public abstract class EuclidianController implements SpecialPointsListener {
 				GeoLineND[] lines = getSelectedLinesND();
 				// create new line
 				return companion.orthogonal(points[0], lines[0]);
+			} else if (selFunctions() == 1) {
+				// fetch selected point and (linear) function
+				GeoPointND[] points = getSelectedPointsND();
+				GeoFunction[] lines = getSelectedFunctions();
+				// create new line
+				return companion.orthogonal(points[0], (Lineable2D) lines[0]);
 			}
 		}
 		return null;
@@ -3556,12 +3575,6 @@ public abstract class EuclidianController implements SpecialPointsListener {
 			app.getGuiManager().loadImage(loc, null, altDown, view);
 		}
 		return true;
-	}
-
-	protected final void webcam() {
-		if (app.getGuiManager() != null) {
-			app.getGuiManager().loadWebcam();
-		}
 	}
 
 	protected final GeoElement[] mirrorAtPoint(Hits hits, boolean selPreview) {
@@ -5526,8 +5539,7 @@ public abstract class EuclidianController implements SpecialPointsListener {
 			ret = mirrorAtLine(hits.getTopHits(), selectionPreview);
 			break;
 
-		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds
-			// 2008-03-23
+		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE:
 			ret = mirrorAtCircle(hits.getTopHits(), selectionPreview);
 			break;
 
@@ -6422,8 +6434,7 @@ public abstract class EuclidianController implements SpecialPointsListener {
 		case EuclidianConstants.MODE_DILATE_FROM_POINT:
 		case EuclidianConstants.MODE_MIRROR_AT_POINT:
 		case EuclidianConstants.MODE_MIRROR_AT_LINE:
-		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds
-			// 2008-03-23
+		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE:
 		case EuclidianConstants.MODE_ROTATE_BY_ANGLE:
 			setViewHits(type);
 			hits = view.getHits();
@@ -6787,9 +6798,13 @@ public abstract class EuclidianController implements SpecialPointsListener {
         resetToolTipManager();
         view.setAnimationButtonsHighlighted(false);
         view.setShowMouseCoords(false);
-        mouseLoc = null;
+        setMouseLocToNullIfNeeded();
         kernel.notifyRepaint();
         view.mouseExited();
+    }
+
+    protected void setMouseLocToNullIfNeeded() {
+        mouseLoc = null;
     }
 
 	protected void handleSelectClick(ArrayList<GeoElement> geos,
@@ -7936,9 +7951,7 @@ public abstract class EuclidianController implements SpecialPointsListener {
 			moveDependent(repaint);
 			break;
 		case MOVE_DEPENDENT:
-			if (movedGeoElement.getParentAlgorithm() != null
-					&& movedGeoElement.getParentAlgorithm()
-							.getClassName() == Commands.AttachCopyToView) {
+			if (Algos.isUsedFor(Commands.AttachCopyToView, movedGeoElement)) {
 				moveAttached(repaint);
 			} else {
 				moveDependent(repaint);
@@ -8235,19 +8248,17 @@ public abstract class EuclidianController implements SpecialPointsListener {
 	protected void snapMoveView(int dx0, int dy0) {
 		int dx = dx0;
 		int dy = dy0;
-		if (app.has(Feature.MOW_MOVING_CANVAS)) {
-			if (startLoc != lastStartLoc) {
-				snapMoveView = true;
-			}
-			if (Math.abs(dx) <= MOVE_VIEW_THRESHOLD && snapMoveView) {
-				dx = 0; // move up/down
-			} else if (Math.abs(dy) <= MOVE_VIEW_THRESHOLD && snapMoveView) {
-				dy = 0; // move left/right
-			} else {
-				snapMoveView = false; // release snap
-			}
-			lastStartLoc = startLoc;
+		if (startLoc != lastStartLoc) {
+			snapMoveView = true;
 		}
+		if (Math.abs(dx) <= MOVE_VIEW_THRESHOLD && snapMoveView) {
+			dx = 0; // move up/down
+		} else if (Math.abs(dy) <= MOVE_VIEW_THRESHOLD && snapMoveView) {
+			dy = 0; // move left/right
+		} else {
+			snapMoveView = false; // release snap
+		}
+		lastStartLoc = startLoc;
 		view.setCoordSystemFromMouseMove(dx, dy, MOVE_VIEW);
 	}
 
@@ -8369,8 +8380,7 @@ public abstract class EuclidianController implements SpecialPointsListener {
 		case EuclidianConstants.MODE_DILATE_FROM_POINT:
 		case EuclidianConstants.MODE_MIRROR_AT_POINT:
 		case EuclidianConstants.MODE_MIRROR_AT_LINE:
-		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds
-			// 2008-03-23
+		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE:
 		case EuclidianConstants.MODE_ROTATE_BY_ANGLE:
 		case EuclidianConstants.MODE_FITLINE:
 		case EuclidianConstants.MODE_CREATE_LIST:
@@ -9966,8 +9976,7 @@ public abstract class EuclidianController implements SpecialPointsListener {
 
 		case EuclidianConstants.MODE_MIRROR_AT_POINT:
 		case EuclidianConstants.MODE_MIRROR_AT_LINE:
-		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds
-			// 2008-03-23
+		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE:
 			processSelectionRectangleForTransformations(hits,
 					TestGeo.TRANSFORMABLE);
 			break;
@@ -10132,8 +10141,7 @@ public abstract class EuclidianController implements SpecialPointsListener {
 		switch (mode) {
 		case EuclidianConstants.MODE_MIRROR_AT_POINT:
 		case EuclidianConstants.MODE_MIRROR_AT_LINE:
-		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds
-			// 2008-03-23
+		case EuclidianConstants.MODE_MIRROR_AT_CIRCLE:
 			processSelectionRectangleForTransformations(hits,
 					TestGeo.TRANSFORMABLE);
 			break;
@@ -11025,7 +11033,7 @@ public abstract class EuclidianController implements SpecialPointsListener {
 					// selectionRectangle
 					processSelectionRectangle(alt, control, shift);
 				} else if (selection.selectedGeosSize() > 0) {
-					if (hasWhiteboardContextMenu()) {
+					if (app.isUnbundledOrWhiteboard()) {
 						clearAndShowDrawingPadPopup(mouseLoc);
 					} else {
 						showPopupMenuChooseGeo(getAppSelectedGeos(), hits);
@@ -11245,8 +11253,10 @@ public abstract class EuclidianController implements SpecialPointsListener {
 			break;
 
 		case EuclidianConstants.MODE_PARALLEL:
+
 			previewDrawable = view.createPreviewParallelLine(
-					getSelectedPointList(), getSelectedLineList());
+					getSelectedPointList(), getSelectedLineList(),
+					getSelectedFunctionList());
 			break;
 
 		case EuclidianConstants.MODE_PARABOLA:
@@ -11261,8 +11271,10 @@ public abstract class EuclidianController implements SpecialPointsListener {
 
 		case EuclidianConstants.MODE_ORTHOGONAL:
 		case EuclidianConstants.MODE_ORTHOGONAL_THREE_D:
+
 			previewDrawable = view.createPreviewPerpendicularLine(
-					getSelectedPointList(), getSelectedLineList());
+							getSelectedPointList(), getSelectedLineList(),
+							getSelectedFunctionList());
 			break;
 
 		case EuclidianConstants.MODE_LINE_BISECTOR:
@@ -12609,11 +12621,6 @@ public abstract class EuclidianController implements SpecialPointsListener {
 		}
 	}
 
-	protected boolean hasWhiteboardContextMenu() {
-		return app.has(Feature.WHITEBOARD_APP)
-				&& app.has(Feature.MOW_CONTEXT_MENU);
-	}
-
 	public boolean isObjectMenuActive() {
 		return objectMenuActive;
 	}
@@ -12751,7 +12758,7 @@ public abstract class EuclidianController implements SpecialPointsListener {
 		GRectangle rect = AwtFactory.getPrototype().newRectangle((int) minX,
 				(int) minY, (int) (maxX - minX), (int) (maxY - minY));
 		view.setBoundingBox(new BoundingBox(rect, false,
-				hasRotationHandler && app.has(Feature.MOW_ROTATION_HANDLER)));
+				hasRotationHandler));
 	}
 
 	/**

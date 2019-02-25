@@ -192,6 +192,12 @@ public abstract class RendererImplShaders extends RendererImpl {
 	}
 
 	@Override
+	public void setNormalToNone() {
+        oneNormalForAllVertices = true;
+        glUniform3f(normalLocation, -2, -2, -2);
+    }
+
+	@Override
 	final public void enableTextures() {
 		texturesEnabled = true;
 		setCurrentGeometryHasNoTexture(); // let first geometry init textures
@@ -678,12 +684,27 @@ public abstract class RendererImplShaders extends RendererImpl {
 				/ (renderer.perspTop[renderer.eye]
 						- renderer.perspBottom[renderer.eye]);
 		projectionMatrix.set(2, 3, perspYZ);
-        projectionMatrix.set(3, 3, renderer.perspFocus[renderer.eye] / renderer.getWidth());
+		double f = renderer.perspFocus[renderer.eye];
+		double w = renderer.getWidth();
+		double a;
+		double b;
+		if (w > -f) {
+			// eye is too close
+			// z goes from 90% eye distance to w
+			double k = -0.9;
+			a = (f * k + 2 * f + w) / (f * k - w);
+			b = -(f * f * k + 2 * f * k * w + f * w) / (f * k - w);
+		} else {
+			// z goes from -w to w
+			a = f / w;
+			b = w;
+		}
+		projectionMatrix.set(3, 3, a);
 		projectionMatrix.set(4, 3, -1);
 
 		projectionMatrix.set(1, 4, 0);
 		projectionMatrix.set(2, 4, 0);
-        projectionMatrix.set(3, 4, renderer.getWidth());
+		projectionMatrix.set(3, 4, b);
 		projectionMatrix.set(4, 4, -renderer.perspFocus[renderer.eye]);
 
 	}
@@ -779,6 +800,7 @@ public abstract class RendererImplShaders extends RendererImpl {
 
 	@Override
 	public void drawFaceToScreenAbove() {
+	    setNormalToNone();
 		glUniform1i(labelRenderingLocation, 1);
 		resetCenter();
 	}

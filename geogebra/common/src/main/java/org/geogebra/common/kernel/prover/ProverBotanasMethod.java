@@ -41,6 +41,7 @@ import org.geogebra.common.kernel.geos.GeoLine;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.kernel.geos.GeoSegment;
+import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.prover.adapters.DependentNumberAdapter;
 import org.geogebra.common.kernel.prover.polynomial.PPolynomial;
 import org.geogebra.common.kernel.prover.polynomial.PVariable;
@@ -1910,6 +1911,53 @@ public class ProverBotanasMethod {
 			return null;
 		}
 
+		boolean autoNdg = false;
+		SingularWebService singularWS = mover.getConstruction()
+				.getApplication().getSingularWS();
+		if (singularWS == null || (!singularWS.isAvailable())) {
+			autoNdg = k.getApplication().has(Feature.LOCUSEQU_AUTO_NDG);
+		}
+
+		/* Create mover direct dependencies for Pech's idea (see below).
+		 * This set contains all points that should be avoided to
+		 * coincide with the mover.
+		 */
+		HashSet<GeoElementND> moverDirectDependencies = new HashSet<>();
+		if (autoNdg && !implicit) {
+            AlgoPointOnPath apop = (AlgoPointOnPath) mover.getParentAlgorithm();
+			GeoElement i0 = apop.input[0];
+			if (i0 instanceof GeoLine) {
+				GeoLine gl = (GeoLine) i0;
+				// End points of the line path of the mover should be avoided.
+				moverDirectDependencies.add(gl.startPoint);
+				moverDirectDependencies.add(gl.endPoint);
+			} else if (i0 instanceof GeoConic && ((GeoConic) i0).isCircle()) {
+				GeoConic gc = (GeoConic) i0;
+				if (gc.isCircle()) {
+					// Circumpoints of the circular path may be considered to avoid.
+					for (GeoElementND ge : gc.getPointsOnConic()) {
+						if (!ge.isEqual(mover)) {
+						    // Consider only those points that play role in
+                            // building a tangent to the circle.
+                            // TODO: This reads all geos, we need only the related ones:
+                            for (GeoElement ge2 : tracer.getConstruction().getGeoSetLabelOrder()) {
+                                if (ge2 instanceof GeoLine) {
+                                	GeoElement[] input = ge2.getParentAlgorithm().input;
+                                    GeoElement sp = input[0];
+                                    GeoElement ep = input[1];
+                                    if ((sp.equals(ge) && ep.equals(mover)) ||
+                                            (ep.equals(ge) && sp.equals(mover))) {
+                                        moverDirectDependencies.add(ge);
+                                    }
+                                }
+                            }
+						}
+					}
+				}
+			}
+			Log.debug("Direct dependencies of the mover = " + moverDirectDependencies);
+		}
+
 		/* free point support */
 		/*
 		 * Note that sometimes free points can be on a path, but they are
@@ -1928,17 +1976,19 @@ public class ProverBotanasMethod {
 
 			boolean condition = !mover.equals(freePoint);
 
-			if (k.getApplication().has(Feature.LOCUSEQU_AUTO_NDG) && condition) {
-				/* add non-degeneracy condition freePoint != mover, based on an idea by Pavel Pech */
+			if (!implicit) {
+				condition &= !tracer.equals(freePoint);
+			}
+
+			if (autoNdg && condition
+				&& moverDirectDependencies.contains(freePoint)) {
+				/* add non-degeneracy condition for the points to be avoided (Pech's idea) */
 				PPolynomial v = new PPolynomial(new PVariable(k));
 				PPolynomial ndg = PPolynomial.sqrDistance(moverVars[0], moverVars[1], vars[0], vars[1]).multiply(v).
 						subtract(new PPolynomial(1));
 				as.addPolynomial(ndg);
 			}
 
-			if (!implicit) {
-				condition &= !tracer.equals(freePoint);
-			}
 			if (condition) {
 				boolean createX = true;
 				boolean createY = true;

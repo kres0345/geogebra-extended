@@ -167,7 +167,7 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 	protected ArrayList<View> views = new ArrayList<>();
 	private boolean addingPolygon = false;
 	private GeoElement newPolygon;
-	private ArrayList<GeoElement> deleteList;
+	private final ArrayList<GeoElement> deleteList;
 	/** Construction */
 	protected Construction cons;
 	/** Algebra processor */
@@ -268,6 +268,7 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 
 	/** minimum precision */
 	public final static double MIN_PRECISION = 1E-5;
+	/** 1 / (min precision) */
 	public final static double INV_MIN_PRECISION = 1E5;
 
 	/** maximum reasonable precision */
@@ -328,13 +329,13 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 	/** 3D manager */
 	private Manager3DInterface manager3D;
 	private AlgoDispatcher algoDispatcher;
-	private GeoFactory geoFactory;
+	private final GeoFactory geoFactory;
 
 	private GeoVec2D imaginaryUnit;
 
 	private Exercise exercise;
 
-	private Object concurrentModificationLock = new Object();
+	private final Object concurrentModificationLock = new Object();
 
 	private boolean showAnimationButton = true;
 	private boolean loadingMode;
@@ -345,9 +346,8 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 	private boolean arcusFunctionCreatesAngle;
 	private ArrayList<AlgoElement> renameListenerAlgos;
 	private boolean spreadsheetBatchRunning;
-	private boolean isGettingUndo;
 	private StringBuilder stateForModeStarting;
-	private GeoElementSpreadsheet ges = new GeoElementSpreadsheet();
+	private final GeoElementSpreadsheet ges = new GeoElementSpreadsheet();
 	private final ScheduledPreviewFromInputBar scheduledPreviewFromInputBar;
 	private boolean userStopsLoading = false;
 	private AnimationManager animationManager;
@@ -385,7 +385,7 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 	private boolean notifyViewsActive = true;
 
 	// MOB-1304 cache axes numbers
-	private HashMap<StringTemplate, LRUMap<Double, String>> formatterMaps = new HashMap<>();
+	private final HashMap<StringTemplate, LRUMap<Double, String>> formatterMaps = new HashMap<>();
 
 	/**
 	 * @param app
@@ -1431,6 +1431,7 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 		long[] ret = new long[2];
 		ret[1] = precision();
 		ret[0] = Math.round(x * precision());
+
 		long gcd = gcd(ret[0], ret[1]);
 		ret[0] /= gcd;
 		ret[1] /= gcd;
@@ -1523,7 +1524,7 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 			// to get ROUND_HALF_UP like in schools: increase abs(x) slightly
 			// x = x * ROUND_HALF_UP_FACTOR;
 			// We don't do this for large numbers as
-			if (!isLongInteger) {
+			if (!isLongInteger && tpl.getPrecision(nf) > 1E-6) {
 				double abs = Math.abs(x);
 				// increase abs(x) slightly to round up
 				x = x * tpl.getRoundHalfUpFactor(abs, nf, sf, useSF);
@@ -1544,7 +1545,7 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 		// should be rounded to -0.000000000000001 (15 d.p.)
 		// but nf.format(x) returns "-0"
 		double printPrecision = tpl.getPrecision(nf);
-		if (((-printPrecision / 2) <= x) && (x < (printPrecision / 2))) {
+		if (((-printPrecision / 2) < x) && (x < (printPrecision / 2))) {
 			// avoid output of "-0" for eg -0.0004
 			return "0";
 		}
@@ -1595,8 +1596,6 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 			return num;
 		}
 
-		Log.debug("before = " + num);
-
 		if (formatSB == null) {
 			formatSB = new StringBuilder(17);
 		} else {
@@ -1636,8 +1635,6 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 		if (RTL) {
 			formatSB.append(Unicode.RIGHT_TO_LEFT_MARK);
 		}
-
-		Log.debug("after = " + formatSB.toString());
 
 		return formatSB.toString();
 	}
@@ -3143,10 +3140,20 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 		return getViewBoundsForGeo(geo)[3];
 	}
 
+	/**
+	 * @param geo
+	 *            construction element
+	 * @return maximal x-scale of all views displaying geo
+	 */
 	public double getViewsXScale(GeoElementND geo) {
 		return getViewBoundsForGeo(geo)[4];
 	}
 
+	/**
+	 * @param geo
+	 *            construction element
+	 * @return maximal y-scale of all views displaying geo
+	 */
 	public double getViewsYScale(GeoElementND geo) {
 		return getViewBoundsForGeo(geo)[5];
 	}
@@ -4321,18 +4328,17 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 	 * *****************************
 	 */
 
-	public synchronized boolean isGettingUndo() {
-		return isGettingUndo;
-	}
-
-	public synchronized void setIsGettingUndo(boolean flag) {
-		isGettingUndo = flag;
-	}
-
+	/**
+	 * @param flag
+	 *            whether undo is active
+	 */
 	public void setUndoActive(boolean flag) {
 		undoActive = flag;
 	}
 
+	/**
+	 * @return whether undo is active
+	 */
 	public boolean isUndoActive() {
 		return undoActive;
 	}
@@ -4746,23 +4752,18 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 
 		// angle unit
 		sb.append("\t<angleUnit val=\"");
-		if (app.has(Feature.MOB_ANGLE_DEGREES_MINUTES_SECONDS)) {
-		    switch (getAngleUnit()) {
-                case Kernel.ANGLE_RADIANT:
-                    sb.append("radiant");
-                    break;
-                case Kernel.ANGLE_DEGREES_MINUTES_SECONDS:
-                    sb.append("degreesMinutesSeconds");
-                    break;
-                case Kernel.ANGLE_DEGREE:
-                default:
-                    sb.append("degree");
-                    break;
-            }
-        } else {
-            sb.append(
-                    getAngleUnit() == Kernel.ANGLE_RADIANT ? "radiant" : "degree");
-        }
+		switch (getAngleUnit()) {
+			case Kernel.ANGLE_RADIANT:
+				sb.append("radiant");
+				break;
+			case Kernel.ANGLE_DEGREES_MINUTES_SECONDS:
+				sb.append("degreesMinutesSeconds");
+				break;
+			case Kernel.ANGLE_DEGREE:
+			default:
+				sb.append("degree");
+				break;
+		}
 		sb.append("\"/>\n");
 
 		// algebra style
@@ -4994,6 +4995,10 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 
 	/**
 	 * Converts a NumberValue object to an ExpressionNode object.
+	 * 
+	 * @param geo
+	 *            construction element
+	 * @return expression
 	 */
 	public ExpressionNode convertNumberValueToExpressionNode(GeoElement geo) {
 		AlgoElement algo = geo.getParentAlgorithm();
@@ -5042,6 +5047,14 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 
 	/**
 	 * tangent to Curve f in point P: (b'(t), -a'(t), a'(t)*b(t)-a(t)*b'(t))
+	 * 
+	 * @param label
+	 *            output label
+	 * @param P
+	 *            point
+	 * @param f
+	 *            curve
+	 * @return tangent
 	 */
 	final public GeoLine tangent(String label, GeoPointND P,
 			GeoCurveCartesian f) {
@@ -5049,32 +5062,15 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 	}
 
 	/**
-	 * Numeric search for extremum of function f in interval [left,right] Ulven
-	 * 2011-2-5
-	 * 
-	 * final public GeoPoint[] Extremum(String label,GeoFunction f,NumberValue
-	 * left,NumberValue right) { AlgoExtremumNumerical algo=new
-	 * AlgoExtremumNumerical(cons,label,f,left,right); GeoPoint
-	 * g=algo.getNumericalExtremum(); //All variants return array... GeoPoint[]
-	 * result=new GeoPoint[1]; result[0]=g; return result;
-	 * }//Extremum(label,geofunction,numbervalue,numbervalue)
+	 * @return spreadsheet coord handler
 	 */
-
-	/***********************************
-	 * PACKAGE STUFF
-	 ***********************************/
-
-	// temp for buildEquation
-
-	/*
-	 * final private String formatAbs(double x) { if (isZero(x)) return "0";
-	 * else return formatNF(Math.abs(x)); }
-	 */
-
 	public GeoElementSpreadsheet getGeoElementSpreadsheet() {
 		return ges;
 	}
 
+	/**
+	 * @return new kernel for a macro
+	 */
 	public MacroKernel newMacroKernel() {
 		return new MacroKernel(this);
 	}
@@ -5292,6 +5288,11 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 
 	/**
 	 * used for DrawEquationWeb and DrawText in GeoGebraWeb
+	 * 
+	 * @param value
+	 *            whether another update is needed
+	 * @param geo
+	 *            source geo
 	 */
 	public void setUpdateAgain(boolean value, GeoElement geo) {
 		updateEVAgain = value;
@@ -5302,6 +5303,8 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 
 	/**
 	 * used for DrawEquationWeb and DrawText in GeoGebraWeb
+	 * 
+	 * @return whether updateAgain flag was set
 	 */
 	public boolean getUpdateAgain() {
 		return updateEVAgain && app.isHTML5Applet();
@@ -5309,6 +5312,9 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 
 	/**
 	 * used for DrawEquationWeb and DrawText in GeoGebraWeb
+	 * 
+	 * @param value
+	 *            whether bounding box update is needed
 	 */
 	public void setForceUpdatingBoundingBox(boolean value) {
 		forceUpdatingBoundingBox = value;
@@ -5316,6 +5322,8 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 
 	/**
 	 * used for DrawEquationWeb and DrawText in GeoGebraWeb
+	 * 
+	 * @return whether bounding box update is needed
 	 */
 	public boolean getForceUpdatingBoundingBox() {
 		return forceUpdatingBoundingBox && app.isHTML5Applet();
@@ -5474,6 +5482,9 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 		return null;
 	}
 
+	/**
+	 * @return number of views with xmax
+	 */
 	public int getXmaxLength() {
 		return xmax.length;
 	}
@@ -5481,8 +5492,12 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 	/**
 	 * Creates a new GeoElement object for the given type string.
 	 * 
+	 * @param cons1
+	 *            construction
+	 * 
 	 * @param type
 	 *            String as produced by GeoElement.getXMLtypeString()
+	 * @return new element
 	 */
 	public GeoElement createGeoElement(Construction cons1, String type) {
 		return geoFactory.createGeoElement(cons1, type);
@@ -5492,16 +5507,20 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 		return geoFactory.newImplicitPoly(cons2);
 	}
 
+	/**
+	 * @return factory for GeoElements
+	 */
 	public GeoFactory getGeoFactory() {
 		return geoFactory;
 	}
 
 	/**
 	 * try to create/update preview for input typed
+	 * 
+	 * @return preview update scheduler
 	 */
 	public ScheduledPreviewFromInputBar getInputPreviewHelper() {
 		return scheduledPreviewFromInputBar;
-
 	}
 
 	/**
@@ -5526,6 +5545,11 @@ public class Kernel implements SpecialPointsListener, ConstructionStepper {
 		}
 	}
 
+	/**
+	 * @param cons1
+	 *            construction
+	 * @return construction companion
+	 */
 	public ConstructionCompanion createConstructionCompanion(
 			Construction cons1) {
 		return new ConstructionCompanion(cons1);

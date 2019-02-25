@@ -32,6 +32,7 @@ public final class ScientificDockPanelDecorator implements DockPanelDecorator {
 		stylePanel(panel);
 		buildHeaderAndAddToPanel(panel);
 		panel.add(algebraScrollPanel);
+		algebraScrollPanel.addStyleName("algebraPanelScientific");
 		ScientificScrollHandler scrollController = new ScientificScrollHandler(
 				app, panel);
 		panel.addDomHandler(scrollController, MouseDownEvent.getType());
@@ -52,9 +53,10 @@ public final class ScientificDockPanelDecorator implements DockPanelDecorator {
 
 	@Override
 	public void onResize() {
-		boolean smallScreen = AppW.smallScreen(app.getArticleElement());
+		boolean smallScreen = app.getAppletFrame()
+				.shouldHaveSmallScreenLayout();
 		header.setVisible(smallScreen);
 		Dom.toggleClass(algebraScrollPanel, "algebraPanelScientificWithHeader",
-				"algebraPanelScientificNohHeader", smallScreen);
+				"algebraPanelScientificNoHeader", smallScreen);
 	}
 }

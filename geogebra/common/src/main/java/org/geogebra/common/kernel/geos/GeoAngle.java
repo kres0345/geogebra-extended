@@ -193,8 +193,8 @@ public class GeoAngle extends GeoNumeric implements AngleProperties {
 
 	@Override
 	public void setAllVisualPropertiesExceptEuclidianVisible(GeoElement geo,
-			boolean keepAdvanced) {
-		super.setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced);
+			boolean keepAdvanced, boolean setAuxiliaryProperty) {
+		super.setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced, setAuxiliaryProperty);
 
 		if (geo.isGeoAngle()) {
 			setAngleStyle(((GeoAngle) geo).getAngleStyle());
@@ -270,8 +270,8 @@ public class GeoAngle extends GeoNumeric implements AngleProperties {
 	}
 
 	@Override
-	public void setVisualStyle(GeoElement geo) {
-		super.setVisualStyle(geo);
+	public void setVisualStyle(GeoElement geo, boolean setAuxiliaryProperty) {
+		super.setVisualStyle(geo, setAuxiliaryProperty);
 
 		if (geo.isGeoAngle()) {
 			GeoAngle ang = (GeoAngle) geo;

@@ -66,6 +66,7 @@ import org.geogebra.common.kernel.geos.GeoNumberValue;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.kernel.geos.GeoText;
+import org.geogebra.common.kernel.geos.XMLBuilder;
 import org.geogebra.common.kernel.kernelND.GeoDirectionND;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.kernelND.GeoLineND;
@@ -3499,15 +3500,19 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	@Override
 	public Previewable createPreviewParallelLine(
 			ArrayList<GeoPointND> selectedPoints,
-			ArrayList<GeoLineND> selectedLines) {
-		return new DrawLine(this, selectedPoints, selectedLines, true);
+			ArrayList<GeoLineND> selectedLines,
+			ArrayList<GeoFunction> selectedFunctions) {
+		return new DrawLine(this, selectedPoints, selectedLines,
+				selectedFunctions, true);
 	}
 
 	@Override
 	public Previewable createPreviewPerpendicularLine(
 			ArrayList<GeoPointND> selectedPoints,
-			ArrayList<GeoLineND> selectedLines) {
-		return new DrawLine(this, selectedPoints, selectedLines, false);
+			ArrayList<GeoLineND> selectedLines,
+			ArrayList<GeoFunction> selectedFunctions) {
+		return new DrawLine(this, selectedPoints, selectedLines,
+				selectedFunctions, false);
 	}
 
 	/**
@@ -3817,7 +3822,8 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	 *            {@link GGraphics2D}
 	 */
 	public void paintMOWBackround(GGraphics2D g2) {
-		if (!(app.has(Feature.MOW_BACKGROUND) && isShowBackground() && settings != null)) {
+		if (!(app.isWhiteboardActive() && isShowBackground()
+				&& settings != null)) {
 			return;
 		}
 
@@ -4885,31 +4891,19 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		sbxml.append("\"/>\n");
 
 		// background color
-		sbxml.append("\t<bgColor r=\"");
-		sbxml.append(getBackgroundCommon().getRed());
-		sbxml.append("\" g=\"");
-		sbxml.append(getBackgroundCommon().getGreen());
-		sbxml.append("\" b=\"");
-		sbxml.append(getBackgroundCommon().getBlue());
-		sbxml.append("\"/>\n");
+		sbxml.append("\t<bgColor");
+		XMLBuilder.appendRGB(sbxml, getBackgroundCommon());
+		sbxml.append("/>\n");
 
 		// axes color
-		sbxml.append("\t<axesColor r=\"");
-		sbxml.append(axesColor.getRed());
-		sbxml.append("\" g=\"");
-		sbxml.append(axesColor.getGreen());
-		sbxml.append("\" b=\"");
-		sbxml.append(axesColor.getBlue());
-		sbxml.append("\"/>\n");
+		sbxml.append("\t<axesColor");
+		XMLBuilder.appendRGB(sbxml, axesColor);
+		sbxml.append("/>\n");
 
 		// grid color
-		sbxml.append("\t<gridColor r=\"");
-		sbxml.append(gridColor.getRed());
-		sbxml.append("\" g=\"");
-		sbxml.append(gridColor.getGreen());
-		sbxml.append("\" b=\"");
-		sbxml.append(gridColor.getBlue());
-		sbxml.append("\"/>\n");
+		sbxml.append("\t<gridColor");
+		XMLBuilder.appendRGB(sbxml, gridColor);
+		sbxml.append("/>\n");
 
 		int rulerType = settings.getBackgroundType().value();
 		if (app.isWhiteboardActive()) {
@@ -5757,19 +5751,11 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		// init grid's line type
 		setGridLineStyle(EuclidianStyleConstants.LINE_TYPE_DASHED_SHORT);
 		setAxesLineStyle(EuclidianStyleConstants.AXES_LINE_TYPE_ARROW);
-		setAxesColor(GColor.BLACK); // Michael Borcherds
-									// 2008-01-26 was
-									// darkgray
+		setAxesColor(GColor.BLACK);
 		setGridColor(GColor.LIGHT_GRAY);
 		setBackground(GColor.WHITE);
 
-		// showAxes = true;
-		// showGrid = false;
 		pointCapturingMode = EuclidianStyleConstants.POINT_CAPTURING_AUTOMATIC;
-
-		// added by Loic BEGIN
-		// app.rightAngleStyle = EuclidianView.RIGHT_ANGLE_STYLE_SQUARE;
-		// END
 
 		showAxesNumbers[0] = true;
 		showAxesNumbers[1] = true;
@@ -6623,6 +6609,10 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		}
 	}
 
+	/**
+	 * 
+	 * @return true if AR is enabled
+	 */
     public boolean isAREnabled() {
         return false;
     }
@@ -6633,4 +6623,12 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	public ScreenReaderAdapter getScreenReader() {
 		return ScreenReaderSilent.INSTANCE;
 	}
+
+    /**
+     * reset settings
+     */
+    public void resetSettings() {
+        // settings should have been reset before
+        settingsChanged(getSettings());
+    }
 }

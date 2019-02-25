@@ -93,7 +93,7 @@ public class EuclidianController3DW extends EuclidianController3D implements
 
 	/**
 	 * Creates new controller
-	 * 
+	 *
 	 * @param kernel
 	 *            kernel
 	 */

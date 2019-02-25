@@ -143,11 +143,12 @@ public abstract class Renderer implements RendererInterface {
 	public boolean waitForSetStencilLines = false;
 	private Runnable export3DRunnable;
 
-	//ARCore
+	// AR
 	private CoordMatrix4x4 arCameraView;
 	private CoordMatrix4x4 arModelMatrix;
 	private CoordMatrix4x4 arCameraPerspective;
-	private float arScaleFactor;
+	protected float arScaleFactor;
+    private boolean arShouldStart = false;
 
 	/**
 	 * background type (only for AR)
@@ -182,12 +183,27 @@ public abstract class Renderer implements RendererInterface {
 		return new Textures(this);
 	}
 
+    /**
+     * Start AR session
+     */
+	public void setARShouldStart() {
+        arShouldStart = true;
+    }
+
 	/**
-	 * Restart ARCore session.
+	 * start AR if needed
 	 */
-	public void setARShouldRestart() {
-		// Override in RendererWithImplA.
-	}
+    public void mayStartAR() {
+        if (arShouldStart) {
+            doStartAR();
+            arShouldStart = false;
+        }
+    }
+
+	/**
+	 * do start AR
+	 */
+	abstract protected void doStartAR();
 
 	/**
      * @param ret Hitting Direction from AR. Override in RendererWithImplA
@@ -203,6 +219,25 @@ public abstract class Renderer implements RendererInterface {
 	public void getHittingOriginAR(Coords ret) {
 		// nothing to do here
 	}
+
+    /**
+     * @param ret Hitting floor from AR. Override in RendererWithImplA
+     *
+     * @return true if there is an hitting on floor
+     */
+    public boolean getHittingFloorAR(Coords ret) {
+        // nothing to do here
+        return false;
+    }
+
+    /**
+     *
+     * @return current hitting distance (in AR)
+     */
+    public double getHittingDistanceAR() {
+        // nothing to do here
+        return 0;
+    }
 
 	/**
 	 * dummy renderer (when no GL available)
@@ -260,6 +295,16 @@ public abstract class Renderer implements RendererInterface {
 	}
 
 	/**
+	 * may update the GL clear color
+	 */
+	public void mayUpdateClearColor() {
+		if (waitForUpdateClearColor) {
+			updateClearColor();
+			waitForUpdateClearColor = false;
+		}
+	}
+
+	/**
 	 * draw the scene
 	 */
 	public void drawScene() {
@@ -301,10 +346,7 @@ public abstract class Renderer implements RendererInterface {
 			disableStencilLines();
 		}
 
-		if (waitForUpdateClearColor) {
-			updateClearColor();
-			waitForUpdateClearColor = false;
-		}
+		mayUpdateClearColor();
 
 		// init rendering values
 		initRenderingValues();
@@ -954,8 +996,10 @@ public abstract class Renderer implements RendererInterface {
 
 	/**
 	 * draw view cursor
+	 * 
+	 * WARNING: needs to be protected for iOS
 	 */
-	private void drawCursor() {
+	protected void drawCursor() {
 		if (enableClipPlanes) {
 			disableClipPlanes();
 		}
@@ -1082,7 +1126,7 @@ public abstract class Renderer implements RendererInterface {
 	 * @param cursorType
 	 *            cursor type
 	 */
-	final public void drawCursor(int cursorType) {
+	public void drawCursor(int cursorType) {
 
 		if (!PlotterCursor.isTypeAlready(cursorType)) {
 			disableLighting();
@@ -1106,7 +1150,7 @@ public abstract class Renderer implements RendererInterface {
 	 *            matrix for target circle
 	 *
 	 */
-	final public void drawTarget(CoordMatrix4x4 dotMatrix,
+	public void drawTarget(CoordMatrix4x4 dotMatrix,
 			CoordMatrix4x4 circleMatrix) {
 		disableLighting();
 		disableDepthMask();
@@ -1133,7 +1177,7 @@ public abstract class Renderer implements RendererInterface {
 	 * @param out
 	 *            out
 	 */
-	final public void drawCompletingCursor(double value, boolean out) {
+	public void drawCompletingCursor(double value, boolean out) {
 
 		initMatrix();
 		setLineWidth(PlotterCompletingCursor.WIDTH);
@@ -1148,7 +1192,7 @@ public abstract class Renderer implements RendererInterface {
 	/**
 	 * draws a view button
 	 */
-	public void drawViewInFrontOf() {
+	final public void drawViewInFrontOf() {
 		// Application.debug("ici");
 		initMatrix();
 		disableBlending();
@@ -1160,7 +1204,7 @@ public abstract class Renderer implements RendererInterface {
 	/**
 	 * draws mouse cursor
 	 */
-	final public void drawMouseCursor() {
+	public void drawMouseCursor() {
 
 		initMatrixForFaceToScreen();
 		disableBlending();
@@ -2005,9 +2049,9 @@ public abstract class Renderer implements RendererInterface {
 	}
 
 	/**
-	 * @return background for AR, null otherwise
+	 * @return background for AR, opaque otherwise
 	 */
 	public BackgroundStyle getBackgroundStyle() {
-		return null;
+		return BackgroundStyle.OPAQUE;
 	}
 }

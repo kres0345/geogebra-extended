@@ -19,11 +19,13 @@ import org.geogebra.common.awt.GPoint;
 import org.geogebra.common.euclidian.EuclidianController;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.gui.InputHandler;
+import org.geogebra.common.gui.dialog.Export3dDialogInterface;
 import org.geogebra.common.gui.dialog.InputDialog;
 import org.geogebra.common.gui.dialog.TextInputDialog;
 import org.geogebra.common.gui.dialog.handler.RedefineInputHandler;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.Kernel;
+import org.geogebra.common.kernel.View;
 import org.geogebra.common.kernel.geos.GeoBoolean;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoFunction;
@@ -31,6 +33,7 @@ import org.geogebra.common.kernel.geos.GeoNumberValue;
 import org.geogebra.common.kernel.geos.GeoPolygon;
 import org.geogebra.common.kernel.geos.GeoText;
 import org.geogebra.common.kernel.geos.Transformable;
+import org.geogebra.common.kernel.kernelND.GeoCoordSys2D;
 import org.geogebra.common.kernel.kernelND.GeoDirectionND;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.kernelND.GeoLineND;
@@ -169,8 +172,42 @@ public abstract class DialogManager {
 			GeoPolygon[] selectedPolygons, GeoPointND[] selectedPoints,
 			GeoElement[] selGeos, EuclidianController ec);
 
-	public abstract void showNumberInputDialogRegularPolygon(String menu,
-			EuclidianController ec, GeoPointND geoPoint1, GeoPointND geoPoint2);
+	/**
+	 * Regular polygon dialog for 2D
+	 * 
+	 * @param menu
+	 *            title
+	 * @param ec
+	 *            controller
+	 * @param geoPoint1
+	 *            first vertex
+	 * @param geoPoint2
+	 *            second vertex
+	 */
+	final public void showNumberInputDialogRegularPolygon(String menu,
+			EuclidianController ec, GeoPointND geoPoint1,
+			GeoPointND geoPoint2) {
+		showNumberInputDialogRegularPolygon(menu, ec, geoPoint1, geoPoint2,
+				null);
+	}
+
+	/**
+	 * Regular polygon dialog for 3D
+	 * 
+	 * @param title
+	 *            title
+	 * @param ec
+	 *            controller
+	 * @param geoPoint1
+	 *            first vertex
+	 * @param geoPoint2
+	 *            second vertex
+	 * @param direction
+	 *            direction
+	 */
+	abstract public void showNumberInputDialogRegularPolygon(String title,
+			EuclidianController ec, GeoPointND geoPoint1, GeoPointND geoPoint2,
+			GeoCoordSys2D direction);
 
 	public abstract void showBooleanCheckboxCreationDialog(GPoint corner,
 			GeoBoolean bool);
@@ -364,6 +401,8 @@ public abstract class DialogManager {
 	 *            first vertex
 	 * @param geoPoint2
 	 *            second vertex
+	 * @param direction
+	 *            direction
 	 * @param handler
 	 *            error handler
 	 * @param cb
@@ -372,7 +411,8 @@ public abstract class DialogManager {
 	public static void makeRegularPolygon(final App app,
 			final EuclidianController ec, String inputString,
 			final GeoPointND geoPoint1, final GeoPointND geoPoint2,
-			final ErrorHandler handler, final AsyncOperation<Boolean> cb) {
+			final GeoCoordSys2D direction, final ErrorHandler handler,
+			final AsyncOperation<Boolean> cb) {
 		if (inputString == null || "".equals(inputString)) {
 			if (cb != null) {
 				cb.callback(false);
@@ -406,7 +446,7 @@ public abstract class DialogManager {
 				}
 
 				GeoElement[] geos = ec.getCompanion().regularPolygon(geoPoint1,
-						geoPoint2, (GeoNumberValue) result[0]);
+						geoPoint2, (GeoNumberValue) result[0], direction);
 				GeoElement[] onlypoly = { null };
 				if (geos != null) {
 					onlypoly[0] = geos[0];
@@ -974,5 +1014,16 @@ public abstract class DialogManager {
 	 */
 	public void openTableViewDialog(GeoElement geo) {
 		// only needed in web
+	}
+
+	/**
+	 * @param view
+	 *            exported view
+	 * @return dialog for export 3D settings
+	 * 
+	 */
+	public Export3dDialogInterface getExport3dDialog(View view) {
+		// implemented only in web
+		return null;
 	}
 }

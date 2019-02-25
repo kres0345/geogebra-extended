@@ -199,6 +199,12 @@ public interface MaterialDesignResources extends ClientBundle {
 
 	// plus menu icon resources
 
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/av/wrong_input.svg")
+	SVGResource wrong_input();
+
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/av/baseline-clear-24px.svg")
+	SVGResource clear();
+
 	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/av/plusMenu/ic_add_black_24px.svg")
 	SVGResource add_black();
 
@@ -346,6 +352,9 @@ public interface MaterialDesignResources extends ClientBundle {
 	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/burgerMenu/ic_mode_edit_black_24px.svg")
 	SVGResource edit_black();
 
+	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/burgerMenu/scientific.svg")
+	SVGResource scientific();
+
 	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/burgerMenu/graphing.svg")
 	SVGResource graphing();
 
@@ -415,8 +424,8 @@ public interface MaterialDesignResources extends ClientBundle {
 	@Source("org/geogebra/common/icons/svg/web/matDesignIcons/burgerMenu/book-logo.svg")
 	SVGResource manual_black();
 
-	@Source("org/geogebra/common/icons/png/matDesignIcons/burgerMenu/tools_black.png")
-	ImageResource tools_black();
+	@Source("org/geogebra/common/icons/png/matDesignIcons/burgerMenu/tools_black_fake.svg")
+	SVGResource tools_black();
 
 	@Source("org/geogebra/common/icons/png/matDesignIcons/burgerMenu/tools_customize_black.png")
 	ImageResource tools_customize_black();

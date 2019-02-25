@@ -3,7 +3,6 @@ package org.geogebra.web.full.gui.toolbarpanel;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.event.PointerEventType;
 import org.geogebra.common.io.layout.PerspectiveDecoder;
-import org.geogebra.common.main.Feature;
 import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.full.gui.exam.ExamLogAndExitDialog;
@@ -37,7 +36,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.himamis.retex.editor.share.util.GWTKeycodes;
 
@@ -250,7 +248,7 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 		}
 		toolbarPanel.getFrame().showKeyBoard(false, null, true);
 	}
-	
+
 	private void onClose() {
 		setAnimating(true);
 		removeOrientationStyles();
@@ -298,7 +296,7 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 		if (app.isMenuShowing()) {
 			app.toggleMenu();
 		}
-		toolbarPanel.app.getGuiManager().undo();
+		app.getGuiManager().undo();
 	}
 
 	/**
@@ -310,7 +308,7 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 		}
 
 		app.getAccessibilityManager().setAnchor(btnMenu);
-		toolbarPanel.app.getGuiManager().redo();
+		app.getGuiManager().redo();
 		app.getAccessibilityManager().cancelAnchor();
 	}
 
@@ -405,7 +403,7 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 				onClosePressed();
 			}
 		});
-		
+
 		btnClose.addKeyDownHandler(this);
 
 		rightSide = new FlowPanel();
@@ -482,7 +480,7 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 		if (btnMenu == null) {
 			return;
 		}
-		boolean external = needsHeader() && RootPanel.get("headerID") != null;
+		boolean external = needsHeader() && GlobalHeader.isInDOM();
 		btnMenu.setExternal(external);
 		if (external) {
 			btnMenu.addToGlobalHeader();
@@ -493,8 +491,7 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 	}
 
 	private boolean needsHeader() {
-		return app.has(Feature.MAT_DESIGN_HEADER)
-				&& !AppW.smallScreen(app.getArticleElement());
+		return !app.getAppletFrame().shouldHaveSmallScreenLayout();
 	}
 
 	private void addShareButton() {
@@ -522,7 +519,7 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 	 * update position of undo+redo panel
 	 */
 	public void updateUndoRedoPosition() {
-		final EuclidianView ev = toolbarPanel.app.getActiveEuclidianView();
+		final EuclidianView ev = app.getActiveEuclidianView();
 		if (ev != null && undoRedoPanel != null) {
 			double evTop = (ev.getAbsoluteTop() - (int) app.getAbsTop())
 					/ app.getArticleElement().getScaleY();
@@ -588,9 +585,9 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 			}
 		}
 		Dom.toggleClass(btnUndo, "buttonActive", "buttonInactive",
-				toolbarPanel.app.getKernel().undoPossible());
+				app.getKernel().undoPossible());
 
-		if (toolbarPanel.app.getKernel().redoPossible()) {
+		if (app.getKernel().redoPossible()) {
 			btnRedo.removeStyleName("hideButton");
 		} else {
 			if (!btnRedo.getElement().hasClassName("hideButton")) {
@@ -643,7 +640,7 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 		btnRedo.addKeyDownHandler(this);
 		panel.add(btnRedo);
 	}
-	
+
 	/**
 	 * @return - true if toolbar is open
 	 */
@@ -658,7 +655,7 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 	public void setOpen(boolean value) {
 		this.open = value;
 		updateDraggerStyle(value);
-		
+
 		if (app.isPortrait()) {
 			toolbarPanel.updateHeight();
 		} else {
@@ -801,7 +798,7 @@ class Header extends FlowPanel implements KeyDownHandler, TabHandler {
 
 	/**
 	 * Shrinks header width by dx.
-	 * 
+	 *
 	 * @param dx
 	 *            the step of shinking.
 	 */

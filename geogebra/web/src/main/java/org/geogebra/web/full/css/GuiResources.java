@@ -248,15 +248,6 @@ public interface GuiResources extends ClientBundle {
 	ImageResource stylebar_more();
 
 	// ALGEBRA VIEW SPECIAL EDITING
-	@Source("org/geogebra/common/icons/png/web/stylingbar/algebra_delete.png")
-	ImageResource algebra_delete();
-
-	@Source("org/geogebra/common/icons/png/web/stylingbar/algebra_delete_dark.png")
-	ImageResource algebra_delete_dark();
-
-	@Source("org/geogebra/common/icons/png/web/stylingbar/algebra_delete_hover.png")
-	ImageResource algebra_delete_hover();
-
 	@Source("org/geogebra/common/icons/png/web/stylingbar/algebra_matrix_size.png")
 	ImageResource algebra_matrix_size();
 
@@ -423,4 +414,7 @@ public interface GuiResources extends ClientBundle {
 
 	@Source("org/geogebra/web/resources/scss/scientific-layout.scss")
 	SassResource scientificLayoutScss();
+
+	@Source("org/geogebra/web/resources/scss/header.scss")
+	SassResource headerScss();
 }

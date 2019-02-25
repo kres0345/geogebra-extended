@@ -48,6 +48,7 @@ import org.geogebra.common.kernel.arithmetic.ValidExpression;
 import org.geogebra.common.kernel.arithmetic.ValueType;
 import org.geogebra.common.kernel.commands.EvalInfo;
 import org.geogebra.common.kernel.geos.GeoAngle.AngleStyle;
+import org.geogebra.common.kernel.geos.properties.FillType;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.kernelND.GeoQuadricND;
@@ -90,8 +91,7 @@ public class GeoList extends GeoElement
 	 */
 	private boolean showAllProperties = false;
 
-	private ArrayList<GeoElement> colorFunctionListener; // Michael Borcherds
-	// 2008-04-02
+	private ArrayList<GeoElement> colorFunctionListener;
 	private String typeStringForXML = null;
 	private final StringBuilder sbBuildValueString = new StringBuilder(50);
 
@@ -435,8 +435,9 @@ public class GeoList extends GeoElement
 	}
 
 	@Override
-	public void setVisualStyle(final GeoElement style) {
-		super.setVisualStyle(style);
+	public void setVisualStyle(final GeoElement style,
+			boolean setAuxiliaryProperty) {
+		super.setVisualStyle(style, setAuxiliaryProperty);
 
 		// set point style
 		if (style instanceof PointProperties) {
@@ -452,7 +453,7 @@ public class GeoList extends GeoElement
 		for (int i = 0; i < size; i++) {
 			final GeoElement geo = elements.get(i);
 			if (!geo.isLabelSet()) {
-				geo.setVisualStyle(style);
+				geo.setVisualStyle(style, setAuxiliaryProperty);
 			}
 		}
 	}
@@ -1645,8 +1646,6 @@ public class GeoList extends GeoElement
 		super.getXMLtags(sb);
 
 		getLineStyleXML(sb);
-		getScriptTags(sb);
-
 	}
 
 	/**

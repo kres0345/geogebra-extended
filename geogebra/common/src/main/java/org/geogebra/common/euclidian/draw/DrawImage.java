@@ -472,11 +472,8 @@ public final class DrawImage extends Drawable {
 		if (!isVisible || geoImage.isInBackground()) {
 			return false;
 		}
-
-		if (view.getApplication().has(Feature.MOW_SELECTION_TOOL)) {
-			return rect.intersects(getBoundingBox().getRectangle());
-		}
-		return rect.intersects(classicBoundingBox);
+		return rect.intersects(view.getApplication().isWhiteboardActive()
+				? getBoundingBox().getRectangle() : classicBoundingBox);
 	}
 
 	@Override
@@ -484,11 +481,8 @@ public final class DrawImage extends Drawable {
 		if (!isVisible || geoImage.isInBackground()) {
 			return false;
 		}
-
-		if (view.getApplication().has(Feature.MOW_SELECTION_TOOL)) {
-			return rect.contains(getBoundingBox().getRectangle());
-		}
-		return rect.contains(classicBoundingBox);
+		return rect.contains(view.getApplication().isWhiteboardActive()
+				? getBoundingBox().getRectangle() : classicBoundingBox);
 	}
 
 	/**
@@ -518,10 +512,7 @@ public final class DrawImage extends Drawable {
 	@Override
 	public BoundingBox getBoundingBox() {
 		if (boundingBox == null) {
-			boundingBox = new BoundingBox(
-					view.getApplication().has(Feature.MOW_CROP_IMAGE) ? true
-							: false,
-					false);
+			boundingBox = new BoundingBox(true, false);
 		}
 		return boundingBox;
 	}
@@ -541,15 +532,13 @@ public final class DrawImage extends Drawable {
 	@Override
 	public void updateByBoundingBoxResize(GPoint2D p,
 			EuclidianBoundingBoxHandler handler) {
-		if (!(geo.getKernel().getApplication()
-				.has(Feature.MOW_IMAGE_BOUNDING_BOX) && geo.getKernel().getApplication()
-						.has(Feature.MOW_CROP_IMAGE))
+		if (!(geo.getKernel().getApplication().isWhiteboardActive())
 				|| (absoluteLocation && !geo.getKernel().getApplication()
 						.has(Feature.MOW_PIN_IMAGE))) {
 			return;
 		}
 		if (boundingBox.isCropBox()) {
-			if (!geo.getKernel().getApplication().has(Feature.MOW_CROP_IMAGE)) {
+			if (!geo.getKernel().getApplication().isWhiteboardActive()) {
 				return;
 			}
 			geoImage.setCropped(true);
@@ -558,8 +547,7 @@ public final class DrawImage extends Drawable {
 			}
 			updateImageCrop(p, handler);
 		} else {
-			if (!geo.getKernel().getApplication()
-					.has(Feature.MOW_IMAGE_BOUNDING_BOX)) {
+			if (!geo.getKernel().getApplication().isWhiteboardActive()) {
 				return;
 			}
 			if (Double.isNaN(originalRatio)) {

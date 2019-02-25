@@ -8,7 +8,6 @@ import org.geogebra.common.geogebra3D.euclidian3D.EuclidianStyleBarStatic3D;
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.main.App;
-import org.geogebra.common.main.Feature;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.main.OptionType;
 import org.geogebra.common.main.settings.EuclidianSettings3D;
@@ -65,7 +64,8 @@ public class EuclidianStyleBar3DW extends EuclidianStyleBarW {
 
 		super.createDefaultMap();
 
-		EuclidianStyleBarStatic3D.addToDefaultMap(defaultGeoMap);
+		EuclidianStyleBarStatic3D.addToDefaultMap(defaultGeoMap,
+				ev.getApplication());
 
 	}
 
@@ -259,7 +259,7 @@ public class EuclidianStyleBar3DW extends EuclidianStyleBarW {
 	protected MyToggleButtonW[] newToggleBtnList() {
 		MyToggleButtonW[] superList = super.newToggleBtnList();
 		
-		if (!app.has(Feature.MOW_CLEAR_VIEW_STYLEBAR)) {
+		if (!app.isUnbundledOrWhiteboard()) {
 			return superList;
 		}
 

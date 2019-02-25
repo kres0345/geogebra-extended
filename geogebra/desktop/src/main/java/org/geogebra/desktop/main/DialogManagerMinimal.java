@@ -23,6 +23,7 @@ import org.geogebra.common.kernel.geos.GeoNumberValue;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoPolygon;
 import org.geogebra.common.kernel.geos.GeoText;
+import org.geogebra.common.kernel.kernelND.GeoCoordSys2D;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.kernelND.GeoSegmentND;
 import org.geogebra.common.main.App;
@@ -196,11 +197,12 @@ public class DialogManagerMinimal extends DialogManager {
 
 	@Override
 	public void showNumberInputDialogRegularPolygon(String menu,
-			EuclidianController ec, GeoPointND geoPoint1,
-			GeoPointND geoPoint2) {
+			EuclidianController ec, GeoPointND geoPoint1, GeoPointND geoPoint2,
+			GeoCoordSys2D direction) {
 		String inputString = prompt(menu + " " + loc.getMenu("Points"), "4");
 
 		makeRegularPolygon(app, ec, inputString, geoPoint1, geoPoint2,
+				direction,
 				app.getErrorHandler(), new AsyncOperation<Boolean>() {
 
 					@Override

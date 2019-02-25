@@ -19,7 +19,6 @@ import java.util.TreeSet;
 import org.geogebra.common.factories.UtilFactory;
 import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.RelationNumerical;
-import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.algos.AlgoElement;
 import org.geogebra.common.kernel.cas.UsesCAS;
 import org.geogebra.common.kernel.commands.Commands;
@@ -161,9 +160,9 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 		p.setReturnExtraNDGs(true);
 
 		// Adding benchmarking:
-		double startTime = cons.getApplication().getMillisecondTime();
+		double startTime = UtilFactory.getPrototype().getMillisecondTime();
 		p.compute(); // the computation of the proof
-		int elapsedTime = (int) (cons.getApplication().getMillisecondTime()
+		int elapsedTime = (int) (UtilFactory.getPrototype().getMillisecondTime()
 				- startTime);
 		/*
 		 * Don't remove this. It is needed for automated testing. (String match
@@ -330,12 +329,6 @@ public class AlgoProveDetails extends AlgoElement implements UsesCAS {
 
 	private static StringBuilder sb(String content) {
 		return content == null ? null : new StringBuilder(content);
-	}
-
-	@Override
-	// Not sure how to do this hack normally.
-	final public String getDefinitionName(StringTemplate tpl) {
-		return "ProveDetails";
 	}
 
 	@Override

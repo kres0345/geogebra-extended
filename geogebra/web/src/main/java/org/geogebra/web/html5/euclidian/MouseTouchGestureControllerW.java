@@ -9,6 +9,7 @@ import org.geogebra.common.euclidian.event.AbstractEvent;
 import org.geogebra.common.euclidian.event.PointerEventType;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoList;
+import org.geogebra.common.main.Feature;
 import org.geogebra.common.util.debug.GeoGebraProfiler;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.web.html5.Browser;
@@ -50,7 +51,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 	private PointerEvent waitingMouseMove = null;
 
 	private EnvironmentStyleW style = new EnvironmentStyleW();
-
+	private boolean cssZoom = false;
 	/**
 	 * Threshold for the selection rectangle distance squared (10 pixel circle)
 	 */
@@ -92,14 +93,30 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 		if (ec.getView() == null) {
 			return;
 		}
+
 		style = new EnvironmentStyleW();
 		style.setxOffset(getEnvXoffset());
 		style.setyOffset(getEnvYoffset());
-		style.setScaleX(((AppW) app).getArticleElement().getScaleX());
+		double scaleX = ((AppW) app).getArticleElement().getScaleX();
+		style.setScaleX(scaleX);
 		style.setScaleY(((AppW) app).getArticleElement().getScaleY());
+
+		setZoomOffsets(scaleX);
+
 		style.setScrollLeft(Window.getScrollLeft());
 		style.setScrollTop(Window.getScrollTop());
 		ec.getView().setPixelRatio(((AppW) app).getPixelRatio());
+	}
+
+	private void setZoomOffsets(double scale) {
+		if (!cssZoom || scale == 1) {
+			style.setZoomXOffset(0);
+			style.setZoomYOffset(0);
+		} else {
+			style.setZoomXOffset(
+					ec.getView().getAbsoluteLeft());
+			style.setZoomYOffset(ec.getView().getAbsoluteTop());
+		}
 	}
 
 	private double getEnvWidthScale() {
@@ -173,7 +190,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Create new mouse / touch handler.
-	 * 
+	 *
 	 * @param app
 	 *            application
 	 * @param ec
@@ -192,6 +209,10 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 		});
 		app.addWindowResizeListener(this);
 		longTouchManager = LongTouchManager.getInstance();
+		if (app.has(Feature.SAFARI_CSS_ZOOM)) {
+			Browser.enableZoomInSafari();
+		}
+		this.cssZoom = Browser.preferZoomOverTransform();
 	}
 
 	/**
@@ -303,7 +324,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle two finger touch move.
-	 * 
+	 *
 	 * @param touch
 	 *            first touch
 	 * @param touch2
@@ -327,7 +348,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle touch move event immediately.
-	 * 
+	 *
 	 * @param event
 	 *            touch move
 	 * @param time
@@ -358,7 +379,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle touch end
-	 * 
+	 *
 	 * @param event
 	 *            touch end event
 	 */
@@ -394,7 +415,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle touch start
-	 * 
+	 *
 	 * @param event
 	 *            touch start event
 	 */
@@ -439,7 +460,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 	/**
 	 * Prevent touch event default behavior unless needed for native elements
 	 * (i.e. inputbox)
-	 * 
+	 *
 	 * @param event
 	 *            touch event
 	 */
@@ -451,7 +472,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle double touch event.
-	 * 
+	 *
 	 * @param touch
 	 *            first touch
 	 * @param touch2
@@ -470,7 +491,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle mouse scroll.
-	 * 
+	 *
 	 * @param event
 	 *            mouse wheel event
 	 */
@@ -516,7 +537,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle mouse out event.
-	 * 
+	 *
 	 * @param event
 	 *            mouse out event.
 	 */
@@ -532,7 +553,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle mouse movement
-	 * 
+	 *
 	 * @param event
 	 *            mouse move event
 	 */
@@ -577,7 +598,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle mouse move event immediately.
-	 * 
+	 *
 	 * @param event
 	 *            touch move
 	 * @param time
@@ -608,7 +629,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle mouse up event.
-	 * 
+	 *
 	 * @param event
 	 *            mouse up event
 	 */
@@ -629,7 +650,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle touch end or mouse up.
-	 * 
+	 *
 	 * @param e
 	 *            pointer up event
 	 */
@@ -659,7 +680,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle mouse down event.
-	 * 
+	 *
 	 * @param event
 	 *            mouse down event
 	 */
@@ -680,7 +701,7 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	/**
 	 * Handle pointer start event.
-	 * 
+	 *
 	 * @param event
 	 *            pointer start
 	 */
@@ -793,12 +814,20 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 
 	@Override
 	public int mouseEventX(int clientX) {
-		return (int) Math.round((clientX) * (1 / style.getScaleX()));
+		return getEventCoordInGraphics(clientX, style.getZoomXOffset(),
+				style.getScaleX());
+	}
+
+	private static int getEventCoordInGraphics(int relativePosition,
+			double zoomOffset, double scale) {
+		double absPosition = relativePosition + zoomOffset;
+		return (int) Math.round(absPosition / scale - zoomOffset);
 	}
 
 	@Override
 	public int mouseEventY(int clientY) {
-		return (int) Math.round((clientY) * (1 / style.getScaleY()));
+		return getEventCoordInGraphics(clientY, style.getZoomYOffset(),
+				style.getScaleY());
 	}
 
 	@Override
@@ -827,4 +856,5 @@ public class MouseTouchGestureControllerW extends MouseTouchGestureController
 		((AppW) app).closePerspectivesPopup();
 		app.closePopups();
 	}
+
 }

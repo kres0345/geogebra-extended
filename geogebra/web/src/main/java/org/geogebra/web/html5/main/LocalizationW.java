@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 
 import org.geogebra.common.GeoGebraConstants;
+import org.geogebra.common.gui.SetLabels;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.util.StringUtil;
 import org.geogebra.common.util.debug.Log;
@@ -43,6 +44,8 @@ public final class LocalizationW extends Localization {
 
 	private boolean commandChanged = true;
 
+	private ArrayList<SetLabels> setLabelsListeners;
+
 	/**
 	 * @param dimension
 	 *            3 for 3D
@@ -56,7 +59,7 @@ public final class LocalizationW extends Localization {
 	 * eg __GGB__keysVar.en.command.Ellipse
 	 */
 	/**
-	 * 
+	 *
 	 * @param language
 	 *            language
 	 * @param key
@@ -336,7 +339,7 @@ public final class LocalizationW extends Localization {
 
 	/**
 	 * Saves properties loaded from external JSON to localStorage
-	 * 
+	 *
 	 * @param lang0
 	 *            language
 	 * @param version
@@ -357,29 +360,6 @@ public final class LocalizationW extends Localization {
 	@Override
 	protected ArrayList<Locale> getSupportedLocales() {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected void updateResourceBundles() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected String getLanguage(Locale locale) {
-		// TODO: implement if LocalizationW uses Locale rather than String
-		return "en";
-	}
-
-	@Override
-	protected String getCountry(Locale locale) {
-		// TODO: implement if LocalizationW uses Locale rather than String
-		return "US";
-	}
-
-	@Override
-	protected Locale createLocale(String language, String country) {
 		return null;
 	}
 
@@ -457,4 +437,26 @@ public final class LocalizationW extends Localization {
 			$wnd.android.savePreference("language", lang0);
 		}
 	}-*/;
+
+	/**
+	 * @param localizedUI
+	 *            localized UI element
+	 */
+	public void registerLocalizedUI(SetLabels localizedUI) {
+		if (setLabelsListeners == null) {
+			setLabelsListeners = new ArrayList<>();
+		}
+		setLabelsListeners.add(localizedUI);
+	}
+
+	/**
+	 * Call setLabels() on all registered UI elements
+	 */
+	public void notifySetLabels() {
+		if (setLabelsListeners != null) {
+			for (SetLabels ui : setLabelsListeners) {
+				ui.setLabels();
+			}
+		}
+	}
 }

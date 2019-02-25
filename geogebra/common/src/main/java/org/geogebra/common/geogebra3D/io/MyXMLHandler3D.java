@@ -9,7 +9,6 @@ import org.geogebra.common.kernel.Construction;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
-import org.geogebra.common.main.Feature;
 import org.geogebra.common.main.settings.EuclidianSettings;
 import org.geogebra.common.main.settings.EuclidianSettings3D;
 import org.geogebra.common.util.StringUtil;
@@ -75,9 +74,7 @@ public class MyXMLHandler3D extends MyXMLHandler {
 			ok = handleAxis(evSet, attrs);
 			break;
 		case "axesColored":
-			if (app.has(Feature.G3D_BLACK_AXES)) {
-				ok = handleColoredAxes((EuclidianSettings3D) evSet, attrs);
-			}
+		    ok = handleColoredAxes((EuclidianSettings3D) evSet, attrs);
 			break;
 		case "bgColor":
 			ok = handleBgColor(evSet, attrs);

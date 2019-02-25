@@ -52,7 +52,8 @@ public class ToolBar {
 	 */
 	static private final String[][] DEFAULT_TOOLBAR_3D = { { "0" },
 			{ "1 501 5 19 67" }, { "2 15 45 18 7 37" }, { "514 3 9 13 44 47" },
-			{ "16" }, { "551 550 11 20 22 21 23 55 56 57 12" }, { "69" },
+			{ "16", "16 51" },
+            { "551 550 11 20 22 21 23 55 56 57 12", "551 550 11 22 23 55 56 57 12" }, { "69" },
 			{ "510 511 512 513" }, { "533 531 534 532 522 523 537 536 535" },
 			{ "521 520" }, { "36 38 49 560" }, { "571 30 29 570 31 33" },
 			{ "17" }, { "540 40 41 42 27 28 35 6 502" } };
@@ -114,8 +115,6 @@ public class ToolBar {
 		sb.append(EuclidianConstants.MODE_FREEHAND_SHAPE);
 		sb.append(" ");
 		sb.append(EuclidianConstants.MODE_PEN);
-		
-		//Extended tools
 
 		// points
 		sb.append(" | ");
@@ -354,10 +353,8 @@ public class ToolBar {
 		sb.append(EuclidianConstants.MODE_GRAPHING);
 		sb.append(" ");
 		sb.append(EuclidianConstants.MODE_PDF);
-		if (app.has(Feature.MOW_EMBED_EXTENSION)) {
-			sb.append(" ");
-			sb.append(EuclidianConstants.MODE_EXTENSION);
-		}
+		sb.append(" ");
+		sb.append(EuclidianConstants.MODE_EXTENSION);
 		sb.append(" | ");
 		return sb.toString();
 	}
@@ -556,9 +553,11 @@ public class ToolBar {
 	}
 
 	/**
+	 * @param app
+	 *            app for feature flag
 	 * @return default toolbar (3D)
 	 */
-	public static String getAllToolsNoMacros3D() {
+	public static String getAllToolsNoMacros3D(App app) {
 
 		StringBuilder sb = new StringBuilder();
 
@@ -610,6 +609,10 @@ public class ToolBar {
 
 		// polygons
 		sb.append(EuclidianConstants.MODE_POLYGON);
+		if (app.has(Feature.G3D_IMPROVE_SOLID_TOOLS)) {
+			sb.append(" ");
+			sb.append(EuclidianConstants.MODE_REGULAR_POLYGON);
+		}
 		sb.append(" | ");
 
 		// conics

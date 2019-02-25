@@ -426,10 +426,12 @@ public class AlgoIntegralDefinite extends AlgoUsingTempCASalgo
 								double lower = bound.getLower();
 								double upper = bound.getUpper();
 								if (!bound.isInterval()) {
+									// eg f(x) = If(-2 <= x < 2, x, 2 <= x <= 3,
+									// 4 - x, 3 < x <= 6, 1)
 									Log.debug(
 											"non-linear condition "
 													+ bound);
-									standardIntegral(lowerLimit0, upperLimit0);
+									standardIntegral(lowerLimit, upperLimit);
 									return;
 								}
 								if (i == 0) {
@@ -815,7 +817,7 @@ public class AlgoIntegralDefinite extends AlgoUsingTempCASalgo
 			y2 = f2.value(x2);
 
 			// area of trapezium
-			return trapeziumArea(x1, x2, y1, y2);
+			return multiplier * trapeziumArea(x1, x2, y1, y2);
 
 		}
 
@@ -857,9 +859,7 @@ public class AlgoIntegralDefinite extends AlgoUsingTempCASalgo
 		// + " area = " + trapeziumArea(x1, x2, y1, y2));
 
 		x1 = keyList.getListElement(end - 1).evaluateDouble();
-		x2 = keyList.getListElement(end).evaluateDouble();
 		y1 = valueList.getListElement(end - 1).evaluateDouble();
-		y2 = valueList.getListElement(end).evaluateDouble();
 
 		// if (upperLimit < x1 || upperLimit > x2) {
 		// App.error(
@@ -870,8 +870,8 @@ public class AlgoIntegralDefinite extends AlgoUsingTempCASalgo
 		// + " x2 = " + x2 + " y1 = " + y1 + " y2 = " + y2 + " area = "
 		// + trapeziumArea(x1, x2, y1, y2));
 
-		// interpolate
 		x2 = upperLimit;
+		y2 = f2.value(x2);
 		// area of trapezium
 		area += trapeziumArea(x1, x2, y1, y2);
 

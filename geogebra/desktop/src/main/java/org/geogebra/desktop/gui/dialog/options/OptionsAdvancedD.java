@@ -42,7 +42,6 @@ import org.geogebra.desktop.gui.GuiManagerD;
 import org.geogebra.desktop.gui.util.FullWidthLayout;
 import org.geogebra.desktop.gui.util.LayoutUtil;
 import org.geogebra.desktop.main.AppD;
-import org.geogebra.desktop.main.FontManagerD;
 import org.geogebra.desktop.main.KeyboardSettings;
 import org.geogebra.desktop.main.LocalizationD;
 
@@ -58,7 +57,6 @@ public class OptionsAdvancedD implements OptionPanelD,
 	 */
 	private AppD app;
 	private final LocalizationD loc;
-	private final FontManagerD fontManager; //Added
 
 	/**
 	 * Settings for all kind of application components.
@@ -68,10 +66,10 @@ public class OptionsAdvancedD implements OptionPanelD,
 	/** */
 	private JPanel virtualKeyboardPanel, guiFontsizePanel, tooltipPanel,
 			languagePanel, angleUnitPanel, continuityPanel,
-			usePathAndRegionParametersPanel, rightAnglePanel, coordinatesPanel, comicSansPanel;
+			usePathAndRegionParametersPanel, rightAnglePanel, coordinatesPanel;
 
 	/**	*/
-	private JLabel keyboardLanguageLabel, guiFontSizeLabel, widthLabel, comicSansLabel,
+	private JLabel keyboardLanguageLabel, guiFontSizeLabel, widthLabel,
 			heightLabel, opacityLabel, tooltipLanguageLabel,
 			tooltipTimeoutLabel;
 
@@ -81,7 +79,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 			cbGUIFont;
 
 	/**	 */
-	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseComicSans,
+	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits,
 			cbUseLocalLabels;
 
 	/** */
@@ -124,7 +122,6 @@ public class OptionsAdvancedD implements OptionPanelD,
 
 		this.app = app;
 		this.loc = app.getLocalization();
-		this.fontManager = app.getFontManager();
 		this.settings = app.getSettings();
 
 		initGUI();
@@ -149,7 +146,6 @@ public class OptionsAdvancedD implements OptionPanelD,
 		initUsePathAndRegionParametersPanel();
 		initRightAnglePanel();
 		initCoordinatesPanel();
-		initComicSansPanel(); //new
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new FullWidthLayout());
@@ -165,8 +161,6 @@ public class OptionsAdvancedD implements OptionPanelD,
 		panel.add(tooltipPanel);
 		panel.add(languagePanel);
 		// panel.add(perspectivesPanel);
-		panel.add(comicSansPanel); //new
-		
 
 		panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 		JScrollPane scrollPane = new JScrollPane(panel);
@@ -255,29 +249,6 @@ public class OptionsAdvancedD implements OptionPanelD,
 		cbUseLocalLabels.addActionListener(this);
 		languagePanel.add(cbUseLocalLabels);
 	}
-	
-	/**
-	 * init comic sans
-	 * 
-	 */
-	private void initComicSansPanel() {
-		comicSansPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		
-		comicSansLabel = new JLabel();
-		comicSansPanel.add(comicSansLabel);
-		
-		cbUseComicSans = new JCheckBox();
-		cbUseComicSans.addActionListener(this);
-		comicSansPanel.add(cbUseComicSans);
-	}
-	
-	private void toggleComicSans(boolean enable) {
-		fontManager.comicsans = enable;
-		try {
-			fontManager.setLanguage(app.getLocale());
-		} catch (Exception e) {
-		}
-	}
 
 	/**
 	 * Initialize the tooltip panel.
@@ -340,12 +311,10 @@ public class OptionsAdvancedD implements OptionPanelD,
 		angleUnitPanel.add(angleUnitRadioRadian);
 		angleUnitButtonGroup.add(angleUnitRadioRadian);
 
-		if (app.has(Feature.MOB_ANGLE_DEGREES_MINUTES_SECONDS)) {
-			angleUnitRadioDegreesMinutesSeconds = new JRadioButton();
-			angleUnitRadioDegreesMinutesSeconds.addActionListener(this);
-			angleUnitPanel.add(angleUnitRadioDegreesMinutesSeconds);
-			angleUnitButtonGroup.add(angleUnitRadioDegreesMinutesSeconds);
-		}
+		angleUnitRadioDegreesMinutesSeconds = new JRadioButton();
+		angleUnitRadioDegreesMinutesSeconds.addActionListener(this);
+		angleUnitPanel.add(angleUnitRadioDegreesMinutesSeconds);
+		angleUnitButtonGroup.add(angleUnitRadioDegreesMinutesSeconds);
 
 		// cbReturnAngleInverseTrig = new JCheckBox();
 		// cbReturnAngleInverseTrig.addActionListener(this);
@@ -458,19 +427,12 @@ public class OptionsAdvancedD implements OptionPanelD,
 
 		cbUseLocalDigits.setSelected(loc.isUsingLocalizedDigits());
 		cbUseLocalLabels.setSelected(loc.isUsingLocalizedLabels());
-		//new
-		cbUseComicSans.setSelected(!cbUseComicSans.isSelected());
 
-		if (app.has(Feature.MOB_ANGLE_DEGREES_MINUTES_SECONDS)) {
-			int angleUnit = app.getKernel().getAngleUnit();
-			angleUnitRadioDegree.setSelected(angleUnit == Kernel.ANGLE_DEGREE);
-			angleUnitRadioRadian.setSelected(angleUnit == Kernel.ANGLE_RADIANT);
-			angleUnitRadioDegreesMinutesSeconds.setSelected(
-					angleUnit == Kernel.ANGLE_DEGREES_MINUTES_SECONDS);
-		} else {
-			angleUnitRadioDegree.setSelected(app.getKernel().degreesMode());
-			angleUnitRadioRadian.setSelected(!app.getKernel().degreesMode());
-		}
+		int angleUnit = app.getKernel().getAngleUnit();
+		angleUnitRadioDegree.setSelected(angleUnit == Kernel.ANGLE_DEGREE);
+		angleUnitRadioRadian.setSelected(angleUnit == Kernel.ANGLE_RADIANT);
+		angleUnitRadioDegreesMinutesSeconds.setSelected(
+				angleUnit == Kernel.ANGLE_DEGREES_MINUTES_SECONDS);
 
 		continuityRadioOn.setSelected(app.getKernel().isContinuous());
 		continuityRadioOff.setSelected(!app.getKernel().isContinuous());
@@ -631,8 +593,6 @@ public class OptionsAdvancedD implements OptionPanelD,
 			}
 		} else if (source == cbUseLocalDigits) {
 			loc.setUseLocalizedDigits(cbUseLocalDigits.isSelected(), app);
-		}else if (source == cbUseComicSans){ //comic sans
-			toggleComicSans(cbUseComicSans.isSelected());
 		} else if (source == cbUseLocalLabels) {
 			loc.setUseLocalizedLabels(cbUseLocalLabels.isSelected());
 			/*
@@ -651,8 +611,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 			app.getKernel().setAngleUnit(Kernel.ANGLE_RADIANT);
 			app.getKernel().updateConstruction(false);
 			app.setUnsaved();
-		} else if (source == angleUnitRadioDegreesMinutesSeconds
-				&& app.has(Feature.MOB_ANGLE_DEGREES_MINUTES_SECONDS)) {
+		} else if (source == angleUnitRadioDegreesMinutesSeconds) {
 			app.getKernel().setAngleUnit(Kernel.ANGLE_DEGREES_MINUTES_SECONDS);
 			app.getKernel().updateConstruction(false);
 			app.setUnsaved();
@@ -814,10 +773,9 @@ public class OptionsAdvancedD implements OptionPanelD,
 				.setBorder(LayoutUtil.titleBorder(loc.getMenu("AngleUnit")));
 		angleUnitRadioDegree.setText(loc.getMenu("Degree"));
 		angleUnitRadioRadian.setText(loc.getMenu("Radiant"));
-		if (app.has(Feature.MOB_ANGLE_DEGREES_MINUTES_SECONDS)) {
-			angleUnitRadioDegreesMinutesSeconds
-					.setText(loc.getMenu("DegreesMinutesSeconds"));
-		}
+		angleUnitRadioDegreesMinutesSeconds
+				.setText(loc.getMenu("DegreesMinutesSeconds"));
+
 
 		continuityPanel
 				.setBorder(LayoutUtil.titleBorder(loc.getMenu("Continuity")));
@@ -842,10 +800,6 @@ public class OptionsAdvancedD implements OptionPanelD,
 		coordinatesRadio1.setText(loc.getMenu("A = (x, y)"));
 		coordinatesRadio2.setText(loc.getMenu("A(x | y)"));
 		coordinatesRadio3.setText(loc.getMenu("A: (x, y)"));
-		
-		//comic sans
-		comicSansLabel.setText("Comic Sans");
-		cbUseComicSans.setText("Enabled");
 
 		// perspectivesPanel.setBorder(LayoutUtil.titleBorder(app
 		// .getMenu("Perspectives")));
@@ -1034,9 +988,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 		angleUnitPanel.setFont(font);
 		angleUnitRadioDegree.setFont(font);
 		angleUnitRadioRadian.setFont(font);
-		if (app.has(Feature.MOB_ANGLE_DEGREES_MINUTES_SECONDS)) {
-			angleUnitRadioDegreesMinutesSeconds.setFont(font);
-		}
+		angleUnitRadioDegreesMinutesSeconds.setFont(font);
 
 		continuityPanel.setFont(font);
 		continuityRadioOn.setFont(font);

@@ -1,5 +1,6 @@
 package org.geogebra.web.html5;
 
+import org.geogebra.common.main.Feature;
 import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.common.util.DoubleUtil;
 import org.geogebra.common.util.StringUtil;
@@ -16,6 +17,7 @@ public class Browser {
 	private static boolean webWorkerSupported = false;
 	private static boolean float64supported = true;
 	private static Boolean webglSupported = null;
+	private static boolean zoomInSafari = false;
 
 	public static native boolean isFirefox() /*-{
 		// copying checking code from the checkWorkerSupport method
@@ -28,9 +30,9 @@ public class Browser {
 
 	/**
 	 * Check if browser is Internet Explorer
-	 * 
+	 *
 	 * (Note: only IE11 is supported now)
-	 * 
+	 *
 	 * @return true if IE
 	 */
 	public static native boolean isIE() /*-{
@@ -46,11 +48,11 @@ public class Browser {
 
 	/**
 	 * Check if browser is Safari on iOS
-	 * 
+	 *
 	 * check isiOS() && isSafari() if you want just iOS browser & not webview
-	 * 
+	 *
 	 * (Note: returns true for Chrome on iOS as that's really an iOS Webview)
-	 * 
+	 *
 	 * @return true if iOS (WebView or Safari browser)
 	 */
 	public static native boolean isiOS() /*-{
@@ -58,19 +60,20 @@ public class Browser {
 	}-*/;
 
 	/**
-	 * Check if browser is Safari
-	 * 
+	 * Check if browser is Safari. Note: user agent string contains Safari also
+	 * in Chrome =&gt; use vendor instead
+	 *
 	 * check isiOS() && isSafari() if you want just iOS browser & not webview
-	 * 
+	 *
 	 * @return true if Safari browser
 	 */
-	private static native boolean isSafari() /*-{
-		return !!(/safari/.test($wnd.navigator.userAgent));
+	private static native boolean isSafariByVendor() /*-{
+		return "Apple Computer, Inc." === $wnd.navigator.vendor;
 	}-*/;
 
 	/**
 	 * https://github.com/cheton/is-electron/blob/master/index.js MIT
-	 * 
+	 *
 	 * @return true if running in Electron
 	 */
 	public static native boolean isElectron() /*-{
@@ -128,16 +131,16 @@ public class Browser {
 			@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("INIT: worker not supported in Safari, fallback for simple js");
 			return false;
 		}
-		
+
 	    try {
 	    	var worker = new $wnd.Worker(workerpath+"js/workercheck.js");
 	    } catch (e) {
 	    	@org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("INIT: worker not supported (no worker at " + workerpath + "), fallback for simple js");
-	    	
+
 	    	return false;
 	    }
 	    @org.geogebra.common.util.debug.Log::debug(Ljava/lang/String;)("INIT: workers are supported");
-	    	
+
 	    worker.terminate();
 	    return true;
 	}-*/;
@@ -177,7 +180,7 @@ public class Browser {
 	}-*/;
 
 	/**
-	 * 
+	 *
 	 * @return true if WebAssembly supported
 	 */
 	public static native boolean webAssemblySupported()/*-{
@@ -248,7 +251,7 @@ public class Browser {
 	 * Native check for WebGL support based on
 	 * http://stackoverflow.com/questions/11871077/proper-way-to-detect-webgl-
 	 * support
-	 * 
+	 *
 	 * @return whether WebGL is supported
 	 */
 	public static native boolean supportsWebGLNative()/*-{
@@ -309,6 +312,11 @@ public class Browser {
 			return;
 		}
 
+		if (preferZoomOverTransform()) {
+			zoom(parent, externalScale);
+			return;
+		}
+
 		String transform = "scale(" + externalScale + "," + externalScale + ")";
 
 		if (DoubleUtil.isEqual(externalScale, 1)) {
@@ -318,15 +326,29 @@ public class Browser {
 
 		Style style = parent.getStyle();
 		if (style != null) {
-			style.setProperty("webkitTransform", transform);
-			style.setProperty("mozTransform", transform);
-			style.setProperty("msTransform", transform);
-			style.setProperty("transform", transform);
+			setTransform(style, transform);
 			style.setProperty("msTransformOrigin", pos);
 			style.setProperty("mozTransformOrigin", pos);
 			style.setProperty("webkitTransformOrigin", pos);
 			style.setProperty("transformOrigin", pos);
 		}
+	}
+
+	private static void setTransform(Style style, String transform) {
+		style.setProperty("webkitTransform", transform);
+		style.setProperty("mozTransform", transform);
+		style.setProperty("msTransform", transform);
+		style.setProperty("transform", transform);
+	}
+
+	private static void zoom(Element parent, double externalScale) {
+		Style style = parent.getStyle();
+		if (style == null) {
+			return;
+		}
+		setTransform(style, "none");
+		int zoomPercent = (int) Math.round(externalScale * 100);
+		style.setProperty("zoom", zoomPercent + "%");
 	}
 
 	/**
@@ -370,14 +392,14 @@ public class Browser {
 	}-*/;
 
 	/**
-	 * 
+	 *
 	 * Returns a base64 encoding of the specified (binary) string
-	 * 
+	 *
 	 * extra encoding needed for file from Generator: Adobe Illustrator 11.0,
 	 * SVG Export Plug-In
-	 * 
+	 *
 	 * xpacket begin='\uFEFF'
-	 * 
+	 *
 	 * @param svg
 	 *            A binary string (obtained for instance by the FileReader API)
 	 * @return a base64 encoded string.
@@ -533,7 +555,7 @@ public class Browser {
 
 	/**
 	 * Change URL if we are running on geogebra.org
-	 * 
+	 *
 	 * @param string
 	 *            new URL
 	 */
@@ -562,7 +584,7 @@ public class Browser {
 
 	/**
 	 * Opens GeoGebraTube material in a new window
-	 * 
+	 *
 	 * @param url
 	 *            GeoGebraTube url
 	 */
@@ -572,10 +594,10 @@ public class Browser {
 
 	/**
 	 * Returns a string based on base 64 encoded value
-	 * 
+	 *
 	 * @param base64
 	 *            a base64 encoded string
-	 * 
+	 *
 	 * @return decoded string
 	 */
 	public static native String decodeBase64(String base64)/*-{
@@ -588,7 +610,7 @@ public class Browser {
 
 	/**
 	 * Allow or diallow context menu for an element.
-	 * 
+	 *
 	 * @param element
 	 *            element
 	 * @param allow
@@ -690,7 +712,7 @@ public class Browser {
 
 	/**
 	 * Register handler for fullscreen event.
-	 * 
+	 *
 	 * @param callback
 	 *            callback for fullscreen event
 	 */
@@ -738,7 +760,7 @@ public class Browser {
 
 	/**
 	 * Add mutation observer to element and all its parents.
-	 * 
+	 *
 	 * @param el
 	 *            target element
 	 * @param asyncOperation
@@ -770,7 +792,7 @@ public class Browser {
 	/**
 	 * gets keycodes of iOS arrow keys iOS arrows have a different identifier
 	 * than win and android
-	 * 
+	 *
 	 * @param event
 	 *            native key event
 	 * @return JavaKeyCodes of arrow keys, -1 if pressed key was not an arrow
@@ -797,7 +819,8 @@ public class Browser {
 	 * @return whether current browser is Chrome
 	 */
 	public static boolean isChrome() {
-		return Navigator.getUserAgent().matches(".*Chrome/.*");
+		// yep, Edge UA string contains Chrome too
+		return Navigator.getUserAgent().matches(".*Chrome/.*") && !isEdge();
 	}
 
 	/**
@@ -814,9 +837,23 @@ public class Browser {
 	 * @return valid data URL, browser dependent
 	 */
 	public static String addTxtMarker(String txt) {
-		return isiOS() && isSafari()
+		return isiOS() && isSafariByVendor()
 				? StringUtil.txtMarkerForSafari + encodeURIComponent(txt)
 				: StringUtil.txtMarker + txt;
 	}
 
+	/**
+	 *
+	 * @return if we use css zoom in Safari.
+	 */
+	public static boolean preferZoomOverTransform() {
+		return zoomInSafari && isSafariByVendor();
+	}
+
+	/**
+	 * Please remove this when {@link Feature#SAFARI_CSS_ZOOM} is removed
+	 */
+	public static void enableZoomInSafari() {
+		zoomInSafari = true;
+	}
 }

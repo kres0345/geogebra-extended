@@ -1537,9 +1537,9 @@ public class GeoCasCell extends GeoElement
 				case NONE:
 					break;
 				}
-				// #5119 make sure internally the result does not depend on
-				// rounding
-				sb.append(outputVE.toString(StringTemplate.numericDefault));
+				// #5119 / TRAC-4213 make sure internally the result does not
+				// depend on rounding
+				sb.append(outputVE.toString(StringTemplate.numericNoLocal));
 				res = sb.toString();
 			}
 
@@ -2916,13 +2916,9 @@ public class GeoCasCell extends GeoElement
 		sb.append("\" ");
 		sb.append("/>\n");
 
-		sb.append("\t\t\t<FontColor r=\"");
-		sb.append(getFontColor().getRed());
-		sb.append("\" b=\"");
-		sb.append(getFontColor().getBlue());
-		sb.append("\" g=\"");
-		sb.append(getFontColor().getGreen());
-		sb.append("\"/>\n");
+		sb.append("\t\t\t<FontColor");
+		XMLBuilder.appendRGB(sb, getFontColor());
+		sb.append("/>\n");
 	}
 
 	@Override

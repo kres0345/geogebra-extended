@@ -270,9 +270,12 @@ public interface GuiManagerInterface {
 
 	void updateToolbar();
 
+	/**
+	 * @param idx
+	 *            index
+	 * @return whether secondary euclidian view with given index is showing
+	 */
 	boolean hasEuclidianView2(int idx);
-
-	void setLabels();
 
 	EuclidianViewInterfaceCommon getEuclidianView2(int idx);
 

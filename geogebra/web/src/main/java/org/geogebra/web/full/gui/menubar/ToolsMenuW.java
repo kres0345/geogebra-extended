@@ -7,25 +7,22 @@ import org.geogebra.web.full.gui.dialog.ExerciseBuilderDialog;
 import org.geogebra.web.full.gui.dialog.ToolCreationDialogW;
 import org.geogebra.web.full.gui.dialog.ToolManagerDialogW;
 import org.geogebra.web.html5.main.AppW;
+import org.geogebra.web.resources.SVGResource;
 
 /**
  * Web implementation of ToolsMenu
  */
-public class ToolsMenuW extends GMenuBar {
+public class ToolsMenuW extends Submenu {
 
 	/**
 	 * Constructs the "Tools" menu
-	 * 
+	 *
 	 * @param application
 	 *            The App instance
 	 */
 	public ToolsMenuW(AppW application) {
 		super("tools", application);
-		if (application.isUnbundled()) {
-			addStyleName("matStackPanel");
-		} else {
-			addStyleName("GeoGebraMenuBar");
-		}
+		addExpandableStyleWithColor(false);
 		initActions();
 	}
 
@@ -98,6 +95,16 @@ public class ToolsMenuW extends GMenuBar {
 		ExerciseBuilderDialog exerciseBuilderDialog = new ExerciseBuilderDialog(
 				getApp());
 		exerciseBuilderDialog.center();
+	}
+
+	@Override
+	public SVGResource getImage() {
+		return MaterialDesignResources.INSTANCE.tools_black();
+	}
+
+	@Override
+	protected String getTitleTranslationKey() {
+		return "Tools";
 	}
 
 }

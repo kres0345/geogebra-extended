@@ -163,6 +163,29 @@ public abstract class CASgiac implements CASGenericInterface {
 		GGB_IS_VARIABLE("ggb_is_variable", "ggb_is_variable(a):=when(length(lvar(a))==1,lvar(a)[0],?)"),
 
 		/**
+		 * Used by Zip.N
+		 * 
+		 * TODO check if it's easier to implement with giac's zip command
+		 */
+		GGBZIPANS("ggbzipans", "ggbzipans(l):=begin local len0,res,sbl,xpr,k,j;xpr:=l[0];len0:=length(l[2]);res:={};"
+						+ "for k from 4 to length(l)-1 step +2 do len0:=min(len0,length(l[k])); od;"
+						+ "for k from 0 to len0-1 do sbl:={};for j from 2 to length(l)-1 step +2 do"
+						+ " sbl:=append(sbl,l[j-1]=l[j][k]);od;res:=append(res,subst(xpr,sbl));od; res; end"),
+		/**
+		 * 
+		 * need to use %0, %1 repeatedly (not using an intermediate variable)
+		 * see GGB-2184 eg Sum(If(Mod(k,2)==0,k,0),k,0,10)
+		 * 
+		 * check if a,b are numbers or polynomials and use rem() / irem()
+		 * accordingly
+		 */
+		GGBMOD("ggbmod", "ggbmod(a,b):=when(type(a)!=DOM_INT||type(b)!=DOM_INT,rem(a,b,when(length(lname(b))>0,lname(b)[0],x)),irem(a,b))"),
+		
+		// for testing Zip(Mod(k, 2), k,{0, -2, -5, 1, -2, -4, 0, 4, 12})
+		// GGBMOD("ggbmod",
+		// "ggbmod(a,b):=when(((type((a))!=DOM_INT)&&(type((a))!=DOM_IDENT))||((type((b))!=DOM_INT)&&(type((b))!=DOM_IDENT)),rem(a,b,when(length(lname(b))>0,lname(b)[0],x)),irem(a,b))"),
+
+		/**
 		 * test if "=" or "%=" or inequality - needed for eg
 		 * LeftSide({a,b}={1,2})
 		 */
@@ -221,6 +244,17 @@ public abstract class CASgiac implements CASGenericInterface {
 		 * "return angle from inverse trig function" see ExpressionNode.degFix()
 		 */
 		DEG_ATAN2("atan2d", "atan2d(y,x):=normal(arg(x+i*y)/pi*180)*unicode0176u"),
+
+		/**
+		 * Coefficient of Conic, same order as Algebra View command
+		 */
+		COEFFICIENT_CONIC("ggbcoeffconic",
+				"ggbcoeffconic(coeffsarg):={coeffs(coeffsarg,[x,y],[2,0]),coeffs(coeffsarg,[x,y],[0,2]),coeffs(coeffsarg,[x,y],[0,0]),coeffs(coeffsarg,[x,y],[1,1]),coeffs(coeffsarg,[x,y],[1,0]),coeffs(coeffsarg,[x,y],[0,1])}"),
+
+		/**
+		 * Coefficient of Quadric, same order as Algebra View command
+		 */
+		COEFFICIENT_QUADRIC("ggbcoeffquadric", "ggbcoeffquadric(coeffsarg):={coeffs(coeffsarg,[x,y,z],[2,0,0]),coeffs(coeffsarg,[x,y,z],[0,2,0]),coeffs(coeffsarg,[x,y,z],[0,0,2]),coeffs(coeffsarg,[x,y,z],[0,0,0]),coeffs(coeffsarg,[x,y,z],[1,1,0]),coeffs(coeffsarg,[x,y,z],[1,0,1]),coeffs(coeffsarg,[x,y,z],[0,1,1]),coeffs(coeffsarg,[x,y,z],[1,0,0]),coeffs(coeffsarg,[x,y,z],[0,1,0]),coeffs(coeffsarg,[x,y,z],[0,0,1])}"),
 
 		/**
 		 * subtype 27 is ggbvect[]
@@ -350,6 +384,13 @@ public abstract class CASgiac implements CASGenericInterface {
 		 * absfact(x^2*y^2-2) should return (x*y-sqrt(2))*(x*y+sqrt(2)).
 		 * absfact(x^2*y^2+2) should return (x*y+i*sqrt(2))*(x*y-i*sqrt(2)).
 		 */
+
+		/**
+		 * Giac uses round(x):=floor(x+0.5) but we want "round half up" to be
+		 * consistent with the Algebra View
+		 */
+		GGB_ROUND("ggbround", "ggbround(x):=when(type(evalf(x))==DOM_COMPLEX, ggbround(real(x))+i*ggbround(im(x)), when(x<0,-round(-x),round(x)))"),
+
 		/**
 		 * Minimal polynomial of cos(2pi/n), see GGB-2137 for details.
 		 */
@@ -1053,6 +1094,9 @@ public abstract class CASgiac implements CASGenericInterface {
 			ret += ",[" + substParams + "])";
 		}
 		String vars = freeVars + PPolynomial.addLeadingComma(dependantVars);
+		if (vars.startsWith(",")) {
+			vars = vars.substring(1);
+		}
 		ret += ",[" + vars + "],revlex)";
 		ret += "],[s:=size(GB)],[out:=[]],[for ii from 0 to s-1 do if (size(GB[ii])==1) out[ii]:=lvar(GB[ii]); else out[ii]:=lvar(GB[ii][1]); od],out][4]";
 		return ret;

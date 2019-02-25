@@ -2,12 +2,17 @@ package org.geogebra.web.html5.euclidian;
 
 import org.geogebra.common.euclidian.EnvironmentStyle;
 
+/**
+ * Properties of EuclidianView that affect coordinate transformations
+ */
 public class EnvironmentStyleW extends EnvironmentStyle {
 
 	private double scaleX;
 	private double scaleY;
 	private int xOffset;
 	private int yOffset;
+	private int zoomXOffset = 0;
+	private int zoomYOffset = 0;
 	private int scrollLeft;
 	private int scrollTop;
 
@@ -122,6 +127,41 @@ public class EnvironmentStyleW extends EnvironmentStyle {
 	 */
 	public double getScaleYMultiplier() {
 		return (1 / getScaleY());
+	}
+
+	/**
+	 *
+	 * @return x offset of css zoom
+	 */
+	public int getZoomXOffset() {
+		return zoomXOffset;
+	}
+
+	/**
+	 * Sets x offset of css zoom.
+	 *
+	 * @param x to set.
+	 */
+	public void setZoomXOffset(int x) {
+		this.zoomXOffset = x;
+	}
+
+	/**
+	 *
+	 * @return y offset of css zoom
+	 */
+	public int getZoomYOffset() {
+		return zoomYOffset;
+	}
+
+	/**
+	 * Sets y offset of css zoom.
+	 *
+	 * @param zoomYOffset
+	 *            zooming y-offset
+	 */
+	public void setZoomYOffset(int zoomYOffset) {
+		this.zoomYOffset = zoomYOffset;
 	}
 
 }

@@ -1,28 +1,29 @@
 @import 'colors';
+@import 'dimens';
 @import 'shared';
 $duration: 0.2s;
 
 .GeoGebraFrame {
 
-		.matMenu.gwt-PopupPanel {
-		
+	.matMenu.gwt-PopupPanel {
+
 		background-color: $white;
 		padding: 8px 0px 8px 0px;
 		border-radius: 2px;
 		min-width: 192px;
-		
+
 		.withImg.listMenuItem.expanded, .withImg.listMenuItem.collapsed {
 			.checkMarkMenuItem {
-				.gwt-HTML {	
+				.gwt-HTML {
 					left: 12px;
 					padding-right: 40px;
 					.menuImg {
-						left: 12px;	
+						left: 12px;
 					}
 				}
-			}	
+			}
 		}
-	
+
 		.gwt-MenuItem {
 			height: 32px;
 			min-width: 256px;
@@ -31,35 +32,34 @@ $duration: 0.2s;
 			padding-top: 0px;
 			padding-bottom: 0px;
 			padding-right: 16px;
-			
+
 			.no-image {
 				padding-left: 0px !important;
 			}
-			
+
 			.checkMarkMenuItem, .collapseMenuItem {
-				.gwt-HTML {				
+				.gwt-HTML {
 					padding: 0 20px 0 8px;
 				}
-			
+
 				.checkImg {
 					margin-right: 6px;
 					padding-bottom: 6px;
 					padding-top: 2px;
 					padding-right: 0px;
 				}
-			
+
 				.expandImg, .collapseImg {
 					padding: 6px;
 					padding-top: 2px;
 				}
-			
 			}
-			
+
 			 span.gwt-CheckBox.matCheckBox { 
 				padding-left: 16px; 
 			}
 		}
-		
+
 		.gwt-MenuItem.no-hover,
 		.gwt-MenuItem.no-hover:hover{
 		 	background-color: transparent !important;
@@ -69,7 +69,7 @@ $duration: 0.2s;
 			padding-bottom: 8px;
 			cursor: default;
 		}
-		
+
 		.gwt-MenuItem:hover {
 			background-color: $selected-menuitem-background;
 			img {
@@ -108,13 +108,13 @@ $duration: 0.2s;
 			}
 		}
 	}
-	
+
 	.matSubMenu.gwt-PopupPanel {
 		padding: 4px 0px 4px 0px;
 		border-radius: 2px;
 		min-width: 64px;
 		background-color: $white-95;
-	
+
 		.gwt-MenuItem {
 			height: 24px;
 			min-width: 64px;
@@ -124,7 +124,7 @@ $duration: 0.2s;
 			padding-bottom: 0px;
 			padding-right: 40px;
 			line-height: 24px;
-			
+
 			img {
 				width: 24px !important;
 				height: 24px !important;
@@ -132,7 +132,7 @@ $duration: 0.2s;
 				/*padding: 6px;	*/
 			}
 		}
-		
+
 		 span.gwt-RadioButton.RadioButtonMenuItem.GeoGebraFrame { 
 			padding-left: 16px; 
 			padding-right: 16px; 
@@ -150,11 +150,11 @@ $duration: 0.2s;
 		.gwt-MenuItem:hover {
 			background-color: $selected-menuitem-background;
 			color: $black;
-			
+
 			img {
 				opacity: 0.87;
 			}
-			
+
 			span.gwt-RadioButton.RadioButtonMenuItem.GeoGebraFrame { 
 				background-color: $selected-menuitem-background; 
 			}
@@ -165,7 +165,7 @@ $duration: 0.2s;
 			color: $black;
 			opacity: 0.38;
 		}
-		
+
 	}
 
 	.suggestionBar {
@@ -187,17 +187,22 @@ $duration: 0.2s;
 	.suggestionButton {
 		@extend %primaryButton;
 	}
-	
+
 	.algebraView .panelRow .withSuggestions{
 		margin-bottom: 40px;
 		animation-name: addSuggestionsParent;
 		animation-duration: $duration;
 	}
-	.algebraView .panelRow .noSuggestions{	
+	.algebraView .panelRow .noSuggestions{
 		animation-name: removeSuggestionsParent;
 		animation-duration: $duration;
 	}
-
+	.ggb-btnClearAVInput {
+		opacity: 0.54;
+		&:hover {
+			opacity: 0.78;
+		}
+	}
 	.AlgebraViewObjectStylebar.withContextMenu {
 			bottom: 0;
 			padding: 8px 2px 0px 0px;
@@ -206,13 +211,13 @@ $duration: 0.2s;
 			.gwt-ToggleButton.XButton.shown.gwt-ToggleButton-up-hovering {
 				opacity: 1;
 			}
-			
+
 			.XButton{
+				@extend .ggb-btnClearAVInput;
 				background-color: $white;
-				opacity: 0.54;
 				float: right;
 			}
-			
+
 			.symbolicButton{
 				display: inline-block;
 				position: absolute;
@@ -224,24 +229,24 @@ $duration: 0.2s;
     			background-color: $purple-default;
     			border-radius: 2px;
     			border: none;
-    			box-shadow: 0px 3px 1px -2px $black-2, 0px 2px 2px 0px $black-14, 0px 1px 5px 0px $black-12;
+    			box-shadow: 0px 3px 1px -2px $black-20, 0px 2px 2px 0px $black-14, 0px 1px 5px 0px $black-12;
     			transition: background-color 150ms ease 0ms;
-    			
+    
     			&:hover {
     				background-color: $purple-dark;
     			}
 			}
 	}
 	.matAvDesign  {
-		
+
 		.matMinMaxPanel {
 			 display: flex;
-			
+
 			.AutoCompleteTextFieldW {
     			width: initial;
     			margin: 0px !important;
-    			border-radius: 2px;	
-    				
+    			border-radius: 2px;
+    
     			.TextField {
     				padding: 0px;
    					padding-left: 8px;
@@ -254,15 +259,15 @@ $duration: 0.2s;
     			}
     		}
 		}
-	
+
 		.textOverMarble {
 			height: 20px;
    			width: 20px;
 			position: absolute;
     		margin-left: -1px !important;
     		opacity: 0.54;
-		}	
-	
+		}
+
 		.marblePanel.error, 
 		.marblePanel.help,
 		.marblePanel {
@@ -274,32 +279,32 @@ $duration: 0.2s;
 			padding-right: 18px;
 			/*width: 48px;*/
 		}
-	
+
 		.marblePanel.error.gwt-ToggleButton.gwt-ToggleButton-up {
 			width: 22px !important;
 			height: 22px;
 		}
-		
+
 		.marblePanel.error { 
 			padding-left: 16px;
 			padding-right: 16px;
 		}
-		
+
 		.marblePanel.help {
 			width: 48px !important;
 		}
-		
-		
+
+
 		.marblePanel.error, 
 		.marblePanel.help,
 		.marblePanel.plus {
-			
+
 			.gwt-Image {
 				height: 24px;
 				width: 24px;
 			}
 		}
-		
+
 		.marblePanel.plus {
 			padding-top: 0px;
 			padding-left: 4px;
@@ -316,13 +321,13 @@ $duration: 0.2s;
 				padding: 12px;
 			}
 		}
-		
+
 		.marblePanel.plus :hover{
 			img {
 				opacity: 1;
 			}
 		}
-		
+
 		.marblePanel.text {
 			width: 57px !important;
 		}
@@ -336,7 +341,7 @@ $duration: 0.2s;
 			background-color: $purple-default;
 			border: 1px solid $black;
 			border-radius: 24px;
-		
+
 		}
 		.marble.elemHidden {
 			background-color: $white;
@@ -344,12 +349,12 @@ $duration: 0.2s;
 		.marble.elemShown {
 			background-color: $purple-default;
 			border: 1px solid $marble-border;
-			
+
 			.textOverMarble {
-				opacity: 1;	
+				opacity: 1;
 			}
 		}
-		
+
 		.scrollableTextBox,
 		.scrollableTextBox.avPreview,
 		.scrollableTextBox.noPreview, 
@@ -361,6 +366,31 @@ $duration: 0.2s;
 			padding-bottom: 0px;
 			display: inline-block;
 		}
+
+		&.algebraPanelScientific {
+			.avItem .gwt-TreeItem, .NewRadioButtonTreeItemParent {
+				border-width: 0;
+			}
+			.AlgebraViewObjectStylebar.smallStylebar {
+				padding: 12px 8px 0 0;
+			}
+			.scrollableTextBox,
+			.scrollableTextBox.avPreview,
+			.scrollableTextBox.noPreview, 
+			.avItem .elemText,
+			.avItem .elemText.scrollableTextBox {
+				margin-left: $scientificHeaderWidth;
+				padding-left: 0px;
+				border-bottom: 1px $tool-border solid;
+				width: calc(100% - #{$scientificHeaderWidth});
+				box-sizing: border-box;
+				min-height: 48px;
+			}
+			.avInputItem {
+				margin-top: 0;
+			}
+		}
+
 		.avItem .elemText.noPadding{
 			padding-left: 0;
 			padding-top: 6px;
@@ -375,64 +405,64 @@ $duration: 0.2s;
 		.avItem .elemText {
 			padding-top: 14px;
 			padding-bottom: 4px;
-		}	
-		
+		}
+
 		.avItem .gwt-CheckBox{
 			padding-left: 68px;
 			padding-top: 8px;
 		}
-		
+
 		.avItemContent {
 			padding-top: 6px;
-			min-height: 72px;	
-			
+			min-height: 72px;
+
 			.panelRow {
 				padding-top: 8px;
 			}
-		
+
 			&.avSlider {
-				padding-top: 10px !important;	
+				padding-top: 10px !important;
 			}
 		}
-	
+
 		.avEditSlider {
 			padding-top: 0px;
-			
+
 			.panelRow {
 				padding-top: 4px;
 			}
 		}
-	
+
 		.avSlider {
 			.panelRow {
 				padding-top: 20px;
 			}
-		}		
+		}
 		.playOnly {
 			position: absolute;
 			top: 42px;
 			right: 3px;
-			
+
 			img {
-				opacity: 0.54;	
+				opacity: 0.54;
 			}
-		
+
 			&:hover {
 				img {
 					opacity: 1;
-				}	
+				}
 			}
 		}
-	
+
 		.speedPanel {
 			position: absolute;
 			top: 4px;
-			right: 0px;		
+			right: 0px;
 			opacity: 1;
 			transition: 0.3s ease;
 			z-index: 99999;
 			cursor: default;
-			
+
 			.flatButton {
 				margin: 0px;
 				padding: 0px;
@@ -442,7 +472,7 @@ $duration: 0.2s;
 				img {
 					opacity: 0.54;
 				}
-			
+
 				&:hover {
 					img {
 						opacity: 0.84;
@@ -450,21 +480,21 @@ $duration: 0.2s;
 				}
 			}
 
-		.value {
-			display: inline-block;
-			width: 40px;
-			font-size: 0.8em;
-			text-align: center;
-			vertical-align: top;
-			border: none;
-			outline: none;
-			overflow: hidden;
-			height: 19px;
-			margin-right: 0px;
-			line-height: 200%;
-		}
-	
-	}
+            .value {
+                display: inline-block;
+                width: 40px;
+                font-size: 0.8em;
+                text-align: center;
+                vertical-align: top;
+                border: none;
+                outline: none;
+                overflow: hidden;
+                height: 19px;
+                margin-right: 0px;
+                line-height: 200%;
+            }
+
+        }
 
 		.speedPanel-hidden {
 			@extend .speedPanel;
@@ -484,31 +514,31 @@ $duration: 0.2s;
 		.more {
 			opacity: 0.54 !important;
 			transition: 0.3s ease;
-			
+
 			&:hover {
-				opacity: 1 !important;	
+				opacity: 1 !important;
 			}
 		}
-	
+
 		.more-hidden {
 			opacity: 0 !important;
 			transition: 0.3s ease;
 		}
-	
+
 		.NewRadioButtonTreeItemParent {
 			border-top: $purple-default solid 1px;
     		border-bottom: $purple-default solid 1px;
-			
+
 			.scrollableTextBox, .inputBorder {
 				min-height: 48px;
 				overflow: hidden;
 			}
 		}
-		
+
 		.gwt-Tree .gwt-TreeItem .elem {
 			min-height: 48px;
 			position: relative;
-		}		
+		}
 	}
 
 	.arrowOutputImg {
@@ -521,28 +551,6 @@ $duration: 0.2s;
     .algebraPanel {
         height: 100%;
     }
-
-    .algebraPanelScientificNohHeader {
-        background-color: $gray-background;
-         &>div {
-            width: 800px;
-            max-width: calc(100% - 48px);
-            margin-left: auto;
-            margin-right: auto;
-            min-height: calc(100% - 24px);
-            box-sizing: border-box;
-            /** padding to make sure shadow goes to the very bottom when keyboard is open */
-            padding-bottom: 52px; 
-            background: $white;
-            margin-top: 24px;
-            padding-top: 4px;
-            border-top-right-radius: 4px;
-            border-top-left-radius: 4px;
-            box-shadow:  0px 0px 5px 1px rgba(0,0,0,0.2);
-            overflow-x: hidden;
-        }
-    }
-
 }
 
 @keyframes removeSuggestions {
@@ -563,6 +571,5 @@ $duration: 0.2s;
 @keyframes removeSuggestionsParent {
 	0% {margin-bottom: 40px;}
 	100% {margin-bottom: 0;}
-	
 }
-	
+

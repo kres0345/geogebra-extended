@@ -6,6 +6,8 @@ import org.geogebra.common.geogebra3D.euclidian3D.openGL.Renderer;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPoint3D;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoPolygon;
+import org.geogebra.common.kernel.kernelND.GeoCoordSys2D;
+import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.main.Feature;
 
 /**
@@ -15,96 +17,96 @@ public enum TargetType {
 	/** no target */
 	NOT_USED {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
 			// nothing to draw
 		}
 	},
 	/** nothing targeted, no hit */
 	NOTHING_NO_HIT {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
 			// draw nothing (TODO)
 		}
 	},
 	/** nothing targeted, hit can be used for showing */
 	NOTHING {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
 			// draw nothing (TODO)
 		}
 	},
 	/** target new point on region */
 	POINT_ON_REGION {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
-			doDrawTarget(renderer, view3d);
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
+			doDrawTarget(renderer, target);
 		}
 	},
 	/** target new point on path */
 	POINT_ON_PATH {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
-			doDrawTarget(renderer, view3d);
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
+			doDrawTarget(renderer, target);
 		}
 	},
 	/** target new point at intersection */
 	POINT_INTERSECTION {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
-			doDrawTarget(renderer, view3d);
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
+			doDrawTarget(renderer, target);
 		}
 	},
 	/** target existing point for move or select tools */
 	POINT_ALREADY_MOVE_OR_SELECT {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
 			renderer.setMatrix(view3d.getCursorMatrix());
 			view3d.drawPointAlready(view3d.getCursor3D());
 		}
 	},
-	/** target existing point with point (or point on object) tool */
-	POINT_ALREADY_POINT_TOOL {
+	/** target existing point where arrows are shown to move it */
+	POINT_ALREADY_SHOW_ARROWS {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
 			renderer.setMatrix(view3d.getCursorMatrix());
             view3d.drawPointAlready(view3d.getCursor3D());
 		}
 	},
-	/** target existing point with a tool that can NOT move a point */
-	POINT_ALREADY_CANNOT_MOVE_TOOL {
+	/** target existing point where no arrow are shown */
+	POINT_ALREADY_NO_ARROW {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
 		    // avoid z-fighting
             renderer.setLayer(view3d.getCursor3D().getLayer() + 1);
-            doDrawTarget(renderer, view3d);
+			doDrawTarget(renderer, target);
             renderer.setLayer(Renderer.LAYER_DEFAULT);
 		}
 	},
 	/** target free point (3D input devices) */
 	POINT_FREE {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
-            doDrawTarget(renderer, view3d);
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
+			doDrawTarget(renderer, target);
 		}
 	},
 	/** target path to select */
 	SELECT_PATH {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
-			doDrawTarget(renderer, view3d);
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
+			doDrawTarget(renderer, target);
 		}
 	},
 	/** target region to select */
 	SELECT_REGION {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
-			doDrawTarget(renderer, view3d);
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
+			doDrawTarget(renderer, target);
 		}
 	},
 	/** target path or region with "view in front of" tool */
 	VIEW_IN_FRONT_OF {
 		@Override
-		public void drawTarget(Renderer renderer, EuclidianView3D view3d) {
+		public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target) {
 			renderer.setMatrix(view3d.getCursorMatrix());
 			renderer.drawViewInFrontOf();
 		}
@@ -127,10 +129,13 @@ public enum TargetType {
 				return POINT_ALREADY_MOVE_OR_SELECT;
 			}
 			if (isModePointAlreadyAsPointTool(mode)) {
-				return POINT_ALREADY_POINT_TOOL;
+				return view3D.getCursor3D()
+						.getMoveMode() == GeoPointND.MOVE_MODE_NONE
+								? POINT_ALREADY_NO_ARROW
+								: POINT_ALREADY_SHOW_ARROWS;
 			}
 			if (isModeForCreatingPoint(mode)) {
-				return POINT_ALREADY_CANNOT_MOVE_TOOL;
+				return POINT_ALREADY_NO_ARROW;
 			}
 			return NOT_USED;
 
@@ -143,9 +148,6 @@ public enum TargetType {
 		case EuclidianView3D.PREVIEW_POINT_NONE:
 			return isModeForCreatingPoint(mode) ? NOTHING_NO_HIT : NOT_USED;
 		case EuclidianView3D.PREVIEW_POINT_FREE:
-			if (mode == EuclidianConstants.MODE_INTERSECT) {
-				return NOTHING;
-			}
 			return isModeForCreatingPoint(mode) ? POINT_FREE : NOT_USED;
 
 		case EuclidianView3D.PREVIEW_POINT_PATH:
@@ -192,7 +194,6 @@ public enum TargetType {
 		switch (mode) {
 		case EuclidianConstants.MODE_POINT:
 		case EuclidianConstants.MODE_POINT_ON_OBJECT:
-		case EuclidianConstants.MODE_INTERSECT:
 		case EuclidianConstants.MODE_SEGMENT:
 		case EuclidianConstants.MODE_SEGMENT_FIXED:
 		case EuclidianConstants.MODE_JOIN:
@@ -216,6 +217,7 @@ public enum TargetType {
 		case EuclidianConstants.MODE_ELLIPSE_THREE_POINTS:
 		case EuclidianConstants.MODE_CONIC_FIVE_POINTS:
 		case EuclidianConstants.MODE_POLYLINE:
+		case EuclidianConstants.MODE_REGULAR_POLYGON:
 			return true;
 		default:
 			return false;
@@ -249,9 +251,6 @@ public enum TargetType {
 		case EuclidianConstants.MODE_POLYLINE:
 			return onSuccess;
 
-		case EuclidianConstants.MODE_INTERSECT:
-			return NOTHING;
-
 		case EuclidianConstants.MODE_PYRAMID:
 		case EuclidianConstants.MODE_PRISM:
 			if (ec.selPolygons() == 1) {
@@ -273,6 +272,23 @@ public enum TargetType {
 		case EuclidianConstants.MODE_VIEW_IN_FRONT_OF:
 			return VIEW_IN_FRONT_OF;
 			
+		case EuclidianConstants.MODE_REGULAR_POLYGON:
+			// one point, one region: can create a point
+			if (ec.selCS2D() == 1) {
+				return onSuccess;
+			}
+			// on xOy plane or path: can create a point
+			GeoPoint3D point = view3D.getCursor3D();
+			if (point.hasRegion()) {
+				if (point.getRegion() == view3D.getxOyPlane()) {
+					return onSuccess;
+				}
+				if (point.getRegion() instanceof GeoCoordSys2D) {
+					return ec.selPoints() == 1 ? onFail : NOTHING;
+				}
+				return NOTHING;
+			}
+			return point.isPointOnPath() ? onSuccess : NOTHING;
 		default:
 			return NOT_USED;
 		}
@@ -288,6 +304,9 @@ public enum TargetType {
 				GeoPoint3D point = view3D.getCursor3D();
 				if (point.hasRegion()) {
 					GeoElement geo = (GeoElement) point.getRegion();
+                    if (!(geo instanceof GeoCoordSys2D)) {
+                        return onSuccess;
+                    }
 					if (!geo.isGeoPolygon()) {
 						return geo.isGeoPlane() ? onSuccess : NOTHING;
 					}
@@ -321,7 +340,8 @@ public enum TargetType {
 			return onSuccess;
 		}
 		if (point.hasRegion()) {
-			if (point.getRegion() == ec.getKernel().getXOYPlane()) {
+            if (!(point.getRegion() instanceof GeoCoordSys2D)
+                    || point.getRegion() == ec.getKernel().getXOYPlane()) {
 				return onSuccess;
 			}
 		}
@@ -334,20 +354,21 @@ public enum TargetType {
 	 *            GL renderer
 	 * @param view3d
 	 *            3D view
+	 * @param target
+	 *            target
 	 */
-	abstract public void drawTarget(Renderer renderer, EuclidianView3D view3d);
+	abstract public void drawTarget(Renderer renderer, EuclidianView3D view3d, Target target);
 
 	/**
 	 * draw sphere at current cursor position
 	 * 
 	 * @param renderer
 	 *            renderer
-	 * @param view3d
-	 *            3D view
+	 * @param target
+	 *            target
 	 */
 	static protected void doDrawTarget(Renderer renderer,
-			EuclidianView3D view3d) {
-		renderer.drawTarget(view3d.getCursorMatrix(),
-				view3d.getTargetCircleMatrix());
+			Target target) {
+		renderer.drawTarget(target.getDotMatrix(), target.getCircleMatrix());
 	}
 }

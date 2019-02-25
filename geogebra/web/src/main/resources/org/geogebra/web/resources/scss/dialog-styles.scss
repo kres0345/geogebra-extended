@@ -614,7 +614,7 @@ $duration: 0.2s;
    		.prevImg {
    			max-width: 420px;
    			max-height: 420px;
-			border: 1px solid $black-2;
+			border: 1px solid $black-20;
 			border-radius: 2px 2px 0 0 ;
 			cursor: pointer;
    		}
@@ -832,7 +832,7 @@ $duration: 0.2s;
     		line-height: 1;
 		}
 		.linkPanel {
-			display: inline-flex;
+			display: flex;
 			
 			.linkBox {
 				padding: 8px 0 8px 0;
@@ -1337,7 +1337,7 @@ $duration: 0.2s;
 		
 			.linkPanel {
 				margin-top: 16px;
-				display: inline-flex;
+				display: flex;
 						
 				.linkBox {
 					width: 362px;
@@ -1452,4 +1452,50 @@ $duration: 0.2s;
 			margin-bottom: 12px; 	
 		}
 	}
+	
+	.export3dDialog {
+		padding-right: 0px;
+		.Caption {
+			// with the extra 8px from the top 
+			// of input field is 20px as supposed to
+			margin-bottom: 12px; 	
+		}
+	   	.panelRow>* {
+			margin: 0px;	
+		}
+		.inputTextField { 
+			margin-left: 0px;	
+			margin-right: 24px;	
+			margin-top: 8px;	
+			margin-bottom: 8px;	
+			width: 96px;	
+			.textField {
+	   			.AutoCompleteTextFieldW {
+	   				margin: 0px;
+	   				// enforces baseline alignment (needed for mac osx)
+	   				display: flex;
+	   				align-items: baseline;
+	   				.suffix {
+	   					margin: 0px;
+	   					padding-left: 8px;
+	                    font-size: 100%;
+	   				}
+	   			}
+	   		}
+	   		.errorLabel {
+	   			max-width: 96px;
+	   		}
+   		}
+   		.equal {
+   			// margin top and bottom set to center it with text field
+   			margin-top: 0px;
+   			margin-bottom: 8px;
+   			// we already have 24px margin from text field
+   			margin-left: -8px;
+   			margin-right: 16px;
+   		}
+   		.DialogButtonPanel {
+			margin-right: 8px; 	
+		}
+   	}
 }

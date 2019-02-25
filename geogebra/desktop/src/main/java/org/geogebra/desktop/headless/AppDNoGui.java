@@ -82,9 +82,11 @@ import org.geogebra.desktop.factories.LaTeXFactoryD;
 import org.geogebra.desktop.factories.LoggingCASFactoryD;
 import org.geogebra.desktop.factories.UtilFactoryD;
 import org.geogebra.desktop.geogebra3D.App3DCompanionD;
+import org.geogebra.desktop.gui.menubar.GeoGebraMenuBar;
 import org.geogebra.desktop.io.MyXMLioD;
 import org.geogebra.desktop.kernel.UndoManagerD;
 import org.geogebra.desktop.kernel.geos.GeoElementGraphicsAdapterD;
+import org.geogebra.desktop.main.AppD;
 import org.geogebra.desktop.main.LocalizationD;
 import org.geogebra.desktop.main.SpreadsheetTableModelD;
 import org.geogebra.desktop.move.ggtapi.models.LoginOperationD;
@@ -107,7 +109,7 @@ import org.geogebra.desktop.util.StringUtilD;
  */
 public class AppDNoGui extends App implements AppDI {
 	private GgbAPI ggbapi;
-	private Localization loc;
+	private LocalizationD loc;
 	private SpreadsheetTableModelD tableModel;
 	private DrawEquationD drawEquation;
 	private boolean is3Dactive;
@@ -144,6 +146,14 @@ public class AppDNoGui extends App implements AppDI {
 			prerelease = false;
 		}
 		Log.debug(prerelease ? "Start up prerelese." : "Start up stable.");
+
+		// print GeoGebra & Java versions
+		StringBuilder sb = new StringBuilder();
+		GeoGebraMenuBar.appendVersion(sb, this);
+		sb.append(" Java ");
+		AppD.appendJavaVersion(sb);
+		Log.debug(sb.toString());
+
 		initFactories();
 		this.kernel = dimension == 2 ? new Kernel(this, new GeoFactory())
 				: new Kernel3D(this, new GeoFactory3D());
@@ -667,12 +677,6 @@ public class AppDNoGui extends App implements AppDI {
 	@Override
 	public Localization getLocalization() {
 		return loc;
-	}
-
-	@Override
-	public double getMillisecondTime() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override

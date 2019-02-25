@@ -5,11 +5,12 @@ import org.geogebra.common.main.OptionType;
 import org.geogebra.common.main.SelectionManager;
 import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.html5.main.AppW;
+import org.geogebra.web.resources.SVGResource;
 
 /**
  * The "Edit" menu.
  */
-public class EditMenuW extends GMenuBar {
+public class EditMenuW extends Submenu {
 
 	/**
 	 * Reference to selection manager
@@ -20,19 +21,15 @@ public class EditMenuW extends GMenuBar {
 
 	/**
 	 * Constructs the "Edit" menu
-	 * 
+	 *
 	 * @param app
 	 *            Application instance
 	 */
 	public EditMenuW(AppW app) {
 		super("edit", app);
+		addExpandableStyleWithColor(false);
 		this.loc = app.getLocalization();
 		this.selection = getApp().getSelectionManager();
-		if (app.isUnbundledOrWhiteboard()) {
-			addStyleName("matStackPanel");
-		} else {
-			addStyleName("GeoGebraMenuBar");
-		}
 		initActions();
 	}
 
@@ -311,10 +308,21 @@ public class EditMenuW extends GMenuBar {
 	/**
 	 * Rebuild the UI if invalid
 	 */
+	@Override
 	public void update() {
 		if (!valid) {
 			valid = true;
 			this.initActions();
 		}
+	}
+
+	@Override
+	public SVGResource getImage() {
+		return MaterialDesignResources.INSTANCE.edit_black();
+	}
+
+	@Override
+	protected String getTitleTranslationKey() {
+		return "Edit";
 	}
 }

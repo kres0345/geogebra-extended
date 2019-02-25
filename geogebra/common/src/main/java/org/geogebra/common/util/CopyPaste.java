@@ -46,6 +46,7 @@ import org.geogebra.common.kernel.commands.Commands;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoPolyLine;
+import org.geogebra.common.kernel.kernelND.GeoElementND;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.main.App;
 import org.geogebra.common.util.debug.Log;
@@ -110,33 +111,34 @@ public class CopyPaste {
 	 * which depends on xAxis or yAxis, then copy & paste something else, points
 	 * may be repositioned)
 	 * 
+	 * @param geos
+	 *            elements
+	 * @param app
+	 *            application
 	 */
 	protected void removeDependentFromAxes(ArrayList<ConstructionElement> geos,
 			App app) {
 		TreeSet<GeoElement> ancestors = new TreeSet<>();
 		ConstructionElement geo;
+		Construction cons = app.getKernel().getConstruction();
 		for (int i = geos.size() - 1; i >= 0; i--) {
 			geo = geos.get(i);
 			ancestors.clear();
 			geo.addPredecessorsToSet(ancestors, true);
-			if (ancestors.contains(app.getKernel().getXAxis())) {
-				geos.remove(i);
-			} else if (ancestors.contains(app.getKernel().getYAxis())) {
-				geos.remove(i);
-			} else if (app.is3D()) {
-				Construction cons = app.getKernel().getConstruction();
-				if (ancestors.contains(app.getKernel().getZAxis3D())) {
+			if (contained(ancestors, app.getKernel().getXAxis())
+					|| contained(ancestors, app.getKernel().getYAxis())
+					|| contained(ancestors, app.getKernel().getZAxis3D())
+					|| contained(ancestors, cons.getXOYPlane())
+					|| contained(ancestors, cons.getClippingCube())
+					|| contained(ancestors, cons.getSpace())) {
 					geos.remove(i);
-				} else if (ancestors.contains(cons.getXOYPlane())) {
-					geos.remove(i);
-				} else if (ancestors
-						.contains(cons.getClippingCube())) {
-					geos.remove(i);
-				} else if (ancestors.contains(cons.getSpace())) {
-					geos.remove(i);
-				}
 			}
 		}
+	}
+
+	private static boolean contained(TreeSet<GeoElement> ancestors,
+			GeoElementND el) {
+		return el != null && ancestors.contains(el);
 	}
 
 	protected void removeHavingMacroPredecessors(
@@ -148,33 +150,12 @@ public class CopyPaste {
 		for (int i = geos.size() - 1; i >= 0; i--) {
 			if (geos.get(i).isGeoElement()) {
 				geo = (GeoElement) geos.get(i);
-				found = false;
-				if (geo.getParentAlgorithm() != null) {
-					if (geo.getParentAlgorithm().getClassName()
-							.equals(Algos.AlgoMacro)) {
-						found = true;
-						if (copymacro) {
-							copiedMacros
-									.add(((AlgoMacro) geo.getParentAlgorithm())
-											.getMacro());
-						}
-					}
-				}
+				found = checkMacros(geo, copymacro);
 				if (!found) {
 					it = geo.getAllPredecessors().iterator();
-					while (it.hasNext()) {
+					while (it.hasNext() && !found) {
 						geo2 = it.next();
-						if (geo2.getParentAlgorithm() != null) {
-							if (geo2.getParentAlgorithm().getClassName()
-									.equals(Algos.AlgoMacro)) {
-								found = true;
-								if (copymacro) {
-									copiedMacros.add(((AlgoMacro) geo2
-											.getParentAlgorithm()).getMacro());
-								}
-								break;
-							}
-						}
+						found = checkMacros(geo2, copymacro);
 					}
 				}
 				if (found && !copymacro) {
@@ -182,6 +163,17 @@ public class CopyPaste {
 				}
 			}
 		}
+	}
+
+	private boolean checkMacros(GeoElement geo, boolean copymacro) {
+		if (Algos.isUsedFor(Algos.AlgoMacro, geo)) {
+			if (copymacro) {
+				copiedMacros
+						.add(((AlgoMacro) geo.getParentAlgorithm()).getMacro());
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -314,8 +306,7 @@ public class CopyPaste {
 					// nested
 					// lists in lists and GeoElements with subGeos in lists!
 					// (new ticket)
-					if (geo.getParentAlgorithm().getClassName()
-							.equals(Commands.Sequence)) {
+					if (Algos.isUsedFor(Commands.Sequence, geo)) {
 						GeoElement[] pgeos = geo.getParentAlgorithm()
 								.getInput();
 						if (pgeos.length > 1) {
@@ -813,24 +804,19 @@ public class CopyPaste {
 				// geo.setLabel(geo.getDefaultLabel(false));
 				app.getSelectionManager().addSelectedGeo(geo);
 
-				if (geo.getParentAlgorithm() != null) {
-					if (geo.getParentAlgorithm().getClassName()
-							.equals(Commands.Sequence)) {
-						// variable of AlgoSequence is not returned in
-						// lookupLabel!
-						// the old name of the variable may remain, as it is not
-						// part of the construction anyway
-						GeoElement[] pgeos = geo.getParentAlgorithm()
-								.getInput();
-						if (pgeos.length > 1 && pgeos[1].getLabelSimple()
-								.length() > labelPrefix.length()) {
-							if (pgeos[1].getLabelSimple()
-									.substring(0, labelPrefix.length())
-									.equals(labelPrefix)) {
-								pgeos[1].setLabelSimple(
-										pgeos[1].getLabelSimple().substring(
-												labelPrefix.length()));
-							}
+				if (Algos.isUsedFor(Commands.Sequence, geo)) {
+					// variable of AlgoSequence is not returned in
+					// lookupLabel!
+					// the old name of the variable may remain, as it is not
+					// part of the construction anyway
+					GeoElement[] pgeos = geo.getParentAlgorithm().getInput();
+					if (pgeos.length > 1 && pgeos[1].getLabelSimple()
+							.length() > labelPrefix.length()) {
+						if (pgeos[1].getLabelSimple()
+								.substring(0, labelPrefix.length())
+								.equals(labelPrefix)) {
+							pgeos[1].setLabelSimple(pgeos[1].getLabelSimple()
+									.substring(labelPrefix.length()));
 						}
 					}
 				}

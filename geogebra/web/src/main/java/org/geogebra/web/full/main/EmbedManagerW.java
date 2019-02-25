@@ -19,7 +19,6 @@ import org.geogebra.common.util.debug.Log;
 import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.full.gui.applet.AppletFactory;
 import org.geogebra.web.full.gui.applet.GeoGebraFrameBoth;
-import org.geogebra.web.full.gui.layout.DockManagerW;
 import org.geogebra.web.full.gui.layout.DockPanelW;
 import org.geogebra.web.full.gui.layout.panels.EuclidianDockPanelW;
 import org.geogebra.web.html5.main.GgbFile;
@@ -39,7 +38,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Creates, deletes and resizes embedded applets.
- * 
+ *
  * @author Zbynek
  *
  */
@@ -74,12 +73,11 @@ public class EmbedManagerW implements EmbedManager {
 			}
 			return;
 		}
+		TestArticleElement parameters = new TestArticleElement("", "graphing");
 		GeoGebraFrameBoth fr = new GeoGebraFrameBoth(
 				(AppletFactory) GWT.create(AppletFactory.class),
-				app.getLAF(), app.getDevice(), false);
-		TestArticleElement parameters = new TestArticleElement("",
-				"graphing");
-		fr.ae = parameters;
+				app.getLAF(), app.getDevice(), parameters);
+
 		parameters.attr("showToolBar", "true")
 				.attr("scaleContainerClass", "embedContainer")
 				.attr("allowUpscale", "true")
@@ -136,8 +134,8 @@ public class EmbedManagerW implements EmbedManager {
 		container.add(scaler);
 		container.getElement().addClassName("embedContainer");
 		container.getElement().addClassName("mowWidget");
-		DockPanelW panel = ((DockManagerW) app.getGuiManager().getLayout()
-				.getDockManager()).getPanel(App.VIEW_EUCLIDIAN);
+		DockPanelW panel = app.getGuiManager().getLayout().getDockManager()
+				.getPanel(App.VIEW_EUCLIDIAN);
 		((EuclidianDockPanelW) panel).getEuclidianPanel().add(container);
 	}
 
@@ -316,7 +314,7 @@ public class EmbedManagerW implements EmbedManager {
 					Log.warn("Problem loading embed " + entry.getKey());
 				}
 			}
-		}	
+		}
 	}
 
 	@Override

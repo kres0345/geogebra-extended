@@ -64,6 +64,7 @@ import org.geogebra.common.kernel.geos.GeoSegment;
 import org.geogebra.common.kernel.geos.GeoSurfaceFinite;
 import org.geogebra.common.kernel.geos.LabelManager;
 import org.geogebra.common.kernel.geos.ParametricCurve;
+import org.geogebra.common.kernel.geos.properties.Auxiliary;
 import org.geogebra.common.kernel.kernelND.Geo3DVecInterface;
 import org.geogebra.common.kernel.kernelND.GeoConicND;
 import org.geogebra.common.kernel.kernelND.GeoConicNDConstants;
@@ -81,6 +82,7 @@ import org.geogebra.common.kernel.kernelND.GeoSegmentND;
 import org.geogebra.common.kernel.kernelND.GeoVectorND;
 import org.geogebra.common.kernel.kernelND.HasHeight;
 import org.geogebra.common.kernel.kernelND.HasVolume;
+import org.geogebra.common.main.Feature;
 import org.geogebra.common.plugin.GeoClass;
 import org.geogebra.common.plugin.Operation;
 
@@ -1954,6 +1956,10 @@ public class Manager3D implements Manager3DInterface {
 				algoCircle.getCircle(), tmpCoords.getX(), tmpCoords.getY(),
 				tmpCoords.getZ());
 		algoPoint.getP().setLabel(null);
+		if (kernel.getApplication().has(Feature.G3D_SHOW_IN_ALGEBRA_VIEW)) {
+			((GeoElement) algoPoint.getP())
+					.setAuxiliaryObject(Auxiliary.YES_SAVE);
+		}
 
 		// create solid
 		AlgoArchimedeanSolidThreePoints algo = new AlgoArchimedeanSolidThreePoints(

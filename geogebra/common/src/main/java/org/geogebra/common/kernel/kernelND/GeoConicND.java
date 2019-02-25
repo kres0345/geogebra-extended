@@ -57,7 +57,6 @@ import org.geogebra.common.kernel.geos.XMLBuilder;
 import org.geogebra.common.kernel.implicit.GeoImplicit;
 import org.geogebra.common.kernel.integration.EllipticArcLength;
 import org.geogebra.common.main.ExamEnvironment;
-import org.geogebra.common.main.Feature;
 import org.geogebra.common.plugin.Operation;
 import org.geogebra.common.util.DoubleUtil;
 import org.geogebra.common.util.ExtendedBoolean;
@@ -1789,8 +1788,10 @@ public abstract class GeoConicND extends GeoQuadricND
 			sb.append(kernel.format(coeffs[4], tpl));
 			sb.append(")*");
 			sb.append(y);
-			sb.append("=");
-			sb.append(kernel.format(-coeffs[5], tpl));
+			sb.append("+");
+			sb.append(kernel.format(coeffs[5], tpl));
+			// serialise to CAS as "...=0" so eg Coefficients(c) works
+			sb.append("=0");
 			return sb;
 		}
 		if (ExamEnvironment.isProtectedEquation(this)) {
@@ -1809,21 +1810,18 @@ public abstract class GeoConicND extends GeoQuadricND
 			return sbToValueString;
 		}
 
-		String squared;
+		final String squared = tpl.squared();
 		String[] myVars;
 		switch (tpl.getStringType()) {
 		case LATEX:
-			squared = "^{2}";
 			myVars = varsLateX;
 			break;
 
 		case GIAC:
-			squared = "^2";
 			myVars = varsCAS;
 			break;
 
 		default:
-			squared = "\u00b2";
 			myVars = vars;
 		}
 
@@ -4579,8 +4577,7 @@ public abstract class GeoConicND extends GeoQuadricND
 
 	@Override
 	public boolean isShape() {
-		return kernel.getApplication().has(Feature.MOW_BOUNDING_BOXES)
-				&& isShape;
+		return isShape;
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 package org.geogebra.common.main;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+//import java.util.Locale;
 import java.util.Locale;
 
 import org.geogebra.common.GeoGebraConstants;
@@ -551,36 +551,52 @@ public abstract class Localization {
 	 * 
 	 * @param key
 	 *            eg "poly" -> "Name.poly" -> poly -> poly1 as a label
+	 * @param fallback
+	 *            if properties not loaded
 	 * @return "poly" (the suffix is added later)
 	 */
-	final public String getPlainLabel(String key) {
+	final public String getPlainLabel(String key, String fallback) {
 		String ret = getMenu("Name." + key);
 
 		if (ret == null || ret.startsWith("Name.")) {
-			return key;
+			return fallback;
 		}
 
 		for (int i = ret.length() - 1; i >= 0; i--) {
 			if (!StringUtil.isLetterOrDigitOrUnderscore(ret.charAt(i))) {
-
 				Log.warn("Bad character in key: " + key + "=" + ret);
-
 				// remove bad character
 				ret = ret.substring(0, i) + ret.substring(i + 1);
-
 			}
 		}
 
 		return ret;
-
 	}
 
-	/** replace "%0" by arg0 */
+	/**
+	 * replace "%0" by arg0 etc.
+	 * 
+	 * @param key
+	 *            pattern key
+	 * @param arg0
+	 *            replace args
+	 * @return string with replacements
+	 */
 	final public String getPlain(String key, String... arg0) {
 		return getPlainArray(key, null, arg0);
 	}
 
-	/** replace "%0" by arg0 */
+	/**
+	 * replace "%0" by arg0 etc.
+	 * 
+	 * @param key
+	 *            pattern key
+	 * @param default0
+	 *            pattern for default locale
+	 * @param arg0
+	 *            replace args
+	 * @return string with replacements
+	 */
 	final public String getPlainDefault(String key, String default0,
 			String... arg0) {
 		return getPlainArray(key, default0, arg0);
@@ -590,9 +606,7 @@ public abstract class Localization {
 	 * 
 	 * @return 2 letter language name, eg "en"
 	 */
-	public String getLanguage() {
-		return getLanguage(getLocale());
-	}
+	public abstract String getLanguage();
 
 	/**
 	 * @param lang
@@ -915,8 +929,6 @@ public abstract class Localization {
 		// force update
 		fontSizeStrings = null;
 
-		// reverseLanguage = "zh".equals(lang); removed Michael Borcherds
-		// 2008-03-31
 		reverseNameDescription = "eu".equals(lang) || "hu".equals(lang);
 
 		// used for eg axes labels
@@ -1300,59 +1312,6 @@ public abstract class Localization {
 	abstract protected ArrayList<Locale> getSupportedLocales();
 
 	/**
-	 * Creates a locale from a language and a country string.
-	 *
-	 * @param language
-	 *            the language of the locale
-	 * @param country
-	 *            the country the language is used in. Might be null.
-	 * @return a new locale
-	 */
-	protected abstract Locale createLocale(String language, String country);
-
-	/**
-	 * Returns a locale object that has the same country and/or language as
-	 * locale. If the language of locale is not supported an English locale is
-	 * returned.
-	 */
-	protected Locale getClosestSupportedLocale(Locale locale) {
-		int size = getSupportedLocales().size();
-
-		// try to find country and and language
-		String country = getCountry(locale);
-		String language = getLanguage(locale);
-		String variant = getVariant(locale);
-
-		if (country.length() > 0) {
-			for (int i = 0; i < size; i++) {
-				Locale loc = getSupportedLocales().get(i);
-
-				if (country.equals(getCountry(loc))
-						&& language.equals(getLanguage(loc))
-						// needed for no_NO_NY
-						&& (!"no".equals(language)
-								|| variant.equals(getVariant(loc)))) {
-					// found supported country locale
-					return loc;
-				}
-			}
-		}
-
-		// try to find only language
-		for (int i = 0; i < size; i++) {
-			Locale loc = getSupportedLocales().get(i);
-			if (language.equals(getLanguage(loc))) {
-				// found supported country locale
-				return loc;
-			}
-		}
-
-		// we didn't find a matching country or language,
-		// so we take English
-		return Locale.ENGLISH;
-	}
-
-	/**
 	 * Returns the languages that are supported by the app.
 	 *
 	 * @param prerelease
@@ -1372,66 +1331,15 @@ public abstract class Localization {
 	}
 
 	/**
-	 * Converts the language to a locale object.
-	 *
-	 * @param language
-	 *            the language to convert to.
-	 * @return converted locale
-	 */
-	public Locale convertToLocale(Language language) {
-		String lang = language.localeISO6391;
-		String country = "";
-		if (language.getLocaleGWT().length() == 5) {
-			country = language.getLocaleGWT().substring(3);
-		}
-		return createLocale(lang, country);
-	}
-
-	/**
-	 * Get an array of locales from langauges.
+	 * Get an array of locales from languages.
 	 *
 	 * @param languages
 	 *            array of languages
 	 * @return an array of locales
 	 */
 	public Locale[] getLocales(Language[] languages) {
-		Locale[] locales = new Locale[languages.length];
-		for (int i = 0; i < languages.length; i++) {
-			Language language = languages[i];
-			locales[i] = convertToLocale(language);
-		}
-		return locales;
+		return new Locale[0];
 	}
-
-	/**
-	 * Returns the supported locales.
-	 *
-	 * @param prerelease
-	 *            if the app is in prerelease
-	 * @return locales that the app can handle
-	 */
-	public ArrayList<Locale> getSupportedLocales(boolean prerelease) {
-		Language[] languages = getSupportedLanguages(prerelease);
-		Locale[] locales = getLocales(languages);
-		List<Locale> localeList = Arrays.asList(locales);
-
-		return new ArrayList<>(localeList);
-	}
-
-	/**
-	 * @param locale
-	 *            current locale
-	 */
-	public void setLocale(Locale locale) {
-		currentLocale = getClosestSupportedLocale(locale);
-		updateResourceBundles();
-	}
-
-	abstract protected void updateResourceBundles();
-
-	protected abstract String getLanguage(Locale locale);
-
-	protected abstract String getCountry(Locale locale);
 
 	@SuppressWarnings("unused")
 	protected String getVariant(Locale locale) {
@@ -1602,6 +1510,9 @@ public abstract class Localization {
 	 * @return url for current app
 	 */
 	public String getTutorialURL(AppConfig config) {
+		if (StringUtil.empty(config.getTutorialKey())) {
+			return "";
+		}
 		return GeoGebraConstants.GEOGEBRA_WEBSITE + "m/"
 				+ getMenu(config.getTutorialKey());
 	}
@@ -1615,6 +1526,8 @@ public abstract class Localization {
 
 	/**
 	 * Get the value which tells whether the english commands are forced or not
+	 * 
+	 * @return whether to force English commands
 	 */
 	public boolean areEnglishCommandsForced() {
 		return areEnglishCommandsForced;

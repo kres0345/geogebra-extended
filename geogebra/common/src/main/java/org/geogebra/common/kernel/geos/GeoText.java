@@ -228,8 +228,8 @@ public class GeoText extends GeoElement
 	}
 
 	@Override
-	public void setVisualStyle(GeoElement geo) {
-		super.setVisualStyle(geo);
+	public void setVisualStyle(GeoElement geo, boolean setAuxiliaryProperty) {
+		super.setVisualStyle(geo, setAuxiliaryProperty);
 		if (!geo.isGeoText()) {
 			return;
 		}
@@ -727,8 +727,9 @@ public class GeoText extends GeoElement
 
 	@Override
 	public void setAllVisualPropertiesExceptEuclidianVisible(GeoElement geo,
-			boolean keepAdvanced) {
-		super.setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced);
+			boolean keepAdvanced, boolean setAuxiliaryProperty) {
+		super.setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced,
+				setAuxiliaryProperty);
 
 		// start point of text
 		if (geo instanceof GeoText) {

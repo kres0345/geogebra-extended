@@ -531,19 +531,7 @@ public abstract class GeoQuadricND extends GeoElement
 	 */
 	protected void buildSphereNDString(StringBuilder sbToValueString,
 			StringTemplate tpl) {
-		String squared;
-		switch (tpl.getStringType()) {
-		case LATEX:
-			squared = "^{2}";
-			break;
-
-		case GIAC:
-			squared = "^2";
-			break;
-
-		default:
-			squared = "\u00b2";
-		}
+		String squared = tpl.squared();
 
 		for (int i = 0; i < dimension; i++) {
 			if (DoubleUtil.isZero(getMidpoint().get(i + 1))) {

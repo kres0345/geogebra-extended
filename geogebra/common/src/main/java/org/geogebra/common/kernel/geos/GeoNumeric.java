@@ -744,8 +744,9 @@ public class GeoNumeric extends GeoElement
 
 	@Override
 	public void setAllVisualPropertiesExceptEuclidianVisible(GeoElement geo,
-			boolean keepAdvanced) {
-		super.setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced);
+			boolean keepAdvanced, boolean setAuxiliaryProperty) {
+		super.setAllVisualPropertiesExceptEuclidianVisible(geo, keepAdvanced,
+				setAuxiliaryProperty);
 
 		if (geo.isGeoNumeric()) {
 			isDrawable = ((GeoNumeric) geo).isDrawable;
@@ -753,8 +754,8 @@ public class GeoNumeric extends GeoElement
 	}
 
 	@Override
-	public void setVisualStyle(GeoElement geo) {
-		super.setVisualStyle(geo);
+	public void setVisualStyle(GeoElement geo, boolean setAuxiliaryProperty) {
+		super.setVisualStyle(geo, setAuxiliaryProperty);
 
 		if (geo.isGeoNumeric()) {
 			slopeTriangleSize = ((GeoNumeric) geo).slopeTriangleSize;

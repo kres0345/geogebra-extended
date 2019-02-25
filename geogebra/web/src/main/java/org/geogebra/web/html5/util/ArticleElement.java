@@ -107,7 +107,7 @@ public final class ArticleElement extends Element implements ArticleElementInter
 	public boolean getDataParamEnableRightClick() {
 		return getBoolDataParam("enableRightClick", true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.geogebra.web.html5.util.ArticleElementInterface#getDataParamEnableCAS(boolean)
 	 */
@@ -209,7 +209,7 @@ public final class ArticleElement extends Element implements ArticleElementInter
 	public boolean getDataParamShowAlgebraInput(boolean def) {
 		return getBoolDataParam("showAlgebraInput", def);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.geogebra.web.html5.util.ArticleElementInterface#getAlgebraPosition(org.geogebra.common.main.App.InputPosition)
 	 */
@@ -421,6 +421,10 @@ public final class ArticleElement extends Element implements ArticleElementInter
 					sx *= mul;
 					sy *= mul;
 				}
+				if (style.zoom && current != $doc.body.parentElement) {
+					sx *= style.zoom;
+					sy *= style.zoom;
+				}
 			}
 
 			current = current.parentElement;
@@ -540,7 +544,7 @@ public final class ArticleElement extends Element implements ArticleElementInter
 	@Override
 	public String getDataParamAppName() {
 		return getStringDataParam("appName", "classic").replace("whiteboard", "notes")
-				.toLowerCase(Locale.US);
+				.replace("scientific", "calculator").toLowerCase(Locale.US);
 	}
 
 	/* (non-Javadoc)
@@ -828,11 +832,6 @@ public final class ArticleElement extends Element implements ArticleElementInter
 	@Override
 	public String getParamBackendURL() {
 		return getStringDataParam("backendURL", "");
-	}
-
-	@Override
-	public boolean isForceHeader() {
-		return getStringDataParam("marginTop", "").startsWith("+");
 	}
 
 	@Override

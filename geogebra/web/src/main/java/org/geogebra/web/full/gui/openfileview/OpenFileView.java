@@ -3,7 +3,6 @@ package org.geogebra.web.full.gui.openfileview;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geogebra.common.main.Feature;
 import org.geogebra.common.main.OpenFileListener;
 import org.geogebra.common.move.events.BaseEvent;
 import org.geogebra.common.move.ggtapi.events.LogOutEvent;
@@ -17,21 +16,21 @@ import org.geogebra.common.move.views.EventRenderable;
 import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.web.full.css.MaterialDesignResources;
+import org.geogebra.web.full.gui.HeaderView;
 import org.geogebra.web.full.gui.MyHeaderPanel;
 import org.geogebra.web.full.gui.dialog.DialogManagerW;
 import org.geogebra.web.full.main.BrowserDevice.FileOpenButton;
 import org.geogebra.web.html5.gui.FastClickHandler;
 import org.geogebra.web.html5.gui.util.NoDragImage;
-import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.gui.view.browser.BrowseViewI;
 import org.geogebra.web.html5.gui.view.browser.MaterialListElementI;
+import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.shared.ggtapi.LoginOperationW;
 import org.geogebra.web.shared.ggtapi.models.MaterialCallback;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -48,15 +47,13 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class OpenFileView extends MyHeaderPanel
 		implements BrowseViewI, OpenFileListener, EventRenderable {
-	private static final int HEADER_HEIGHT = 44;
+
 	/**
 	 * application
 	 */
 	protected AppW app;
 	// header
-	private FlowPanel headerPanel;
-	private StandardButton backBtn;
-	private Label headerCaption;
+	private HeaderView headerView;
 
 	// content panel
 	private FlowPanel contentPanel;
@@ -133,29 +130,18 @@ public class OpenFileView extends MyHeaderPanel
 	}
 
 	private void initHeader() {
-		headerPanel = new FlowPanel();
-		headerPanel.setStyleName("openFileViewHeader");
-
-		backBtn = new StandardButton(
-				MaterialDesignResources.INSTANCE.mow_back_arrow(),
-				null, 24,
-				app);
-		backBtn.setStyleName("headerBackButton");
-		backBtn.addFastClickHandler(new FastClickHandler() {
+		headerView = new HeaderView(app);
+		headerView.setCaption(localize("mow.openFileViewTitle"));
+		StandardButton backButton = headerView.getBackButton();
+		backButton.addFastClickHandler(new FastClickHandler() {
 
 			@Override
 			public void onClick(Widget source) {
 				close();
 			}
 		});
-		headerPanel.add(backBtn);
 
-		headerCaption = new Label(
-				localize("mow.openFileViewTitle"));
-		headerCaption.setStyleName("headerCaption");
-		headerPanel.add(headerCaption);
-
-		this.setHeaderWidget(headerPanel);
+		this.setHeaderWidget(headerView);
 	}
 
 	private void initContentPanel() {
@@ -248,7 +234,7 @@ public class OpenFileView extends MyHeaderPanel
 				if (!app.isUnbundledOrWhiteboard()) {
 					app.showPerspectivesPopup();
 				}
-				if (app.has(Feature.MOW_MULTI_PAGE)
+				if (app.isWhiteboardActive()
 						&& app.getPageController() != null) {
 					app.getPageController().resetPageControl();
 				}
@@ -394,7 +380,7 @@ public class OpenFileView extends MyHeaderPanel
 
 	@Override
 	public void setLabels() {
-		headerCaption.setText(localize("mow.openFileViewTitle"));
+		headerView.setCaption(localize("mow.openFileViewTitle"));
 		newFileBtn.setText(localize("mow.newFile"));
 		openFileBtn
 				.setImageAndText(
@@ -520,12 +506,16 @@ public class OpenFileView extends MyHeaderPanel
 
 	@Override
 	public void setHeaderVisible(boolean visible) {
-		if (headerPanel.getElement().getParentElement() != null) {
-			headerPanel.getElement().getParentElement().getStyle()
+		if (headerView.getElement().getParentElement() != null) {
+			headerView.getElement().getParentElement().getStyle()
 					.setDisplay(visible ? Display.BLOCK : Display.NONE);
 		}
-		contentPanel.getElement().getStyle().setTop(visible ? HEADER_HEIGHT : 0,
-				Unit.PX);
+	}
+
+	@Override
+	public void closeAndSave(AsyncOperation<Boolean> callback) {
+		close();
+		app.checkSaved(callback);
 	}
 
 	@Override

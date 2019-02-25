@@ -66,6 +66,7 @@ import org.geogebra.common.geogebra3D.euclidian3D.printer3D.Format;
 import org.geogebra.common.geogebra3D.kernel3D.Kernel3D;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoClippingCube3D;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoConicSection;
+import org.geogebra.common.geogebra3D.kernel3D.geos.GeoCursor3D;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPlane3D;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPlane3DConstant;
 import org.geogebra.common.geogebra3D.kernel3D.geos.GeoPoint3D;
@@ -95,6 +96,7 @@ import org.geogebra.common.kernel.geos.GeoNumberValue;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoPolygon;
 import org.geogebra.common.kernel.geos.GeoText;
+import org.geogebra.common.kernel.geos.XMLBuilder;
 import org.geogebra.common.kernel.implicit.GeoImplicit;
 import org.geogebra.common.kernel.kernelND.CurveEvaluable;
 import org.geogebra.common.kernel.kernelND.GeoAxisND;
@@ -242,7 +244,7 @@ public abstract class EuclidianView3D extends EuclidianView
 	private DrawPointDecorations pointDecorations;
 	// preview
 	private Previewable previewDrawable;
-	private GeoPoint3D cursor3D;
+	private GeoCursor3D cursor3D;
 	private int cursor3DType = PREVIEW_POINT_NONE;
 	private boolean cursor3DVisible = true;
 	private EuclidianCursor cursor = EuclidianCursor.DEFAULT;
@@ -285,7 +287,6 @@ public abstract class EuclidianView3D extends EuclidianView
 	private EuclidianView3DCompanion companion3D;
 
 	private CoordMatrix4x4 cursorMatrix = new CoordMatrix4x4();
-	private CoordMatrix4x4 targetCircleMatrix;
 	private Coords cursorNormal = new Coords(3);
 
 	private Coords startPos;
@@ -297,6 +298,7 @@ public abstract class EuclidianView3D extends EuclidianView
 	//Augmented Reality
 	private boolean mIsARDrawing;
 	private boolean mIsAREnabled;
+	private Target target;
 
 	/**
 	 * common constructor
@@ -321,6 +323,8 @@ public abstract class EuclidianView3D extends EuclidianView
 
 		viewDirectionPersp = new Coords(4);
 		viewDirection = Coords.VZ.copyVector();
+
+		target = new Target();
 
 		start();
 	}
@@ -423,7 +427,7 @@ public abstract class EuclidianView3D extends EuclidianView
 		initAxisAndPlane();
 		kernel3D.getConstruction().setIgnoringNewTypes(true);
 		// previewables
-		cursor3D = new GeoPoint3D(kernel3D.getConstruction());
+		cursor3D = new GeoCursor3D(kernel3D.getConstruction());
 		cursor3D.setCoords(0, 0, 0, 1);
 		cursor3D.setIsPickable(false);
 		// cursor3D.setLabelOffset(5, -5);
@@ -2072,7 +2076,7 @@ public abstract class EuclidianView3D extends EuclidianView
 	 *
 	 * @return the point used for 3D cursor
 	 */
-	public GeoPoint3D getCursor3D() {
+	public GeoCursor3D getCursor3D() {
 		return cursor3D;
 	}
 
@@ -2105,6 +2109,9 @@ public abstract class EuclidianView3D extends EuclidianView
 	public void setCursor3DType(int v) {
 		cursor3DType = v;
 		cursor3DVisible = true;
+		if (euclidianController.isCreatingPointAR()) {
+			target.updateType(this);
+        }
 	}
 
 	@Override
@@ -2389,25 +2396,19 @@ public abstract class EuclidianView3D extends EuclidianView
 				}
 			}
 		} else {
+			if (getEuclidianController().isCreatingPointAR()) {
+				target.updateMatrices(this);
+			}
 			switch (getCursor3DType()) {
 
 			default:
 				// do nothing
 				break;
 			case PREVIEW_POINT_FREE:
-				// use default directions for the cross
-				if (getEuclidianController().isCreatingPointAR()) {
-					t = EuclidianStyleConstants.PREVIEW_POINT_SIZE_WHEN_FREE
-							* DrawPoint3D.DRAW_POINT_FACTOR;
-					cursorMatrix.getVx().setMul(Coords.VX, t);
-					cursorMatrix.getVy().setMul(Coords.VY, t);
-					cursorMatrix.getVz().setMul(Coords.VZ, t);
-				} else {
-					cursorMatrix.setDiagonal3(1);
-				}
+				// use default directions for the cros
+				cursorMatrix.setDiagonal3(1);
 				cursorMatrix.setOrigin(getCursor3D().getDrawingMatrix().getOrigin());
 				scaleXYZ(cursorMatrix.getOrigin());
-				updateTargetCircleMatrixForPoint();
 				break;
 			case PREVIEW_POINT_REGION:
 				// use region drawing directions for the cross
@@ -2418,17 +2419,6 @@ public abstract class EuclidianView3D extends EuclidianView
 				CoordMatrix4x4.createOrthoToDirection(getCursor3D().getDrawingMatrix().getOrigin(),
 						cursorNormal, CoordMatrix4x4.VZ, tmpCoords1, tmpCoords2, cursorMatrix);
 				scaleXYZ(cursorMatrix.getOrigin());
-				if (getEuclidianController().isCreatingPointAR()) {
-                    updateTargetCircleMatrixOrigin();
-                    targetCircleMatrix.setVx(cursorMatrix.getVx());
-                    targetCircleMatrix.setVy(cursorMatrix.getVy());
-                    targetCircleMatrix.setVz(cursorMatrix.getVz());
-					t = EuclidianStyleConstants.PREVIEW_POINT_SIZE_WHEN_FREE
-							* DrawPoint3D.DRAW_POINT_FACTOR;
-					cursorMatrix.getVx().mulInside3(t);
-					cursorMatrix.getVy().mulInside3(t);
-					cursorMatrix.getVz().mulInside3(t);
-				}
 				break;
 			case PREVIEW_POINT_PATH:
 			case PREVIEW_POINT_REGION_AS_PATH:
@@ -2440,24 +2430,11 @@ public abstract class EuclidianView3D extends EuclidianView
 				scaleXYZ(cursorNormal);
 				cursorNormal.normalize();
 				CoordMatrix4x4.completeOrtho(cursorNormal, tmpCoords1, tmpCoords2, cursorMatrix);
-				if (getEuclidianController().isCreatingPointAR()) {
-                    updateTargetCircleMatrixOrigin();
-					targetCircleMatrix.setVx(cursorMatrix.getVy());
-					targetCircleMatrix.setVy(cursorMatrix.getVz());
-					targetCircleMatrix.setVz(cursorMatrix.getVx());
-					t = path.getLineThickness()
-							+ EuclidianStyleConstants.PREVIEW_POINT_ENLARGE_SIZE_ON_PATH;
-					cursorMatrix.getVx().mulInside3(t);
-					cursorMatrix.getVy().mulInside3(t);
-					cursorMatrix.getVz().mulInside3(t);
-				} else {
-					t = 10 + path.getLineThickness();
-					cursorMatrix.getVy().mulInside3(t);
-					cursorMatrix.getVz().mulInside3(t);
-				}
+				t = 10 + path.getLineThickness();
+				cursorMatrix.getVy().mulInside3(t);
+				cursorMatrix.getVz().mulInside3(t);
 				break;
 			case PREVIEW_POINT_DEPENDENT:
-				updateTargetCircleMatrixForPoint();
 				// use size of intersection
 				cursorMatrix.setOrigin(
 						getCursor3D().getDrawingMatrix().getOrigin());
@@ -2468,84 +2445,47 @@ public abstract class EuclidianView3D extends EuclidianView
 				cursorMatrix.getVz().setMul(Coords.VZ, t);
 				break;
 			case PREVIEW_POINT_ALREADY:
-				if (getEuclidianController().isCreatingPointAR()
-						&& !TargetType.isModePointAlreadyMoveOrSelect(
-								getEuclidianController().getMode())
-						&& !TargetType.isModePointAlreadyAsPointTool(
-								getEuclidianController().getMode())) {
-					cursorMatrix.setOrigin(
-							getCursor3D().getDrawingMatrix().getOrigin());
-					scaleXYZ(cursorMatrix.getOrigin());
-					t = (getCursor3D().getPointSize() + EuclidianStyleConstants
-                            .PREVIEW_POINT_ENLARGE_SIZE_WHEN_ALREADY)
-							* DrawPoint3D.DRAW_POINT_FACTOR;
-					cursorMatrix.getVx().setMul(Coords.VX, t);
-					cursorMatrix.getVy().setMul(Coords.VY, t);
-					cursorMatrix.getVz().setMul(Coords.VZ, t);
-					updateTargetCircleMatrixForPoint();
+				if (getCursor3D().isPointOnPath()) {
+					cursorNormal.set3(((GeoElement) getCursor3D().getPath())
+							.getMainDirection());
+					scaleXYZ(cursorNormal);
+					cursorNormal.normalize();
+
+					CoordMatrix4x4.completeOrtho(cursorNormal, tmpCoords1,
+							tmpCoords2, tmpMatrix4x4);
+
+					cursorMatrix.setVx(tmpMatrix4x4.getVy());
+					cursorMatrix.setVy(tmpMatrix4x4.getVz());
+					cursorMatrix.setVz(tmpMatrix4x4.getVx());
+					cursorMatrix.setOrigin(tmpMatrix4x4.getOrigin());
+
+				} else if (getCursor3D().hasRegion()) {
+					cursorNormal.set3(getCursor3D().getMoveNormalDirection());
+					scaleNormalXYZ(cursorNormal);
+					cursorNormal.normalize();
+					CoordMatrix4x4.createOrthoToDirection(
+							getCursor3D().getCoordsInD3(), cursorNormal,
+							CoordMatrix4x4.VZ, tmpCoords1, tmpCoords2,
+							cursorMatrix);
 				} else {
-					if (getCursor3D().isPointOnPath()) {
-						cursorNormal.set3(((GeoElement) getCursor3D().getPath())
-								.getMainDirection());
-						scaleXYZ(cursorNormal);
-						cursorNormal.normalize();
-
-						CoordMatrix4x4.completeOrtho(cursorNormal, tmpCoords1,
-								tmpCoords2, tmpMatrix4x4);
-
-						cursorMatrix.setVx(tmpMatrix4x4.getVy());
-						cursorMatrix.setVy(tmpMatrix4x4.getVz());
-						cursorMatrix.setVz(tmpMatrix4x4.getVx());
-						cursorMatrix.setOrigin(tmpMatrix4x4.getOrigin());
-
-					} else if (getCursor3D().hasRegion()) {
-						cursorNormal
-								.set3(getCursor3D().getMoveNormalDirection());
-						scaleNormalXYZ(cursorNormal);
-						cursorNormal.normalize();
-						CoordMatrix4x4.createOrthoToDirection(
-								getCursor3D().getCoordsInD3(), cursorNormal,
-								CoordMatrix4x4.VZ, tmpCoords1, tmpCoords2,
-								cursorMatrix);
-					} else {
-						CoordMatrix4x4.identity(cursorMatrix);
-					}
-
-					cursorMatrix.setOrigin(
-							getCursor3D().getDrawingMatrix().getOrigin());
-					scaleXYZ(cursorMatrix.getOrigin());
-
-					cursorMatrix.getVx().normalize();
-					// use size of point
-					t = Math.max(1, getCursor3D().getPointSize() / 6.0 + 0.5);
-					cursorMatrix.getVx().mulInside3(t);
-					cursorMatrix.getVy().mulInside3(t);
-					cursorMatrix.getVz().mulInside3(t);
+					CoordMatrix4x4.identity(cursorMatrix);
 				}
+
+				cursorMatrix.setOrigin(
+						getCursor3D().getDrawingMatrix().getOrigin());
+				scaleXYZ(cursorMatrix.getOrigin());
+
+				cursorMatrix.getVx().normalize();
+				// use size of point
+				t = Math.max(1, getCursor3D().getPointSize() / 6.0 + 0.5);
+				cursorMatrix.getVx().mulInside3(t);
+				cursorMatrix.getVy().mulInside3(t);
+				cursorMatrix.getVz().mulInside3(t);
 				break;
 			}
 		}
 		// Application.debug("getCursor3DType()="+getCursor3DType());
 
-	}
-
-    private void updateTargetCircleMatrixOrigin() {
-        getHittingOrigin(null, tmpCoords1);
-        getHittingDirection(tmpCoordsLength4);
-        getCursor3D().getDrawingMatrix().getOrigin().projectLine(tmpCoords1,
-                tmpCoordsLength4, tmpCoords2);
-        targetCircleMatrix.setOrigin(tmpCoords2);
-        scaleXYZ(targetCircleMatrix.getOrigin());
-    }
-
-	private void updateTargetCircleMatrixForPoint() {
-	    updateTargetCircleMatrixOrigin();
-		// warning: tmpCoordsLength4 set to hitting direction in updateTargetCircleMatrixOrigin()
-		CoordMatrix4x4.completeOrtho(tmpCoordsLength4, tmpCoords1, tmpCoords2,
-				tmpMatrix4x4);
-		targetCircleMatrix.setVx(tmpMatrix4x4.getVy());
-		targetCircleMatrix.setVy(tmpMatrix4x4.getVz());
-		targetCircleMatrix.setVz(tmpMatrix4x4.getVx());
 	}
 
 	public Coords getCursorNormal() {
@@ -2558,7 +2498,11 @@ public abstract class EuclidianView3D extends EuclidianView
 	//
 	// ///////////////////////////////////////////////////
 
-	private GeoElement getCursorPath() {
+	/**
+	 * 
+	 * @return current cursor path
+	 */
+	public GeoElement getCursorPath() {
 		if (getCursor3DType() == PREVIEW_POINT_PATH) {
 			return (GeoElement) getCursor3D().getPath();
 		}
@@ -2670,7 +2614,7 @@ public abstract class EuclidianView3D extends EuclidianView
 		// + "\ncursor=" + cursor + "\ngetCursor3DType()="
 		// + getCursor3DType());
 
-		if (companion3D.shouldDrawCursor()) {
+		if (companion3D != null && companion3D.shouldDrawCursor()) {
 			if (shouldDrawCursorAtEnd()) {
 				// draw here for hidden parts
 				if (moveCursorIsVisible()) {
@@ -2755,16 +2699,14 @@ public abstract class EuclidianView3D extends EuclidianView
 	 *            renderer
 	 */
 	public void drawCursorAtEnd(Renderer renderer1) {
-		if (companion3D.shouldDrawCursor() && shouldDrawCursorAtEnd()) {
+		if (companion3D != null && companion3D.shouldDrawCursor()
+				&& shouldDrawCursorAtEnd()) {
 			drawTarget(renderer1);
 		}
 	}
 
 	private void drawTarget(Renderer renderer1) {
-		TargetType
-				.getCurrentTargetType(this,
-						(EuclidianController3D) euclidianController)
-				.drawTarget(renderer1, this);
+		target.draw(renderer1, this);
 	}
 
 	/**
@@ -3051,28 +2993,9 @@ public abstract class EuclidianView3D extends EuclidianView
 
 		sb.append("\" rightAngleStyle=\"");
 		sb.append(getApplication().rightAngleStyle);
-		// if (asPreference) {
-		// sb.append("\" allowShowMouseCoords=\"");
-		// sb.append(getAllowShowMouseCoords());
-		//
-		// sb.append("\" allowToolTips=\"");
-		// sb.append(getAllowToolTips());
-		//
-		// sb.append("\" deleteToolSize=\"");
-		// sb.append(getEuclidianController().getDeleteToolSize());
-		// }
-
-		// sb.append("\" checkboxSize=\"");
-		// sb.append(app.getCheckboxSize()); // Michael Borcherds
-		// 2008-05-12
 
 		sb.append("\" gridType=\"");
 		sb.append(getGridType()); // cartesian/isometric/polar
-
-		// if (lockedAxesRatio != null) {
-		// sb.append("\" lockedAxesRatio=\"");
-		// sb.append(lockedAxesRatio);
-		// }
 
 		sb.append("\"/>\n");
 		// end ev settings
@@ -3093,17 +3016,12 @@ public abstract class EuclidianView3D extends EuclidianView
 		// sb.append("\"/>\n");
 
 		// background color
-		sb.append("\t<bgColor r=\"");
-		sb.append(bgColor.getRed());
-		sb.append("\" g=\"");
-		sb.append(bgColor.getGreen());
-		sb.append("\" b=\"");
-		sb.append(bgColor.getBlue());
-		sb.append("\"/>\n");
+		sb.append("\t<bgColor");
+		XMLBuilder.appendRGB(sb, bgColor);
+		sb.append("/>\n");
 
 		// colored axes
-		if (app.has(Feature.G3D_BLACK_AXES)
-				&& !getSettings().getHasColoredAxes()) {
+		if (!getSettings().getHasColoredAxes()) {
 			sb.append("\t<axesColored val=\"false\"/>\n");
 		}
 
@@ -3368,6 +3286,7 @@ public abstract class EuclidianView3D extends EuclidianView
 
 		pointDecorations.setWaitForReset();
 
+		clippingCubeDrawable.clearEnlarge();
 		clippingCubeDrawable.setWaitForReset();
 
 		getCompanion().resetOwnDrawables();
@@ -3491,7 +3410,9 @@ public abstract class EuclidianView3D extends EuclidianView
 		// update, but not in case where view changed by rotation
 		if (viewChangedByTranslate() || viewChangedByZoom()) {
 			// update clipping cube
-			double[][] minMax = updateClippingCubeMinMax();
+			double[][] minMax = isAREnabled()
+					? clippingCubeDrawable.updateMinMaxLarge()
+					: updateClippingCubeMinMax();
 			// e.g. Corner[] algos are updated by clippingCubeDrawable
 			clippingCubeDrawable.setWaitForUpdate();
 
@@ -3505,7 +3426,6 @@ public abstract class EuclidianView3D extends EuclidianView
 				setAxesIntervals(getScale(i), i);
 
 				axisDrawable[i].setWaitForUpdate();
-
 			}
 		}
 
@@ -3523,9 +3443,7 @@ public abstract class EuclidianView3D extends EuclidianView
 
 			// update e.g. Corner[]
 			kernel.notifyEuclidianViewCE(EVProperty.ROTATION);
-
 		}
-
 	}
 
 	protected double[][] updateClippingCubeMinMax() {
@@ -3618,16 +3536,18 @@ public abstract class EuclidianView3D extends EuclidianView
 	@Override
 	public Previewable createPreviewParallelLine(
 			ArrayList<GeoPointND> selectedPoints,
-			ArrayList<GeoLineND> selectedLines) {
-		// TODO Auto-generated method stub
+			ArrayList<GeoLineND> selectedLines,
+			ArrayList<GeoFunction> selectedFunctions) {
+		// not implemented in 3D
 		return null;
 	}
 
 	@Override
 	public Previewable createPreviewPerpendicularLine(
-			ArrayList<GeoPointND> selectedPoints,
-			ArrayList<GeoLineND> selectedLines) {
-		// TODO Auto-generated method stub
+			ArrayList<GeoPointND> selectedPoints, 
+			ArrayList<GeoLineND> selectedLines,
+			ArrayList<GeoFunction> selectedFunctions) {
+		// not implemented in 3D
 		return null;
 	}
 
@@ -4289,12 +4209,10 @@ public abstract class EuclidianView3D extends EuclidianView
 
 		setProjection(evs.getProjection());
 
-		if (app.has(Feature.G3D_BLACK_AXES)) {
-			boolean colored = evs.getHasColoredAxes();
-			for (GeoAxisND ax : axis) {
-				ax.setColoredFor3D(colored);
-			}
-		}
+        boolean colored = evs.getHasColoredAxes();
+        for (GeoAxisND ax : axis) {
+            ax.setColoredFor3D(colored);
+        }
 
 		updateMatrix();
 		getEuclidianController().onCoordSystemChanged();
@@ -4337,14 +4255,14 @@ public abstract class EuclidianView3D extends EuclidianView
 	 *
 	 * @param includeAxesIfVisible
 	 *            if axes should enlarge bounds
-	 * @param reduceWhenClipped
+	 * @param dontExtend
 	 *            set to true if clipped curves/surfaces should not be larger
-	 *            than the view itself
+	 *            than the view itself; and when point radius should extend
 	 *
 	 * @return true if bounds were computed
 	 */
 	protected boolean updateObjectsBounds(boolean includeAxesIfVisible,
-			boolean reduceWhenClipped) {
+			boolean dontExtend) {
 		if (boundsMin == null) {
 			boundsMin = new Coords(3);
 			boundsMax = new Coords(3);
@@ -4353,12 +4271,12 @@ public abstract class EuclidianView3D extends EuclidianView
 		boundsMin.setPositiveInfinity();
 		boundsMax.setNegativeInfinity();
 
-		drawable3DLists.enlargeBounds(boundsMin, boundsMax, reduceWhenClipped);
+		drawable3DLists.enlargeBounds(boundsMin, boundsMax, dontExtend);
 		if (includeAxesIfVisible) {
 			for (int i = 0; i < 3; i++) {
 				DrawAxis3D d = axisDrawable[i];
 				if (d.isVisible()) {
-					d.enlargeBounds(boundsMin, boundsMax, reduceWhenClipped);
+					d.enlargeBounds(boundsMin, boundsMax, dontExtend);
 				}
 			}
 		}
@@ -4892,9 +4810,14 @@ public abstract class EuclidianView3D extends EuclidianView
 			mIsARDrawing = isARDrawing;
 			if (isARDrawing) {
 				if (app.has(Feature.G3D_AR_REGULAR_TOOLS)) {
+				    boolean boundsNeededUpdate = updateObjectsBounds(true, true);
+				    if (boundsNeededUpdate) {
+                        clippingCubeDrawable.enlargeFor(boundsMin);
+                        clippingCubeDrawable.enlargeFor(boundsMax);
+                    }
                     if (getShowAxis(AXIS_Z)) {
-                        translationZzeroForAR = -getZmin();
-                    } else if (updateObjectsBounds(true, true)) {
+                        translationZzeroForAR = -clippingCubeDrawable.getZminLarge();
+                    } else if (boundsNeededUpdate) {
                         translationZzeroForAR = -boundsMin.getZ();
                         // ensure showing plane if visible and not too far
 						if ((getShowGrid() || getShowPlane())
@@ -4933,9 +4856,9 @@ public abstract class EuclidianView3D extends EuclidianView
 	 */
 	public void setAREnabled(boolean isAREnabled) {
 		mIsAREnabled = isAREnabled;
-		if (mIsAREnabled) {
-			targetCircleMatrix = new CoordMatrix4x4();
-		}
+        if (euclidianController.isCreatingPointAR()) {
+            target.updateType(this);
+        }
 		updateMatrixForCursor3D();
         ((EuclidianController3D) euclidianController).scheduleMouseExit();
 	}
@@ -4972,14 +4895,6 @@ public abstract class EuclidianView3D extends EuclidianView
 		return cursorMatrix;
 	}
 
-	/**
-	 * 
-	 * @return matrix for target circle
-	 */
-	public CoordMatrix4x4 getTargetCircleMatrix() {
-		return targetCircleMatrix;
-	}
-
 	@Override
 	public void setHasMouse(boolean flag) {
 		super.setHasMouse(flag);
@@ -5000,4 +4915,48 @@ public abstract class EuclidianView3D extends EuclidianView
 		}
 	}
 
+	/**
+	 * enlarge clipping values regarding point coords
+	 * 
+	 * @param point
+	 *            point
+	 */
+	public void enlargeClippingForPoint(GeoPointND point) {
+		if (isAREnabled()) {
+			if (clippingCubeDrawable.enlargeFor(point.getInhomCoordsInD3())) {
+				setViewChangedByZoom();
+				setWaitForUpdate();
+			}
+		}
+	}
+
+	/**
+	 * enlarge clipping for AR
+	 */
+	public void enlargeClippingWhenAREnabled() {
+        if (isAREnabled()) {
+			if (updateObjectsBounds(true, true)) {
+                boolean needsUpdate1 = clippingCubeDrawable.enlargeFor(boundsMin);
+                boolean needsUpdate2 = clippingCubeDrawable.enlargeFor(boundsMax);
+                if (needsUpdate1 || needsUpdate2) {
+                    setViewChangedByZoom();
+                    setWaitForUpdate();
+                }
+            }
+        }
+    }
+
+	/**
+	 * reset view for AR
+	 */
+	public void resetViewFromAR() {
+        resetSettings();
+	}
+
+	@Override
+    public void resetSettings() {
+        super.resetSettings();
+        // reset rendering
+        reset();
+    }
 }

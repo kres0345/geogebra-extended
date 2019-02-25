@@ -5,10 +5,23 @@ import org.geogebra.common.kernel.commands.AlgebraProcessor;
 import org.geogebra.common.kernel.parser.stringparser.StringParser;
 import org.geogebra.common.kernel.validator.exception.NumberValueOutOfBoundsException;
 
+/**
+ * Checks string to be a number with given properties
+ */
 public class NumberValidator {
+
+	public static final String NUMBER_FORMAT_ERROR_MESSAGE_KEY = "InputError.Enter_a_number";
+	public static final String NUMBER_TOO_SMALL_ERROR_MESSAGE_KEY = "InputError."
+			+ "EndValueLessThanStartValue";
+	public static final String NUMBER_NEGATIVE_ERROR_MESSAGE_KEY = "InputError."
+			+ "Enter_a_number_greater_than_0";
 
 	private StringParser stringParser;
 
+	/**
+	 * @param algebraProcessor
+	 *            algebra processor
+	 */
 	public NumberValidator(AlgebraProcessor algebraProcessor) {
 		stringParser = new StringParser(algebraProcessor);
 	}

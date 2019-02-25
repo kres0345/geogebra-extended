@@ -13,6 +13,7 @@ import org.geogebra.common.awt.GPoint;
 import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.euclidian.EuclidianControllerCompanion;
 import org.geogebra.common.euclidian.event.AbstractEvent;
+import org.geogebra.common.factories.UtilFactory;
 import org.geogebra.common.geogebra3D.euclidian3D.EuclidianView3D;
 import org.geogebra.common.geogebra3D.input3D.EuclidianControllerInput3DCompanion;
 import org.geogebra.common.geogebra3D.input3D.Input3D;
@@ -128,8 +129,10 @@ public class EuclidianControllerInput3D extends EuclidianController3DD {
 			input3D.updateMousePosition();
 
 			// check if the 3D mouse is on 3D view
-			if (!input3D.hasMouse() && robot != null) { // bird outside the view
-
+			if (input3D.hasMouse()) {
+				input3D.updateMouse3DEvent();
+				input3D.handleButtons();
+			} else if (robot != null) { // bird outside the view
 				// process right press / release
 				if (input3D.isRightPressed()) {
 					if (input3D.wasRightReleased()) {
@@ -165,7 +168,8 @@ public class EuclidianControllerInput3D extends EuclidianController3DD {
 
 	private void processRightRelease() {
 		((EuclidianView3D) getView()).setRotContinueAnimation(
-				app.getMillisecondTime() - timeOld, animatedRotSpeed);
+				UtilFactory.getPrototype().getMillisecondTime() - timeOld,
+				animatedRotSpeed);
 	}
 
 

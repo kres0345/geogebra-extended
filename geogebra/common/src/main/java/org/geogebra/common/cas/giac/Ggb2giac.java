@@ -115,7 +115,17 @@ public class Ggb2giac {
 		p("ChiSquared.2",
 				// "chisquare_cdf(%0,%1)");
 				"igamma(%0/2,%1/2,1)");
-		p("Coefficients.1", "when(is_polynomial(%0)," + "coeffs(%0)," + "{})");
+
+		// Giac syntax coeffs(x^2 + 2*y^2 + 3 + 4*x * y + 5*x + 6*y,[x,y],[2,0])
+		// Coefficients(x^2 + 2*y^2 + 3 + 4*x * y + 5*x + 6*y)
+		p("Coefficients.1", "[[coeffsarg:=%0],"
+				// strip off "=0" from the right
+				+ "[coeffsarg:=when(coeffsarg[0]=='='&&right(coeffsarg)==0,left(coeffsarg),coeffsarg)]"
+
+				+ ",when(coeffsarg[0]=='=',?,when(is_polynomial(coeffsarg),when(degree(coeffsarg,x)==2&&degree(coeffsarg,y)==2,"
+				// special syntax for conics / quadrics
+				+ "when(length(lname(coeffsarg))==2,ggbcoeffconic(coeffsarg),ggbcoeffquadric(coeffsarg))"
+				+ ",coeffs(coeffsarg)),{}))][-1]");
 
 		p("Coefficients.2", "coeffs(%0,%1)");
 		p("CompleteSquare.1",
@@ -1019,11 +1029,8 @@ public class Ggb2giac {
 				"[[ggbminarg:=%],when(type(ggbminarg)==DOM_LIST,when(type((ggbminarg)[0])==DOM_LIST,?,min(ggbminarg)),?)][1]");
 		p("MixedNumber.1", "propfrac(%0)");
 
-		// need to use %0, %1 repeatedly (not using an intermediate variable)
-		// see GGB-2184
-		// eg Sum(If(Mod(k,2)==0,k,0),k,0,10)
-		p("Mod.2",
-				"when(type(%0)!=DOM_INT||type(%1)!=DOM_INT,rem(%0,%1,when(length(lname(%1))>0,lname(%1)[0],x)),irem(%0,%1))");
+		p("Mod.2", "ggbmod(%0,%1)");
+
 		p("NextPrime.1", "nextprime(%0)");
 		p("NIntegral.3", "gaussquad(%%0,%%1,%%2)");
 		p("NIntegral.4", "gaussquad(%%0,%%1,%%2,%%3)");
@@ -1150,8 +1157,8 @@ public class Ggb2giac {
 				"[[ggbpparg0:=%0],if (ggbpparg0>2) then prevprime(ggbpparg0) else 0/0 fi][1]");
 		p("PrimeFactors.1", "ifactors(%0)");
 		// normal() makes sure answer is expanded
-		// TODO: do we want this,or do it in a more general way
-		p("Product.1", "normal(product(%0))");
+		// '*' argument to make Product(list of matrices) work
+		p("Product.1", "normal(product(%0,'*'))");
 		p("Product.4", "normal(product(%0,%1,%2,%3))");
 		// p("Prog.1","<<%0>>");
 		// p("Prog.2","<<begin scalar %0; return %1 end>>");
@@ -1455,12 +1462,9 @@ public class Ggb2giac {
 		p("Weibull.3", "1-exp(-((%2)/(%1))^(%0))");
 		p("Zipf.4", // %1=exponent
 				"[[[ggbzipfarg0:=%0],[ggbzipfarg1:=%1],[ggbzipfarg2:=%2]],if %3==true then harmonic(ggbzipfarg1,ggbzipfarg2)/harmonic(ggbzipfarg1,ggbzipfarg0) else 1/((ggbzipfarg2)^ggbzipfarg1*harmonic(ggbzipfarg1,ggbzipfarg0)) fi][1]");
+
 		// TODO check if it's easier to implement with giac's zip command
-		p("Zip.N",
-				"[[ggbzipans(l):=begin local len0,res,sbl,xpr,k,j;xpr:=l[0];len0:=length(l[2]);res:={};"
-						+ "for k from 4 to length(l)-1 step +2 do len0:=min(len0,length(l[k])); od;"
-						+ "for k from 0 to len0-1 do sbl:={};for j from 2 to length(l)-1 step +2 do"
-						+ " sbl:=append(sbl,l[j-1]=l[j][k]);od;res:=append(res,subst(xpr,sbl));od; res; end],ggbzipans(%)][1]");
+		p("Zip.N", "eval(ggbzipans(%))");
 		// SolveCubic[x^3+3x^2+x-1]
 		// SolveCubic[x^3+3x^2+x-2]
 		// SolveCubic[x^3+3x^2+x-3]

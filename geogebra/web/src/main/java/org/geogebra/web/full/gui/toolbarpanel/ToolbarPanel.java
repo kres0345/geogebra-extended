@@ -16,6 +16,7 @@ import org.geogebra.web.full.gui.layout.DockSplitPaneW;
 import org.geogebra.web.full.gui.layout.GUITabs;
 import org.geogebra.web.full.gui.layout.panels.AlgebraDockPanelW;
 import org.geogebra.web.full.gui.layout.panels.ToolbarDockPanelW;
+import org.geogebra.web.full.gui.toolbarpanel.tableview.TableTab;
 import org.geogebra.web.full.gui.view.algebra.AlgebraViewW;
 import org.geogebra.web.full.main.AppWFull;
 import org.geogebra.web.html5.gui.FastClickHandler;
@@ -63,7 +64,7 @@ public class ToolbarPanel extends FlowPanel implements MyModeChangedListener {
 	public static final int CLOSED_HEIGHT_PORTRAIT = 56;
 
 	/** Application */
-	AppW app;
+	private AppW app;
 
 	/**
 	 * Tab ids.
@@ -137,7 +138,7 @@ public class ToolbarPanel extends FlowPanel implements MyModeChangedListener {
 	 * @author Laszlo
 	 *
 	 */
-	abstract static class ToolbarTab extends ScrollPanel {
+	public abstract static class ToolbarTab extends ScrollPanel {
 		/** Constructor */
 		public ToolbarTab() {
 			setSize("100%", "100%");
@@ -214,7 +215,7 @@ public class ToolbarPanel extends FlowPanel implements MyModeChangedListener {
 			@Override
 			public void onClickStart(final int x, final int y,
 					PointerEventType type) {
-				app.getActiveEuclidianView().getEuclidianController()
+				getApp().getActiveEuclidianView().getEuclidianController()
 						.closePopups(x, y, type);
 			}
 		});
@@ -992,5 +993,12 @@ public class ToolbarPanel extends FlowPanel implements MyModeChangedListener {
 	 */
 	public void updateContent() {
 		getTabTools().updateContent();
+	}
+
+	/**
+	 * @return application
+	 */
+	public AppW getApp() {
+		return app;
 	}
 }

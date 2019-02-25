@@ -1,7 +1,6 @@
 package org.geogebra.web.full.gui.dialog.image;
 
 import org.geogebra.common.GeoGebraConstants.Versions;
-import org.geogebra.common.main.Feature;
 import org.geogebra.common.main.Localization;
 import org.geogebra.web.html5.Browser;
 import org.geogebra.web.html5.main.AppW;
@@ -15,13 +14,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Panel for HTML5 webcam input
  */
 public class WebCamInputPanel extends VerticalPanel {
-	
+
 	private SimplePanel inputWidget;
 	private Element video;
 	private JavaScriptObject stream;
 	private int canvasWidth = 640;
 	private int canvasHeight = 480; // overwritten by real
-														// dimensions
+									// dimensions
 	private AppW app;
 	private static final int MAX_CANVAS_WIDTH = 640;
 	private WebcamInputDialog webcamDialog;
@@ -32,9 +31,9 @@ public class WebCamInputPanel extends VerticalPanel {
 	 *            application
 	 */
 	public WebCamInputPanel(AppW app) {
-	    this.app = app;
-	    initGUI();
-    }
+		this.app = app;
+		initGUI();
+	}
 
 	/**
 	 * @param app
@@ -47,7 +46,7 @@ public class WebCamInputPanel extends VerticalPanel {
 		this.webcamDialog = webcamDialog;
 	}
 
-	private void initGUI() {		
+	private void initGUI() {
 		inputWidget = new SimplePanel();
 		resetVideo();
 		add(inputWidget);
@@ -57,7 +56,7 @@ public class WebCamInputPanel extends VerticalPanel {
 			String errorMessage) /*-{
 
 		el.style.position = "relative";
-		var dependentStyle = this.@org.geogebra.web.full.gui.dialog.image.WebCamInputPanel::getFeatureDependentStyle()();
+		var dependentStyle = this.@org.geogebra.web.full.gui.dialog.image.WebCamInputPanel::getStyle()();
 
 		var ihtml = "<span class=" + dependentStyle + "><br><br>" + message
 				+ "</span>\n";
@@ -179,7 +178,7 @@ public class WebCamInputPanel extends VerticalPanel {
 			return null;
 		}
 		String capture = shotcapture(video);
-		if (!app.has(Feature.MOW_IMAGE_DIALOG_UNBUNDLED)) {
+		if (!app.isWhiteboardActive()) {
 			stopVideo();
 		}
 		return capture;
@@ -192,7 +191,7 @@ public class WebCamInputPanel extends VerticalPanel {
 		stopVideo();
 		inputWidget.getElement().removeAllChildren();
 		resetVideo();
-    }
+	}
 
 	private void resetVideo() {
 		Localization loc = app.getLocalization();
@@ -200,18 +199,17 @@ public class WebCamInputPanel extends VerticalPanel {
 		if (app.getVersion() == Versions.WEB_FOR_DESKTOP) {
 			message = "";
 		} else if (Browser.isFirefox()) {
-			message = loc.getMenu("Webcam.Firefox"); 
+			message = loc.getMenu("Webcam.Firefox");
 		} else if (Browser.isEdge()) {
 			message = loc.getMenu("Webcam.Edge");
 		} else {
 			message = loc.getMenu("Webcam.Chrome");
 		}
-		video = populate(inputWidget.getElement(), message,
-				loc.getMenu("Webcam.Problem"));
+		video = populate(inputWidget.getElement(), message, loc.getMenu("Webcam.Problem"));
 	}
 
-	private String getFeatureDependentStyle() {
-		if (app.has(Feature.MOW_IMAGE_DIALOG_UNBUNDLED)) {
+	private String getStyle() {
+		if (app.isWhiteboardActive()) {
 			return "mowCameraInputPanel";
 		}
 		return "webcamInputPanel";
@@ -232,19 +230,12 @@ public class WebCamInputPanel extends VerticalPanel {
 	}
 
 	private void hidePermissionDialog() {
-		if (!app.has(Feature.MOW_IMAGE_DIALOG_UNBUNDLED)) {
-			return;
-		}
 		if (permissionDialog != null) {
 			permissionDialog.hide();
 		}
 	}
 
-	private void showPermissionDialog(
-			WebcamPermissionDialog.DialogType dialogType) {
-		if (!app.has(Feature.MOW_IMAGE_DIALOG_UNBUNDLED)) {
-			return;
-		}
+	private void showPermissionDialog(WebcamPermissionDialog.DialogType dialogType) {
 		hidePermissionDialog();
 		permissionDialog = new WebcamPermissionDialog(app, dialogType);
 		permissionDialog.center();
@@ -252,13 +243,11 @@ public class WebCamInputPanel extends VerticalPanel {
 	}
 
 	private void showRequestDialog() {
-		showPermissionDialog(
-				WebcamPermissionDialog.DialogType.PERMISSION_REQUEST);
+		showPermissionDialog(WebcamPermissionDialog.DialogType.PERMISSION_REQUEST);
 	}
 
 	private void showPermissionDeniedDialog() {
-		showPermissionDialog(
-				WebcamPermissionDialog.DialogType.PERMISSION_DENIED);
+		showPermissionDialog(WebcamPermissionDialog.DialogType.PERMISSION_DENIED);
 	}
 
 	private void showErrorDialog() {
@@ -284,9 +273,6 @@ public class WebCamInputPanel extends VerticalPanel {
 	}
 
 	private void resize() {
-		if (!app.has(Feature.MOW_IMAGE_DIALOG_UNBUNDLED)) {
-			return;
-		}
 		webcamDialog.resize();
 	}
 }

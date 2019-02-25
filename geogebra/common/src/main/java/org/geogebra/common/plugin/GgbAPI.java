@@ -355,7 +355,7 @@ public abstract class GgbAPI implements JavaScriptAPI {
 			return ((GeoCasCell) geo).getTwinGeo() != null
 					&& ((GeoCasCell) geo).getTwinGeo().isEuclidianVisible();
 		}
-		return (geo.isEuclidianVisible());
+		return geo.isEuclidianVisible();
 	}
 
 	/**
@@ -2010,7 +2010,7 @@ public abstract class GgbAPI implements JavaScriptAPI {
 
 	/**
 	 * @param enable
-	 *            wheter geogebra-web applet rightclick enabled or not
+	 *            whether geogebra-web applet rightclick enabled or not
 	 */
 	@Override
 	public void enableRightClick(boolean enable) {

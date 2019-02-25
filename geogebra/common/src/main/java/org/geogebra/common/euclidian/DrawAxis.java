@@ -9,6 +9,7 @@ import org.geogebra.common.awt.GFontRenderContext;
 import org.geogebra.common.awt.GGeneralPath;
 import org.geogebra.common.awt.GGraphics2D;
 import org.geogebra.common.awt.font.GTextLayout;
+import org.geogebra.common.euclidian.draw.CanvasDrawable;
 import org.geogebra.common.factories.AwtFactory;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.StringTemplate;
@@ -251,7 +252,7 @@ public class DrawAxis {
 		GFont font = view.getFontLine().deriveFont(view.axesLabelsStyle[1]);
 		GTextLayout layout = AwtFactory.getPrototype()
 				.newTextLayout(view.axesLabels[1], font, frc);
-		if (isLaTeX(view.axesLabels[1])) {
+		if (CanvasDrawable.isLatexString(view.axesLabels[1])) {
 			GeoElement geo = view.getApplication().getKernel().getXAxis();
 			// GDimension dim = view.getApplication().getDrawEquation()
 			// .measureEquation(view.getApplication(), geo,
@@ -259,7 +260,8 @@ public class DrawAxis {
 			view.getApplication().getDrawEquation().drawEquation(
 					view.getApplication(), geo, g2,
 					x - 2, 10,
-					view.axesLabels[1], font, serif(view.axesLabels[1]),
+					view.axesLabels[1], font,
+					StringUtil.startsWithFormattingCommand(view.axesLabels[1]),
 					GColor.BLACK, null, true, false,
 					view.getCallBack(geo, firstCallY));
 
@@ -282,7 +284,7 @@ public class DrawAxis {
 		GFont font = view.getFontLine().deriveFont(view.axesLabelsStyle[0]);
 		GTextLayout layout = AwtFactory.getPrototype()
 				.newTextLayout(view.axesLabels[0], font, frc);
-		if (isLaTeX(view.axesLabels[0])) {
+		if (CanvasDrawable.isLatexString(view.axesLabels[0])) {
 			GeoElement geo = view.getApplication().getKernel().getXAxis();
 			GDimension dim = view.getApplication().getDrawEquation()
 					.measureEquation(
@@ -293,7 +295,8 @@ public class DrawAxis {
 					view.getApplication(), geo, g2,
 					view.getWidth() - 5 - dim.getWidth(),
 					y + 4 - dim.getHeight(),
-					view.axesLabels[0], font, serif(view.axesLabels[0]),
+					view.axesLabels[0], font,
+					StringUtil.startsWithFormattingCommand(view.axesLabels[0]),
 					GColor.BLACK, null, true,
 					false, view.getCallBack(geo, firstCallX));
 
@@ -309,16 +312,6 @@ public class DrawAxis {
 					y, false, view, view.axesColor);
 		}
 		g2.setFont(old);
-	}
-
-	private static boolean serif(String string) {
-		return string != null && string.length() > 6
-				&& string.startsWith("$\\math");
-	}
-
-	private static boolean isLaTeX(String string) {
-		return string.charAt(0) == '$' && string.length() > 2
-				&& string.charAt(string.length() - 1) == '$';
 	}
 
 	private void predrawYAxis(GGraphics2D g2, double xCrossPix,

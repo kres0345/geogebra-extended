@@ -9,7 +9,6 @@ import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian.EuclidianViewInterfaceSlim;
 import org.geogebra.common.euclidian.event.PointerEventType;
 import org.geogebra.common.kernel.geos.ScreenReaderBuilder;
-import org.geogebra.common.main.Feature;
 import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.web.full.gui.layout.GUITabs;
 import org.geogebra.web.html5.Browser;
@@ -23,6 +22,8 @@ import org.geogebra.web.html5.util.ArticleElementInterface;
 import org.geogebra.web.html5.util.Dom;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -33,7 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
  *
  */
 public class ZoomPanel extends FlowPanel
-		implements CoordSystemListener, TabHandler {
+		implements CoordSystemListener, TabHandler, FocusHandler {
 
 	private StandardButton homeBtn;
 	private StandardButton zoomInBtn;
@@ -71,7 +72,7 @@ public class ZoomPanel extends FlowPanel
 			view.getEuclidianController().addZoomerListener(this);
 		}
 		setStyleName("zoomPanel");
-		addStyleName(app.isWhiteboardActive() && app.has(Feature.MOW_MULTI_PAGE)
+		addStyleName(app.isWhiteboardActive()
 				? "zoomPanelWithPageControl" : "zoomPanelPosition");
 		if (ZoomPanel.needsZoomButtons(app) && zoomable) {
 			addZoomButtons();
@@ -80,6 +81,11 @@ public class ZoomPanel extends FlowPanel
 		buttons.addAll(Arrays.asList(homeBtn, zoomInBtn, zoomOutBtn));
 		if (ZoomPanel.needsFullscreenButton(app) && rightBottom) {
 			addFullscreenButton();
+		}
+		for (StandardButton button : buttons) {
+			if (button != null) {
+				button.addFocusHandler(this);
+			}
 		}
 		setLabels();
 
@@ -478,5 +484,10 @@ public class ZoomPanel extends FlowPanel
 		} else if (fullscreenBtn != null) {
 			fullscreenBtn.removeFromParent();
 		}
+	}
+
+	@Override
+	public void onFocus(FocusEvent event) {
+		app.getGlobalKeyDispatcher().setFocused(true);
 	}
 }

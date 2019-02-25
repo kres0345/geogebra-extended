@@ -75,11 +75,6 @@ public interface HasAppletProperties {
 	public void remove();
 
 	/**
-	 * @return whether Open / Language guis are open
-	 */
-	public boolean isHeaderPanelOpen();
-
-	/**
 	 * Update the CSS height of the article
 	 */
 	public void updateArticleHeight();

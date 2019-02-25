@@ -14,7 +14,6 @@ package org.geogebra.common.kernel.prover;
 
 import org.geogebra.common.factories.UtilFactory;
 import org.geogebra.common.kernel.Construction;
-import org.geogebra.common.kernel.StringTemplate;
 import org.geogebra.common.kernel.algos.AlgoElement;
 import org.geogebra.common.kernel.cas.UsesCAS;
 import org.geogebra.common.kernel.commands.Commands;
@@ -117,9 +116,9 @@ public class AlgoProve extends AlgoElement implements UsesCAS {
 		p.setReturnExtraNDGs(false);
 
 		// Adding benchmarking:
-		double startTime = cons.getApplication().getMillisecondTime();
+		double startTime = UtilFactory.getPrototype().getMillisecondTime();
 		p.compute(); // the computation of the proof
-		int elapsedTime = (int) (cons.getApplication().getMillisecondTime()
+		int elapsedTime = (int) (UtilFactory.getPrototype().getMillisecondTime()
 				- startTime);
 
 		/*
@@ -155,12 +154,6 @@ public class AlgoProve extends AlgoElement implements UsesCAS {
 		 */
 		Log.debug("OUTPUT for Prove: " + bool);
 
-	}
-
-	@Override
-	// Not sure how to do this hack normally.
-	final public String getDefinitionName(StringTemplate tpl) {
-		return "Prove";
 	}
 
 	@Override

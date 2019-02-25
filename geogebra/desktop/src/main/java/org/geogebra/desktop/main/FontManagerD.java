@@ -46,8 +46,6 @@ public class FontManagerD extends FontManager {
 	public FontManagerD() {
 		setFontSize(12);
 	}
-	
-	public boolean comicsans = false;
 
 	/**
 	 * Sets default font that works with the given language.
@@ -139,12 +137,6 @@ public class FontManagerD extends FontManager {
 		}
 		if (fontNameSerif == null) {
 			fontNameSerif = "Serif";
-		}
-		
-		
-		if(comicsans) {
-			fontNameSansSerif = "Comic Sans MS";
-			fontNameSerif = "Comic Sans MS";
 		}
 
 		// update application fonts if changed

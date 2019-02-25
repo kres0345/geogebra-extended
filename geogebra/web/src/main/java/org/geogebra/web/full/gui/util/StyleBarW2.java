@@ -8,8 +8,8 @@ import org.geogebra.common.euclidian.EuclidianStyleBarStatic;
 import org.geogebra.common.gui.dialog.handler.ColorChangeHandler;
 import org.geogebra.common.gui.dialog.options.model.PointStyleModel;
 import org.geogebra.common.kernel.geos.GeoElement;
-import org.geogebra.common.kernel.geos.GeoElement.FillType;
 import org.geogebra.common.kernel.geos.GeoImage;
+import org.geogebra.common.kernel.geos.properties.FillType;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.Feature;
 import org.geogebra.common.main.OptionType;
@@ -44,7 +44,7 @@ public abstract class StyleBarW2 extends StyleBarW implements PopupMenuHandler {
 				: new EuclidianLineStylePopup(app, 5, true);
 		btnLineStyle.getMySlider().setMinimum(1);
 		btnLineStyle.getMySlider()
-				.setMaximum(app.has(Feature.MOW_HIGHLIGHTER_TOOL)
+				.setMaximum(app.isWhiteboardActive()
 						? 2 * EuclidianConstants.MAX_PEN_HIGHLIGHTER_SIZE : 13);
 		btnLineStyle.getMySlider().setTickSpacing(1);
 		btnLineStyle.addPopupHandler(this);
@@ -171,7 +171,7 @@ public abstract class StyleBarW2 extends StyleBarW implements PopupMenuHandler {
 		DialogManagerW dm = (DialogManagerW) (app.getDialogManager());
 
 		GColor originalColor;
-		if (app.has(Feature.MOW_CLEAR_VIEW_STYLEBAR) && background) {
+		if (app.isUnbundledOrWhiteboard() && background) {
 			originalColor = geo0.getBackgroundColor();
 		} else {
 			originalColor = geo0.getObjectColor();
@@ -188,7 +188,7 @@ public abstract class StyleBarW2 extends StyleBarW implements PopupMenuHandler {
 			@Override
 			public void onColorChange(GColor color) {
 				if (background) {
-					if (app.has(Feature.MOW_CLEAR_VIEW_STYLEBAR)) {
+					if (app.isUnbundledOrWhiteboard()) {
 						EuclidianStyleBarStatic.applyBgColor(targetGeos, color,
 								geo0.getAlphaValue());
 					}

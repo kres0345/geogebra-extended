@@ -3,6 +3,7 @@ package org.geogebra.web.full.gui.browser;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.geogebra.common.main.Feature;
 import org.geogebra.common.main.OpenFileListener;
 import org.geogebra.common.move.events.BaseEvent;
 import org.geogebra.common.move.ggtapi.events.LogOutEvent;
@@ -16,15 +17,17 @@ import org.geogebra.common.move.ggtapi.models.SyncEvent;
 import org.geogebra.common.move.ggtapi.requests.SyncCallback;
 import org.geogebra.common.move.views.BooleanRenderable;
 import org.geogebra.common.move.views.EventRenderable;
+import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.common.util.debug.Log;
 import org.geogebra.web.full.gui.MyHeaderPanel;
+import org.geogebra.web.full.gui.dialog.DialogManagerW;
 import org.geogebra.web.full.gui.laf.GLookAndFeel;
 import org.geogebra.web.html5.gui.FastClickHandler;
 import org.geogebra.web.html5.gui.ResizeListener;
 import org.geogebra.web.html5.gui.tooltip.ToolTipManagerW;
-import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.gui.view.browser.BrowseViewI;
 import org.geogebra.web.html5.gui.view.browser.MaterialListElementI;
+import org.geogebra.web.html5.gui.view.button.StandardButton;
 import org.geogebra.web.html5.main.AppW;
 import org.geogebra.web.html5.util.ArticleElement;
 import org.geogebra.web.shared.ggtapi.LoginOperationW;
@@ -221,7 +224,9 @@ public class BrowseGUI extends MyHeaderPanel implements BooleanRenderable,
 
 	@Override
 	public void loadAllMaterials() {
-		this.header.clearSearchPanel();
+		if (header != null) {
+			this.header.clearSearchPanel();
+		}
 		this.materialListPanel.loadAllMaterials();
 	}
 
@@ -257,7 +262,9 @@ public class BrowseGUI extends MyHeaderPanel implements BooleanRenderable,
 
 	@Override
 	public void setLabels() {
-		this.header.setLabels();
+		if (header != null) {
+			this.header.setLabels();
+		}
 		this.materialListPanel.setLabels();
 	}
 
@@ -291,7 +298,17 @@ public class BrowseGUI extends MyHeaderPanel implements BooleanRenderable,
 		if (app.getLAF().supportsLocalSave()) {
 			app.getFileManager().setFileProvider(Provider.LOCAL);
 		}
-		app.openFile(fileToHandle, callback);
+
+		if (app.has(Feature.SHOW_SAVE_AFTER_CLOSE_SEARCH)) {
+			app.getGuiManager().getBrowseView().closeAndSave(new AsyncOperation<Boolean>() {
+				@Override
+				public void callback(Boolean obj) {
+					app.openFile(fileToHandle, callback);
+				}
+			});
+		} else {
+			app.openFile(fileToHandle, callback);
+		}
 	}
 
 	/**
@@ -445,5 +462,11 @@ public class BrowseGUI extends MyHeaderPanel implements BooleanRenderable,
 	@Override
 	public void setHeaderVisible(boolean b) {
 		// only for MOW
+	}
+
+	@Override
+	public void closeAndSave(AsyncOperation<Boolean> callback) {
+		close();
+		app.checkSaved(callback);
 	}
 }

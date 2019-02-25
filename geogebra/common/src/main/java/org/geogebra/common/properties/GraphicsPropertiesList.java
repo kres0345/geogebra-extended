@@ -18,6 +18,7 @@ import org.geogebra.common.properties.impl.graphics.PlaneVisibilityProperty;
 import org.geogebra.common.properties.impl.graphics.ProjectionsProperty;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * List of properties for graphics views
@@ -36,77 +37,75 @@ public class GraphicsPropertiesList extends PropertiesList {
 	 *            localization
 	 */
     public GraphicsPropertiesList(App app, Localization localization) {
-        super(null);
+		super(getProperties(app, localization));
         mApp = app;
         mLocalization = localization;
+	}
 
-        EuclidianView activeView = mApp.getActiveEuclidianView();
+	private static List<Property> getProperties(App app,
+			Localization localization) {
+
+		EuclidianView activeView = app.getActiveEuclidianView();
         EuclidianSettings euclidianSettings = activeView.getSettings();
         ArrayList<Property> propertyList = new ArrayList<>();
 
-        if (mApp.has(Feature.MOB_STANDARD_VIEW_ZOOM_BUTTONS)) {
-            propertyList.add(new GraphicsPositionProperty(mApp));
+		if (app.has(Feature.MOB_STANDARD_VIEW_ZOOM_BUTTONS)) {
+			propertyList.add(new GraphicsPositionProperty(app));
         }
 		propertyList.add(
-				new AxesVisibilityProperty(mLocalization, euclidianSettings));
+				new AxesVisibilityProperty(localization, euclidianSettings));
 
         if (activeView.isEuclidianView3D()) {
-            propertyList.add(new PlaneVisibilityProperty(mLocalization,
+			propertyList.add(new PlaneVisibilityProperty(localization,
                     (EuclidianSettings3D) euclidianSettings));
         }
 
 		propertyList.add(
-				new GridVisibilityProperty(mLocalization, euclidianSettings));
+				new GridVisibilityProperty(localization, euclidianSettings));
 
-        if (mApp.has(Feature.G3D_PROJECTIONS_IN_SETTINGS)) {
-            if (activeView.isEuclidianView3D()) {
-                propertyList.add(
-                        new ProjectionsProperty(mLocalization, activeView,
-                                (EuclidianSettings3D) euclidianSettings));
-            }
+        if (activeView.isEuclidianView3D()) {
+            propertyList.add(
+                    new ProjectionsProperty(localization, activeView,
+                            (EuclidianSettings3D) euclidianSettings));
         }
 
-        if (!"3D".equals(mApp.getVersion().getAppName())) {
+		if (!"3D".equals(app.getVersion().getAppName())) {
 			propertyList.add(
-					new GridStyleProperty(mLocalization, euclidianSettings));
+					new GridStyleProperty(localization, euclidianSettings));
         }
 
-		propertyList.add(new DistancePropertyCollection(mApp, mLocalization,
+		propertyList.add(new DistancePropertyCollection(app, localization,
 				euclidianSettings));
-		propertyList.add(new LabelsPropertyCollection(mApp, mLocalization,
+		propertyList.add(new LabelsPropertyCollection(app, localization,
 				euclidianSettings));
 
-        if (mApp.has(Feature.G3D_BLACK_AXES) && activeView.isEuclidianView3D()) {
-            propertyList.add(new AxesColoredProperty(mLocalization,
+		if (activeView.isEuclidianView3D()) {
+			propertyList.add(new AxesColoredProperty(localization,
                     (EuclidianSettings3D) euclidianSettings));
         }
 
-        mProperties = new Property[propertyList.size()];
-        propertyList.toArray(mProperties);
+		return propertyList;
     }
 
     @Override
     public Property[] getPropertiesList() {
         if (mApp.getActiveEuclidianView().isAREnabled()) {
             if (propertiesListARView == null) {
-                if (mApp.has(Feature.MOB_BACKGROUND_PROPERTY) && mApp.has(Feature
-                        .MOB_STANDARD_VIEW_ZOOM_BUTTONS)) {
+                if (mApp.has(Feature.MOB_STANDARD_VIEW_ZOOM_BUTTONS)) {
                     // MOB_STANDARD_VIEW_ZOOM_BUTTONS checked here just in case it would be
                     // temporarily removed
                     propertiesListARView = new Property[mProperties.length + 1];
                     for (int i = 0; i < propertiesListARView.length; i++) {
                         if (i > 1) {
                             propertiesListARView[i] = mProperties[i - 1];
-                        } else {
-                            if (i == 0) {
+						} else if (i == 0) {
                                 propertiesListARView[i] = mProperties[i];
-                            } else {
-								// i = 1 -> BackgroundProperty added below
-								// GraphicsPositionProperty
-								propertiesListARView[i] = new BackgroundProperty(
-										mApp, mLocalization);
-                            }
-                        }
+						} else {
+							// i = 1 -> BackgroundProperty added below
+							// GraphicsPositionProperty
+							propertiesListARView[i] = new BackgroundProperty(
+									mApp, mLocalization);
+						}
                     }
                 } else {
                     propertiesListARView = mProperties;

@@ -38,6 +38,7 @@ import org.geogebra.common.kernel.geos.GeoPolygon;
 import org.geogebra.common.kernel.geos.Traceable;
 import org.geogebra.common.kernel.geos.Transformable;
 import org.geogebra.common.kernel.geos.Translateable;
+import org.geogebra.common.kernel.geos.properties.Auxiliary;
 import org.geogebra.common.kernel.kernelND.GeoCoordSys2D;
 import org.geogebra.common.kernel.kernelND.GeoDirectionND;
 import org.geogebra.common.kernel.kernelND.GeoElementND;
@@ -49,6 +50,7 @@ import org.geogebra.common.kernel.kernelND.HasHeight;
 import org.geogebra.common.kernel.kernelND.HasSegments;
 import org.geogebra.common.kernel.kernelND.HasVolume;
 import org.geogebra.common.kernel.kernelND.RotateableND;
+import org.geogebra.common.main.Feature;
 import org.geogebra.common.plugin.GeoClass;
 import org.geogebra.common.util.debug.Log;
 
@@ -62,6 +64,9 @@ public class GeoPolyhedron extends GeoElement3D
 		implements HasSegments, HasVolume, Traceable, RotateableND,
 		Translateable, MirrorableAtPlane, Transformable, Dilateable, HasHeight,
 		Path, GeoPolyhedronInterface, GeoNumberValue {
+
+	/** unknown */
+	public static final int TYPE_UNKNOWN = 0;
 	/** pyramid */
 	public static final int TYPE_PYRAMID = 1;
 	/** prism */
@@ -76,6 +81,8 @@ public class GeoPolyhedron extends GeoElement3D
 	public static final int TYPE_DODECAHEDRON = 7;
 	/** icosahedron */
 	public static final int TYPE_ICOSAHEDRON = 8;
+	/** net */
+	public static final int TYPE_NET = 9;
 	/** one of the TYPE_* constants */
 	int type;
 
@@ -201,9 +208,15 @@ public class GeoPolyhedron extends GeoElement3D
 	 * 
 	 * @param c
 	 *            construction
+	 * @param polyhedronType
+	 *            polyhedron type
 	 */
-	public GeoPolyhedron(Construction c) {
+	public GeoPolyhedron(Construction c, int polyhedronType) {
 		super(c);
+
+		// needs to be done before setConstructionDefaults() as color depends on
+		// type
+		this.type = polyhedronType;
 
 		// moved from GeoElement's constructor
 		// must be called from the subclass, see
@@ -270,18 +283,8 @@ public class GeoPolyhedron extends GeoElement3D
 	 *            original
 	 */
 	public GeoPolyhedron(GeoPolyhedron polyhedron) {
-		this(polyhedron.getConstruction());
+		this(polyhedron.getConstruction(), polyhedron.getPolyhedronType());
 		set(polyhedron);
-	}
-
-	/**
-	 * set the type of polyhedron
-	 * 
-	 * @param type
-	 *            one of the TYPE_* constants
-	 */
-	public void setType(int type) {
-		this.type = type;
 	}
 
 	/**
@@ -445,6 +448,11 @@ public class GeoPolyhedron extends GeoElement3D
 			}
 		}
 
+		if (cons.getKernel().getApplication()
+				.has(Feature.G3D_SHOW_IN_ALGEBRA_VIEW)) {
+			polygon.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
+		}
+
 		// put the polygon into the collection
 		polygons.put(index, polygon);
 
@@ -551,6 +559,11 @@ public class GeoPolyhedron extends GeoElement3D
 			} catch (Exception e) {
 				// circular definition
 			}
+		}
+
+		if (cons.getKernel().getApplication()
+				.has(Feature.G3D_SHOW_IN_ALGEBRA_VIEW)) {
+			segment.setAuxiliaryObject(Auxiliary.YES_DEFAULT);
 		}
 
 		storeSegment(segment, key);
@@ -1321,6 +1334,14 @@ public class GeoPolyhedron extends GeoElement3D
 		default:
 			return "Polyhedron";
 		}
+	}
+
+	/**
+	 * 
+	 * @return polyhedron type
+	 */
+	public int getPolyhedronType() {
+		return type;
 	}
 
 	@Override
@@ -2219,10 +2240,10 @@ public class GeoPolyhedron extends GeoElement3D
 	 * 
 	 * @param points
 	 *            points for replacement
-	 * @param segments
+	 * @param replacementSegments
 	 *            segments for replacement
 	 */
-	public void replaceDummies(GeoPointND[] points, GeoSegmentND[] segments) {
+	public void replaceDummies(GeoPointND[] points, GeoSegmentND[] replacementSegments) {
 		for (GeoSegment3D seg : getSegments3D()) {
 			GeoPointND p1 = seg.getStartPoint();
 			GeoPointND p2 = seg.getEndPoint();
@@ -2260,7 +2281,7 @@ public class GeoPolyhedron extends GeoElement3D
 				for (int i = 0; i < polySegments.length; i++) {
 					GeoSegmentND s = polySegments[i];
 					if (s instanceof DummyGeoSegment3D) {
-						newSegments[i] = segments[((DummyGeoSegment3D) s)
+						newSegments[i] = replacementSegments[((DummyGeoSegment3D) s)
 								.getDummyIndex()];
 						segmentsNeedChange = true;
 					} else {

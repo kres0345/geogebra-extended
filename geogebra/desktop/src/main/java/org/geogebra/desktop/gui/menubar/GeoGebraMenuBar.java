@@ -633,7 +633,7 @@ public class GeoGebraMenuBar extends JMenuBar implements EventRenderable {
 		dialog.setVisible(true);
 	}
 
-	private static void appendVersion(StringBuilder sb, AppD app) {
+	public static void appendVersion(StringBuilder sb, App app) {
 		sb.append(GeoGebraConstants.APPLICATION_NAME);
 		sb.append(" Classic ");
 		sb.append(app.getVersionString());
@@ -641,7 +641,7 @@ public class GeoGebraMenuBar extends JMenuBar implements EventRenderable {
 
 	public static void copyDebugInfoToClipboard(AppD app) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[co]");
+		sb.append("[pre]");
 		appendVersion(sb, app);
 		sb.append(" (");
 		sb.append(GeoGebraConstants.BUILD_DATE);
@@ -708,7 +708,7 @@ public class GeoGebraMenuBar extends JMenuBar implements EventRenderable {
 
 		sb.append("\n\nPreferences:\n");
 		sb.append(GeoGebraPreferencesD.getPref().getXMLPreferences());
-		sb.append("[/co]");
+		sb.append("[/pre]");
 		Toolkit.getDefaultToolkit().getSystemClipboard()
 				.setContents(new StringSelection(sb.toString()), null);
 

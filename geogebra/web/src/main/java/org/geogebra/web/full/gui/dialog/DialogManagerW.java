@@ -8,6 +8,7 @@ import org.geogebra.common.euclidian.EuclidianConstants;
 import org.geogebra.common.euclidian.EuclidianController;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.gui.InputHandler;
+import org.geogebra.common.gui.dialog.Export3dDialogInterface;
 import org.geogebra.common.gui.dialog.InputDialog;
 import org.geogebra.common.gui.dialog.TextInputDialog;
 import org.geogebra.common.gui.dialog.handler.ColorChangeHandler;
@@ -17,6 +18,7 @@ import org.geogebra.common.gui.dialog.handler.RenameInputHandler;
 import org.geogebra.common.gui.view.properties.PropertiesView;
 import org.geogebra.common.javax.swing.GOptionPane;
 import org.geogebra.common.kernel.Construction;
+import org.geogebra.common.kernel.View;
 import org.geogebra.common.kernel.geos.GeoBoolean;
 import org.geogebra.common.kernel.geos.GeoElement;
 import org.geogebra.common.kernel.geos.GeoFunction;
@@ -25,6 +27,7 @@ import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.kernel.geos.GeoPolygon;
 import org.geogebra.common.kernel.geos.GeoText;
+import org.geogebra.common.kernel.kernelND.GeoCoordSys2D;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.kernel.kernelND.GeoSegmentND;
 import org.geogebra.common.main.App;
@@ -154,7 +157,7 @@ public class DialogManagerW extends DialogManager
 
 	/**
 	 * shows the {@link RecoverAutoSavedDialog}
-	 * 
+	 *
 	 * @param app2
 	 *            {@link AppWFull}
 	 * @param json
@@ -170,13 +173,13 @@ public class DialogManagerW extends DialogManager
 
 	@Override
 	public void showNumberInputDialogRegularPolygon(String title,
-			EuclidianController ec, GeoPointND geoPoint1,
-			GeoPointND geoPoint2) {
+			EuclidianController ec, GeoPointND geoPoint1, GeoPointND geoPoint2,
+			GeoCoordSys2D direction) {
 
 		NumberInputHandler handler = new NumberInputHandler(
 				app.getKernel().getAlgebraProcessor());
 		InputDialogW id = new InputDialogRegularPolygonW(((AppW) app), ec,
-				title, handler, geoPoint1, geoPoint2);
+				title, handler, geoPoint1, geoPoint2, direction);
 		id.setVisible(true);
 
 	}
@@ -257,7 +260,7 @@ public class DialogManagerW extends DialogManager
 	 *            used device
 	 */
 	public void showImageInputDialog(GeoPoint corner, GDevice device) {
-		if (app.has(Feature.MOW_IMAGE_DIALOG_UNBUNDLED)
+		if (app.isWhiteboardActive()
 				&& device instanceof BrowserDevice) {
 			((BrowserDevice) device).getUploadImageWithoutDialog((AppW) app);
 			return;
@@ -280,7 +283,7 @@ public class DialogManagerW extends DialogManager
 
 	/**
 	 * show insert pdf dialog
-	 * 
+	 *
 	 * @param file
 	 *            PDF file
 	 */
@@ -317,7 +320,8 @@ public class DialogManagerW extends DialogManager
 
 	@Override
 	public void showEmbedDialog() {
-		EmbedInputDialog embedDialog = new EmbedInputDialog((AppW) app);
+		EmbedInputDialog embedDialog = new EmbedInputDialog((AppW) app,
+				app.getLoginOperation().getGeoGebraTubeAPI().getURLChecker());
 		embedDialog.center();
 		embedDialog.show();
 	}
@@ -348,7 +352,7 @@ public class DialogManagerW extends DialogManager
 	 *            device type
 	 */
 	public void showWebcamInputDialog(GDevice device) {
-		if (!(app.has(Feature.MOW_IMAGE_DIALOG_UNBUNDLED)
+		if (!(app.isWhiteboardActive()
 				&& device instanceof BrowserDevice)) {
 			return;
 		}
@@ -378,7 +382,7 @@ public class DialogManagerW extends DialogManager
 
 	/**
 	 * Creates a new slider at given location (screen coords).
-	 * 
+	 *
 	 * @return whether a new slider (number) was create or not
 	 */
 	@Override
@@ -443,16 +447,14 @@ public class DialogManagerW extends DialogManager
 	}
 
 	/**
-	 * 
+	 *
 	 * @return {@link SaveDialogI}
 	 */
 	public SaveDialogI getSaveDialog() {
 		if (saveDialog == null) {
-			if (app.isWhiteboardActive()) {
-				saveDialog = new SaveDialogMow((AppW) app);
-			} else {
-				saveDialog = new SaveDialogW((AppW) app);
-			}
+			saveDialog = app.isWhiteboardActive()
+					? new SaveDialogMow((AppW) app)
+					: new SaveDialogW((AppW) app);
 		}
 		// set default saveType
 		saveDialog.setSaveType(
@@ -536,7 +538,7 @@ public class DialogManagerW extends DialogManager
 
 	/**
 	 * Shows alert dialog.
-	 * 
+	 *
 	 * @param text
 	 *            Alert message
 	 */
@@ -619,7 +621,7 @@ public class DialogManagerW extends DialogManager
 
 	/**
 	 * Creates a new {@link ColorChooserDialog}.
-	 * 
+	 *
 	 * @param originalColor
 	 *            initial color
 	 * @param handler
@@ -686,5 +688,10 @@ public class DialogManagerW extends DialogManager
 			tableViewDialog = new InputDialogTableView((AppW) app);
 		}
 		tableViewDialog.show(geo);
+	}
+
+	@Override
+	public Export3dDialogInterface getExport3dDialog(View view) {
+		return new Export3dDialog((AppW) app, view);
 	}
 }

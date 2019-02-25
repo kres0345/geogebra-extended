@@ -1701,6 +1701,8 @@ public class CommandsTest extends AlgebraTest {
 		t("Length[ Curve(3t,4t,t,0,10), 2, 3 ]", "5");
 		tRound("Length[ Curve(3t,4t,t,0,10), (3,5),(6,9) ]", "5");
 		t("Length[ 3/4x, 0, 4 ]", "5");
+		t("round(Length[ x^2, 1, 4 ],5)", "15.33969");
+		t("round(Length[ sqrt(x), 1, 4 ],5)", "3.16784");
 		tRound("Length[ 3/4x, (0,1), (4,4) ]", "5");
 		t("Length[ Segment((1,0),(0,0))]", "1");
 		t("Length[ Segment((3,4,12),(0,0))]", "13");
@@ -1979,6 +1981,17 @@ public class CommandsTest extends AlgebraTest {
 	public void xCurve() {
 		t("f:(cos(t),sin(t+1))", "(cos(t), sin(t + 1))");
 		t("x(f)", "x(f(t))");
+	}
+
+	@Test
+	public void cmdComplexRoot() {
+		tRound("Sort({ComplexRoot(x^6 + 7x^3 - 8)})",
+				complex("{-2 + 0i, -0.5 - 0.86603i, -0.5 + 0.86603i, 1 - 1.73205i, 1 + 0i, 1 + 1.73205i}"));
+		t("ComplexRoot( x^2 )", complex("0 + 0i"));
+	}
+
+	private static String complex(String string) {
+		return string.replaceAll("i", Unicode.IMAGINARY + "");
 	}
 
 	@Test

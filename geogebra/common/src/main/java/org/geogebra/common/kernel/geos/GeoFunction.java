@@ -81,7 +81,8 @@ import com.himamis.retex.editor.share.util.Unicode;
 public class GeoFunction extends GeoElement implements VarString, Translateable,
 		GeoEvaluatable, FunctionalNVar, GeoFunctionable, Region,
 		CasEvaluableFunction, ParametricCurve, UnivariateFunction, Dilateable,
-		Transformable, InequalityProperties, SurfaceEvaluable, GeoLocusable {
+		Transformable, InequalityProperties, SurfaceEvaluable, GeoLocusable,
+		Lineable2D {
 
 	/** inner function representation */
 	protected Function fun;
@@ -326,8 +327,8 @@ public class GeoFunction extends GeoElement implements VarString, Translateable,
 	}
 
 	@Override
-	public void setVisualStyle(GeoElement g) {
-		super.setVisualStyle(g);
+	public void setVisualStyle(GeoElement g, boolean setAuxiliaryProperty) {
+		super.setVisualStyle(g, setAuxiliaryProperty);
 		if (g instanceof GeoFunction) {
 			setShowOnAxis(((GeoFunction) g).showOnAxis);
 		}
@@ -855,14 +856,15 @@ public class GeoFunction extends GeoElement implements VarString, Translateable,
 	 */
 	@Override
 	public String toString(StringTemplate tpl) {
-		if (ExamEnvironment.isProtectedEquation(this)) {
-			return getParentAlgorithm().getDefinition(tpl);
-		}
 		sbToString.setLength(0);
 		if (isLabelSet()) {
 			initStringBuilder(sbToString, tpl, label, this);
 		}
-		sbToString.append(toValueString(tpl));
+		if (ExamEnvironment.isProtectedEquation(this)) {
+			sbToString.append(getParentAlgorithm().getDefinition(tpl));
+		} else {
+			sbToString.append(toValueString(tpl));
+		}
 		return sbToString.toString();
 	}
 
@@ -2993,4 +2995,31 @@ public class GeoFunction extends GeoElement implements VarString, Translateable,
 	public void setPointsVisible(boolean pointsVisible) {
 		this.pointsVisible = pointsVisible;
 	}
+
+	@Override
+	public double getX() {
+
+		try {
+			PolyFunction poly = fun
+					.expandToPolyFunction(fun.getExpression(), false, true);
+			if (poly.getDegree() <= 1) {
+
+				// gradient of line
+				return poly.getCoeffs()[1];
+
+			}
+		} catch (Exception e) {
+			//
+		}
+
+		// not a line
+		return Double.NaN;
+
+	}
+
+	@Override
+	public double getY() {
+		return -1;
+	}
+
 }

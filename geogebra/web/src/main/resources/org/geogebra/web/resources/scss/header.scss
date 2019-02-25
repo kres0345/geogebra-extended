@@ -1,0 +1,69 @@
+@import 'colors';
+
+$header_shadow:
+    0 4px 5px 0 $black-14,
+    0 1px 10px 0 $black-12,
+    0 2px 4px -1px $black-20;
+$header_height: 64px;
+$small_header_height: 48px;
+$button_height: 36px;
+$button_hover_transition: background-color 0.15s;
+
+.GeoGebraFrame {
+
+	%headerViewShared {
+	    position: relative;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+		z-index: 200;
+		background-color: white;
+		box-shadow: $header_shadow;
+		
+		.headerBackButton {
+			cursor: pointer;
+			float: left;
+			width: 24px;
+			height: 24px;
+			opacity: 0.54;
+			&:hover {
+				opacity: 0.87;
+			}
+		}
+		
+		.headerCaption {
+		    display: inline-block;
+			font-size: 125%;
+			color: $text-primary;
+			letter-spacing: 0.25px;
+		}
+	}
+	
+	.headerView {
+		@extend %headerViewShared;
+		height: $header_height;
+		
+		.headerBackButton {
+			padding: 12px;
+			margin: 8px 12px 8px 12px;
+		}
+		
+		.headerCaption {
+			margin: 22px 0px;
+		}
+	}
+	
+	.smallHeaderView {
+		@extend %headerViewShared;
+		height: $small_header_height;
+		
+		.headerBackButton {
+			padding: 8px;
+			margin: 4px 24px 4px 8px;
+		}
+		
+		.headerCaption {
+			margin: 14px 0px;
+		}
+	}
+}

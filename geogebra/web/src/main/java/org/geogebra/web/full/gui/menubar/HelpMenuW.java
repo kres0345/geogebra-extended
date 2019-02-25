@@ -4,14 +4,17 @@ import org.geogebra.common.GeoGebraConstants;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.Localization;
 import org.geogebra.common.move.views.BooleanRenderable;
+import org.geogebra.common.util.StringUtil;
 import org.geogebra.web.full.css.MaterialDesignResources;
 import org.geogebra.web.html5.gui.util.AriaMenuItem;
 import org.geogebra.web.html5.main.AppW;
+import org.geogebra.web.resources.SVGResource;
+import org.geogebra.web.shared.SharedResources;
 
 /**
  * Help menu
  */
-public class HelpMenuW extends GMenuBar implements BooleanRenderable {
+public class HelpMenuW extends Submenu implements BooleanRenderable {
 	/**
 	 * Settings for version/about window
 	 */
@@ -30,26 +33,22 @@ public class HelpMenuW extends GMenuBar implements BooleanRenderable {
 	 */
 	public HelpMenuW(final AppW app) {
 		super("help", app);
-		if (app.isUnbundledOrWhiteboard()) {
-			addStyleName("matStackPanel");
-		} else {
-			addStyleName("GeoGebraMenuBar");
-		}
+		addExpandableStyleWithColor(false);
 		Localization loc = app.getLocalization();
-
+		final String tutorialURL = app.getLocalization().getTutorialURL(app.getConfig());
 		// Tutorials
-		tutorials = addItem(
-				MainMenu.getMenuBarHtml(
-						MaterialDesignResources.INSTANCE.tutorial_black(),
-						loc.getMenu("Tutorials")),
-				true, new MenuCommand(app) {
+		if (!StringUtil.empty(tutorialURL)) {
+			tutorials = addItem(
+					MainMenu.getMenuBarHtml(MaterialDesignResources.INSTANCE.tutorial_black(),
+							loc.getMenu("Tutorials")),
+					true, new MenuCommand(app) {
 
-					@Override
-					public void doExecute() {
-						app.getFileManager().open(app.getLocalization()
-								.getTutorialURL(app.getConfig()));
-					}
-				});
+						@Override
+						public void doExecute() {
+							app.getFileManager().open(tutorialURL);
+						}
+					});
+		}
 		// Help
 		manual = addItem(
 				MainMenu.getMenuBarHtml(
@@ -126,5 +125,15 @@ public class HelpMenuW extends GMenuBar implements BooleanRenderable {
 		tutorials.setEnabled(b);
 		bug.setEnabled(b);
 		forum.setEnabled(b);
+	}
+
+	@Override
+	public SVGResource getImage() {
+		return SharedResources.INSTANCE.icon_help_black();
+	}
+
+	@Override
+	protected String getTitleTranslationKey() {
+		return "HelpAndFeedback";
 	}
 }

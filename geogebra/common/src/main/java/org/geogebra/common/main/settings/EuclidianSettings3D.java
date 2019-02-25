@@ -3,6 +3,7 @@ package org.geogebra.common.main.settings;
 import org.geogebra.common.awt.GFont;
 import org.geogebra.common.euclidian.EuclidianView;
 import org.geogebra.common.euclidian3D.EuclidianView3DInterface;
+import org.geogebra.common.kernel.geos.XMLBuilder;
 import org.geogebra.common.main.App;
 import org.geogebra.common.plugin.EuclidianStyleConstants;
 import org.geogebra.common.util.DoubleUtil;
@@ -591,28 +592,9 @@ public class EuclidianSettings3D extends EuclidianSettings {
 
 		sb.append("\" rightAngleStyle=\"");
 		sb.append(app.rightAngleStyle);
-		// if (asPreference) {
-		// sb.append("\" allowShowMouseCoords=\"");
-		// sb.append(getAllowShowMouseCoords());
-		//
-		// sb.append("\" allowToolTips=\"");
-		// sb.append(getAllowToolTips());
-		//
-		// sb.append("\" deleteToolSize=\"");
-		// sb.append(getEuclidianController().getDeleteToolSize());
-		// }
-
-		// sb.append("\" checkboxSize=\"");
-		// sb.append(app.getCheckboxSize()); // Michael Borcherds
-		// 2008-05-12
 
 		sb.append("\" gridType=\"");
 		sb.append(getGridType()); // cartesian/isometric/polar
-
-		// if (lockedAxesRatio != null) {
-		// sb.append("\" lockedAxesRatio=\"");
-		// sb.append(lockedAxesRatio);
-		// }
 
 		sb.append("\"/>\n");
 		// end ev settings
@@ -633,13 +615,9 @@ public class EuclidianSettings3D extends EuclidianSettings {
 		// sb.append("\"/>\n");
 
 		// background color
-		sb.append("\t<bgColor r=\"");
-		sb.append(backgroundColor.getRed());
-		sb.append("\" g=\"");
-		sb.append(backgroundColor.getGreen());
-		sb.append("\" b=\"");
-		sb.append(backgroundColor.getBlue());
-		sb.append("\"/>\n");
+		sb.append("\t<bgColor");
+		XMLBuilder.appendRGB(sb, backgroundColor);
+		sb.append("/>\n");
 
 		// y axis is up
 		if (getYAxisVertical()) {

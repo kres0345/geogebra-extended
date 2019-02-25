@@ -55,7 +55,6 @@ import org.geogebra.common.kernel.kernelND.HasSegments;
 import org.geogebra.common.kernel.prover.NoSymbolicParametersException;
 import org.geogebra.common.kernel.prover.polynomial.PPolynomial;
 import org.geogebra.common.kernel.prover.polynomial.PVariable;
-import org.geogebra.common.main.Feature;
 import org.geogebra.common.plugin.GeoClass;
 import org.geogebra.common.util.DoubleUtil;
 import org.geogebra.common.util.ExtendedBoolean;
@@ -2550,14 +2549,14 @@ public class GeoPolygon extends GeoElement implements GeoNumberValue,
 		String str;
 		String name;
 		if (getMetasLength() == 1) {
-			name = getLoc().getPlainLabel("face"); // Name.face
+			name = getLoc().getPlainLabel("face", "face"); // Name.face
 		} else {
 			if (points != null && points.length == 3) {
-				name = getLoc().getPlainLabel("triangle"); // Name.triangle
+				name = getLoc().getPlainLabel("triangle", "t"); // Name.triangle
 			} else if (points != null && points.length == 4) {
-				name = getLoc().getPlainLabel("quadrilateral"); // Name.quadrilateral
+				name = getLoc().getPlainLabel("quadrilateral", "q"); // Name.quadrilateral
 			} else {
-				name = getLoc().getPlainLabel("polygon");
+				name = getLoc().getPlainLabel("polygon", "poly");
 			}
 
 		}
@@ -2739,8 +2738,9 @@ public class GeoPolygon extends GeoElement implements GeoNumberValue,
 	}
 
 	@Override
-	public void setVisualStyle(final GeoElement geo) {
-		super.setVisualStyle(geo);
+	public void setVisualStyle(final GeoElement geo,
+			boolean setAuxiliaryProperty) {
+		super.setVisualStyle(geo, setAuxiliaryProperty);
 
 		if (segments == null) {
 			return;
@@ -2754,8 +2754,7 @@ public class GeoPolygon extends GeoElement implements GeoNumberValue,
 
 	@Override
 	public boolean isShape() {
-		return kernel.getApplication().has(Feature.MOW_BOUNDING_BOXES)
-				&& isShape;
+		return isShape;
 	}
 
 	/**

@@ -10,7 +10,6 @@ import org.geogebra.common.kernel.geos.GeoImage;
 import org.geogebra.common.kernel.geos.GeoPoint;
 import org.geogebra.common.kernel.kernelND.GeoPointND;
 import org.geogebra.common.main.App;
-import org.geogebra.common.main.Feature;
 import org.geogebra.common.util.debug.Log;
 
 abstract public class ImageManager {
@@ -24,7 +23,7 @@ abstract public class ImageManager {
 	 *            application
 	 */
 	public void setCornersFromSelection(GeoImage geoImage, App app) {
-		boolean label = !app.has(Feature.MOW_IMAGE_BOUNDING_BOX);
+		boolean label = !app.isWhiteboardActive();
 		ArrayList<GeoPointND> corners = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
 			GeoPointND p = getImageCornerFromSelection(i, app);
@@ -63,7 +62,7 @@ abstract public class ImageManager {
 			ensure2ndCornerOnScreen(point1.getInhomX(), point2, app);
 		}
 		geoImage.setLabel(null);
-		if (app.has(Feature.MOW_IMAGE_DIALOG_UNBUNDLED)) {
+		if (app.isWhiteboardActive()) {
 			centerOnScreen(geoImage, app);
 		}
 		GeoImage.updateInstances(app);
@@ -88,7 +87,8 @@ abstract public class ImageManager {
 	 * @param app
 	 *            app
 	 */
-	public void ensure2ndCornerOnScreen(double x1, GeoPoint point, App app) {
+	public static void ensure2ndCornerOnScreen(double x1, GeoPoint point,
+			App app) {
 		double x2 = point.inhomX;
 		EuclidianView ev = app.getActiveEuclidianView();
 		double xmax = ev.toRealWorldCoordX((double) (ev.getWidth()) + 1);

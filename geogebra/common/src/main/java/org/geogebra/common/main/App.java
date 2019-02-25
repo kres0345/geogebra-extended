@@ -183,11 +183,11 @@ public abstract class App implements UpdateSelection, AppInterface {
 	/**
 	 * initial number of columns for spreadsheet
 	 */
-	public static final int SPREADSHEET_INI_COLS = 20; //Default 10
+	public static final int SPREADSHEET_INI_COLS = 10;
 	/**
 	 * initial number of rows for spreadsheet
 	 */
-	public static final int SPREADSHEET_INI_ROWS = 70; //Default 100
+	public static final int SPREADSHEET_INI_ROWS = 100;
 	// used by PropertyDialogGeoElement and MenuBarImpl
 	// for the Rounding Menus
 	/**
@@ -294,7 +294,7 @@ public abstract class App implements UpdateSelection, AppInterface {
 	/** gui / menu fontsize (-1 = use appFontSize) */
 	protected int guiFontSize = -1;
 	/** kernel */
-	protected Kernel kernel;
+	public Kernel kernel;
 	/** whether points can be created by other tools than point tool */
 	protected boolean isOnTheFlyPointCreationActive = true;
 	/** Settings object */
@@ -371,7 +371,7 @@ public abstract class App implements UpdateSelection, AppInterface {
 	private boolean useBrowserForJavaScript = true;
 	private EventDispatcher eventDispatcher;
 	private int[] versionArray = null;
-	private List<SavedStateListener> savedListeners = new ArrayList<>();
+	private final List<SavedStateListener> savedListeners = new ArrayList<>();
 	private Macro macro;
 	private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_POINTS_ONLY;
 	/**
@@ -404,7 +404,8 @@ public abstract class App implements UpdateSelection, AppInterface {
 	private AdjustViews adjustViews = null;
 	private AdjustScreen adjustScreen = null;
 	private AdjustScreen adjustScreen2 = null;
-	private long ceIDcounter = 1;
+	final static public long CE_ID_COUNTER_START = 1;
+	private long ceIDcounter = CE_ID_COUNTER_START;
 	private int nextVariableID = 1;
 	private boolean buttonShadows = false;
 	private double buttonRounding = 0.2;
@@ -1592,6 +1593,7 @@ public abstract class App implements UpdateSelection, AppInterface {
 	/**
 	 * @param idx
 	 *            secondary EV index, 1 for EV2
+	 * @return whether secondary EV with given index is showing
 	 */
 	public boolean hasEuclidianView2(int idx) {
 		return (getGuiManager() != null)
@@ -1794,12 +1796,18 @@ public abstract class App implements UpdateSelection, AppInterface {
 			return;
 		}
 		showAuxiliaryObjects = auxiliaryObjects;
-
-		if (getGuiManager() != null) {
-			getGuiManager().setShowAuxiliaryObjects(auxiliaryObjects);
-			// updateMenubar();
-		}
+		updateGuiForShowAuxiliaryObjects();
 	}
+
+    /**
+     * update GUI for show auxiliary objects flag
+     */
+	public final void updateGuiForShowAuxiliaryObjects() {
+        if (getGuiManager() != null) {
+            getGuiManager().setShowAuxiliaryObjects(showAuxiliaryObjects);
+            // updateMenubar();
+        }
+    }
 
 	/**
 	 * Returns labeling style. See the constants in ConstructionDefaults (e.g.
@@ -3145,7 +3153,8 @@ public abstract class App implements UpdateSelection, AppInterface {
 	 * text that is useful for tooltips.
 	 *
 	 * @param mode
-	 *            : tool ID
+	 *            tool ID
+	 * @return tool name
 	 */
 	public String getToolTooltipHTML(int mode) {
 		StringBuilder sbTooltip = new StringBuilder();
@@ -3452,6 +3461,7 @@ public abstract class App implements UpdateSelection, AppInterface {
 	/**
 	 * @param mode
 	 *            app mode ID
+	 * @return icon
 	 */
 	public GImageIcon wrapGetModeIcon(int mode) {
 		// TODO: debug message commented out from Trunk version, probably loops
@@ -3704,22 +3714,6 @@ public abstract class App implements UpdateSelection, AppInterface {
 		case MOB_STANDARD_VIEW_ZOOM_BUTTONS:
 			return true;
 
-		// AND-1217, IGR-931
-		case MOB_SCIENTIFIC_CALC_IN_APPS_MENU:
-			return true;
-
-		// AND-1323, IGR-987
-		case MOB_CAS_CALC_IN_APPS_MENU:
-			return true;
-
-		// MOB-1803
-		case MOB_ANGLE_DEGREES_MINUTES_SECONDS:
-			return true;
-
-		/** AND-1372 */
-		case MOB_DEFAULT_ROUNDING_13:
-			return true;
-
 		// **********************************************************************
 		// MOBILE END
 		// *********************************************************
@@ -3730,27 +3724,12 @@ public abstract class App implements UpdateSelection, AppInterface {
 		// note: please use prefix MOW
 		// *********************************************************
 		// **********************************************************************
-
-		case WHITEBOARD_APP:
-			return prerelease;
-
-		// MOW-29
-		case MOW_TOOLBAR:
-			return prerelease && whiteboard; // prerelease;
-
-		case MOW_CONTEXT_MENU:
-			return isUnbundledOrWhiteboard();
-
-		/** MOW-55 */
-		case MOW_BOUNDING_BOXES:
-			return prerelease && whiteboard;
-
 		/** MOW-320 */
 		case MOW_PIN_IMAGE:
 			return prerelease && whiteboard;
 
 		case MOW_PEN_IS_LOCUS:
-			return prerelease;
+			return true;
 
 		case MOW_PEN_EVENTS:
 			return false;
@@ -3761,113 +3740,19 @@ public abstract class App implements UpdateSelection, AppInterface {
 		case MOW_IMPROVE_CONTEXT_MENU:
 			return prerelease && whiteboard;
 
-		case MOW_CLEAR_VIEW_STYLEBAR:
-			return isUnbundledOrWhiteboard();
-
-		case MOW_COLORPOPUP_IMPROVEMENTS:
-			return prerelease;
-
 		case MOW_DIRECT_FORMULA_CONVERSION:
 			return false;
 
-		/** MOW-368 */
-		case MOW_IMAGE_DIALOG_UNBUNDLED:
-			return prerelease && whiteboard;
-
 		/** MOW-261 */
 		case MOW_COLOR_FILLING_LINE:
-			return prerelease && whiteboard;
-
-		/** MOW-269 */
-		case MOW_MULTI_PAGE:
-			return prerelease && whiteboard;
-
-		/** MOW-336 */
-		case MOW_DRAG_AND_DROP_PAGES:
-			return prerelease && whiteboard;
-
-		/** MOW-336 */
-		case MOW_DRAG_AND_DROP_ANIMATION:
-			return prerelease && whiteboard;
-
-		/** MOW-360, MOW-381, MOW-382 */
-		case MOW_CROP_IMAGE:
-			return prerelease && whiteboard;
-
-		/** MOW-379, MOW-380 */
-		case MOW_IMAGE_BOUNDING_BOX:
-			return prerelease && whiteboard;
-
-		/** MOW-285 */
-		case MOW_BOUNDING_BOX_FOR_PEN_TOOL:
-			return prerelease && whiteboard;
-
-		/** MOW-345 */
-		case MOW_MOVING_CANVAS:
-			return prerelease && whiteboard;
-
-		/** MOW-349 */
-		case MOW_AUDIO_TOOL:
-			return prerelease && whiteboard;
-
-		/** MOW-299 */
-		case MOW_VIDEO_TOOL:
-			return prerelease && whiteboard;
-
-		/** MOW-278 */
-		case MOW_HIGHLIGHTER_TOOL:
 			return prerelease && whiteboard;
 
 		/** MOW-459 */
 		case MOW_DOUBLE_CANVAS:
 			return prerelease && whiteboard;
 
-		/** MOW-533 */
-		case MOW_BACKGROUND:
-			return prerelease && whiteboard;
-
-		/** MOW-348 */
-		case MOW_PDF_TOOL:
-			return prerelease && whiteboard;
-
-		/** MOW-300 */
-		case MOW_GEOGEBRA_TOOL:
-			return prerelease && whiteboard;
-
-		/** MOW-479 */
-		case MOW_OPEN_FILE_VIEW:
-			return prerelease && whiteboard;
-
-		/** MOW-350 */
-		case MOW_EMBED_EXTENSION:
-			return prerelease;
-
-		/** MOW-491 */
-		case MOW_WIDGET_POSITIONS:
-			return prerelease;
-
-		/** MOW-532 */
-		case MOW_BURGER_MENU_CLEANUP:
-			return prerelease && whiteboard;
-
-		/** MOW-484 */
-		case MOW_SHARE_DIALOG:
-			return prerelease && whiteboard;
-
 		/** MOW-189 */
 		case MOW_TEXT_TOOL:
-			return canary && whiteboard;
-
-		/** MOW-578 */
-		case MOW_SELECTION_TOOL:
-			return prerelease && whiteboard;
-
-		/** MOW-150 */
-		case MOW_ROTATION_HANDLER:
-			return prerelease && whiteboard;
-
-		/** MOW-626 */
-		case MOW_JOINT_SHARE_DIALOG:
 			return canary && whiteboard;
 
 		// **********************************************************************
@@ -3912,10 +3797,6 @@ public abstract class App implements UpdateSelection, AppInterface {
 
 		/** GGB-2366 */
 		case TIKZ_AXES:
-			return true;
-
-		/** GGB-650 */
-		case GGB_WEB_ASSEMBLY:
 			return true;
 
 		case SOLVE_QUARTIC:
@@ -4015,9 +3896,6 @@ public abstract class App implements UpdateSelection, AppInterface {
 		case SHOW_STEPS:
 			return prerelease;
 
-		case LABEL_SETTING_ON_STYLEBAR:
-			return !whiteboard;
-
 		case SURFACE_2D:
 			return prerelease;
 
@@ -4062,10 +3940,6 @@ public abstract class App implements UpdateSelection, AppInterface {
 			// don't set true in ggb5
 			return !Versions.DESKTOP.equals(getVersion());
 
-		/** GBB-2374 */
-		case MAT_DESIGN_HEADER:
-			return true;
-
 		/** GBB-2394 */
 		case SPLITTER_LOADING:
 			return prerelease;
@@ -4080,7 +3954,7 @@ public abstract class App implements UpdateSelection, AppInterface {
 
 		/** automatically add NDG conditions in locus equations */
 		case LOCUSEQU_AUTO_NDG:
-			return prerelease;
+			return true;
 
 		/** unify prove commands */
 		case PROVE_UNIFY:
@@ -4098,9 +3972,9 @@ public abstract class App implements UpdateSelection, AppInterface {
 		case TOOLBAR_FROM_APPCONFIG:
 			return prerelease;
 
-		/** APPS-19 */
+		/** APPS-19 APPS-68 */
 		case TABLE_VIEW:
-			return prerelease;
+			return true;
 
 		/** APPS-31 */
 		case SPECIAL_POINTS_IN_CONTEXT_MENU:
@@ -4122,58 +3996,62 @@ public abstract class App implements UpdateSelection, AppInterface {
 		case EQUATION_TYPE_SETTING:
 			return true;
 
-		/** APPS-266 - only for testing */
-		case DROPDOWN_COMPONENT:
-			return canary;
+		/** APPS-393 */
+		case SAFARI_CSS_ZOOM:
+			return true;
 
-       // **********************************************************************
+	    /** APPS-91 */
+		case LANG_PARAM_LAST:
+			return prerelease;
+
+		/** APPS-339 */
+		case SHOW_SAVE_AFTER_CLOSE_SEARCH:
+			return prerelease;
+       
+	   // **********************************************************************
        // G3D START
        //
        // *********************************************************
        // **********************************************************************
 
-		// G3D-8, v511, 2018-11-15
-		case MOB_BACKGROUND_PROPERTY:
-			return true;
-
-		/** G3D-6, v512 */
-		case DOWNLOAD_ARCORE:
-            return true;
-
 		/** G3D-42*/
 			case G3D_AR_REGULAR_TOOLS:
-				return false;
+				return prerelease;
 
         /** G3D-95*/
 			case G3D_AR_ROTATE_3D_VIEW_TOOL:
-                return false;
+                return prerelease;
 
         /** G3D-97*/
 			case G3D_AR_TRANSLATE_3D_VIEW_TOOL:
-				return false;
+				return prerelease;
 
 		/** G3D-89 */
 		case G3D_IOS_FASTER_AV:
-			return false;
-
-		/** G3D-131, v516 */
-		case G3D_BLACK_AXES:
 			return true;
-
-        /** G3D-37, v516 */
-        case G3D_PROJECTIONS_IN_SETTINGS:
-			return true;
-
-		/** G3D-152, G3D-157 */
-		case G3D_TEST_IOS_AR:
-			return false;
 
 		/** G3D-160 */
 		case G3D_AR_TARGET:
-			return false;
+			return prerelease;
 
 		/** G3D-170 */
 		case G3D_IMPROVE_SOLID_TOOLS:
+			return prerelease;
+
+        /** G3D-197 */
+        case G3D_TOOLS_SIMPLE_MORE_LESS:
+			return true;
+
+        /** G3D-132 */
+        case G3D_SHOW_IN_ALGEBRA_VIEW:
+			return true;
+
+		/** G3D-177 */
+		case G3D_STL_EXPORT_DIALOG:
+			return prerelease;
+
+		/** G3D-151 */
+		case G3D_IOS_NATIVE_AR:
 			return prerelease;
 
         // **********************************************************************
@@ -4997,7 +4875,7 @@ public abstract class App implements UpdateSelection, AppInterface {
 			case ANDROID_NATIVE_3D:
 			case WEB_3D_GRAPHING:
 			case IOS_NATIVE_3D:
-				factory = new Graphing3DToolCollectionFactory();
+				factory = new Graphing3DToolCollectionFactory(this);
 				break;
 			default:
 				factory = new GraphingToolCollectionFactory();
@@ -5237,9 +5115,17 @@ public abstract class App implements UpdateSelection, AppInterface {
 	 *            old image
 	 * @param autoCorners
 	 *            whether to create corners
+	 * @param c1
+	 *            corner 1
+	 * @param c2
+	 *            corner 2
+	 * @param c4
+	 *            corner 4
+	 * @return image
 	 */
 	public GeoImage createImageFromString(final String imgFileName,
-			String imgBase64, GeoImage imageOld, boolean autoCorners) {
+			String imgBase64, GeoImage imageOld, boolean autoCorners, String c1,
+			String c2, String c4) {
 		return null;
 	}
 
@@ -5287,6 +5173,9 @@ public abstract class App implements UpdateSelection, AppInterface {
 		getLocalization().forceEnglishCommands();
 		StringTemplate.editorTemplate.setLocalizeCmds(false);
 		StringTemplate.editorTemplate.setPrintMethodsWithParenthesis(true);
+		StringTemplate.latexTemplateHideLHS.setLocalizeCmds(false);
+		StringTemplate.latexTemplateHideLHS
+				.setPrintMethodsWithParenthesis(true);
 	}
 
 	/**
@@ -5308,6 +5197,7 @@ public abstract class App implements UpdateSelection, AppInterface {
 	/**
 	 * @param keyboardSettings
 	 *            parent settings
+	 * @return desktop keyboard settings, dummy settings in other platform
 	 */
 	public AbstractSettings getKeyboardSettings(
 			AbstractSettings keyboardSettings) {

@@ -14,6 +14,7 @@ import org.geogebra.common.kernel.arithmetic.MyDouble;
 import org.geogebra.common.kernel.commands.CommandNotLoadedError;
 import org.geogebra.common.kernel.geos.GeoCasCell;
 import org.geogebra.common.kernel.geos.GeoElement;
+import org.geogebra.common.kernel.geos.GeoImage;
 import org.geogebra.common.kernel.geos.GeoNumeric;
 import org.geogebra.common.main.App;
 import org.geogebra.common.main.App.ExportType;
@@ -53,6 +54,8 @@ import com.google.gwt.json.client.JSONString;
  *
  */
 public class GgbAPIW extends GgbAPI {
+	private MathEditor editor;
+
 	/**
 	 * @param app
 	 *            application
@@ -62,6 +65,10 @@ public class GgbAPIW extends GgbAPI {
 		this.kernel = app.getKernel();
 		this.algebraprocessor = kernel.getAlgebraProcessor();
 		this.construction = kernel.getConstruction();
+	}
+
+	public void setEditor(MathEditor editor) {
+		this.editor = editor;
 	}
 
 	@Override
@@ -1028,9 +1035,27 @@ public class GgbAPIW extends GgbAPI {
 	/**
 	 * @param url
 	 *            image URL
+	 * @param corner1
+	 *            bottom left corner
+	 * @param corner2
+	 *            bottom right corner
+	 * @param corner4
+	 *            top left corner
+	 * @return image label
 	 */
-	public void insertImage(String url) {
-		((AppW) app).urlDropHappened(url, 0, 0);
+	public String insertImage(String url, String corner1, String corner2,
+			String corner4) {
+		
+		GeoImage geoImage = ((AppW) app).urlDropHappened(url,
+				checkCorner(corner1), checkCorner(corner2),
+				checkCorner(corner4));
+
+		return geoImage.getLabelSimple();
+	}
+
+	private static String checkCorner(String cornerExp) {
+		return StringUtil.isNaN(cornerExp) || StringUtil.empty(cornerExp) ? null
+				: cornerExp;
 	}
 
 	/**
@@ -1441,6 +1466,18 @@ public class GgbAPIW extends GgbAPI {
 		} else {
 			login(token);
 		}
+	}
+
+	public void setEditorState(String text) {
+		// app.getAlgebraView().startEditItem(kernel.lookupLabel("f"));
+		if (editor != null) {
+			Log.debug("processing...");
+			editor.setState(text);
+		}
+	}
+
+	public String getEditorState() {
+		return editor == null ? "" : editor.getState();
 	}
 
 }

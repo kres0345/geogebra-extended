@@ -121,6 +121,12 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_BOOLEAN = 120;
 	/** default polyhedron type (also used for limited quadrics) */
 	public static final int DEFAULT_POLYHEDRON = 3300;
+	/** default pyramids and cones type */
+	public static final int DEFAULT_PYRAMID_AND_CONE = 3310;
+	/** default prisms and cylinders type */
+	public static final int DEFAULT_PRISM_AND_CYLINDER = 3311;
+	/** default archimedean solids type */
+	public static final int DEFAULT_ARCHIMDEAN_SOLID = 3312;
 
 	/** default curve cartesian */
 	public static final int DEFAULT_CURVE_CARTESIAN = 3400;
@@ -198,6 +204,12 @@ public class ConstructionDefaults {
 	/** new default color for polygons */
 	public static final GColor colPolygonG = GeoGebraColorConstants.GEOGEBRA_OBJECT_BLUE;
 
+	/** default color for pyramids and cones */
+	public static final GColor colPyramidAndCone = GeoGebraColorConstants.GEOGEBRA_OBJECT_ORANGE;
+
+	/** default color for prisms and cylinders */
+	public static final GColor colPrismAndCylinder = GeoGebraColorConstants.GEOGEBRA_OBJECT_PINK;
+
 	/** default alpha for inequalities */
 	public static final float DEFAULT_INEQUALITY_ALPHA = 0.25f;
 
@@ -222,8 +234,13 @@ public class ConstructionDefaults {
 	// quadrics
 	/** default alpha for quadrics */
 	public static final float DEFAULT_QUADRIC_ALPHA = 0.75f;
+	/** new default alpha for quadrics */
+	public static final float DEFAULT_QUADRIC_ALPHA_NEW = 0.65f;
 	/** default color for quadrics */
 	public static final GColor colQuadric = GeoGebraColorConstants.GGB_RED;
+	/** new default color for quadrics */
+	public static final GColor colQuadricAndArchimedeanSolid = 
+			GeoGebraColorConstants.GEOGEBRA_OBJECT_RED;
 
 	/** preview color */
 	public static final GColor colPreview = GColor.DARK_GRAY;
@@ -920,7 +937,7 @@ public class ConstructionDefaults {
 	 *            If the visual styles should be reset
 	 */
 	final public void setDefaultVisualStyles(GeoElement geo, boolean isReset) {
-		setDefaultVisualStyles(geo, isReset, true);
+		setDefaultVisualStyles(geo, isReset, true, true);
 	}
 
 	/**
@@ -933,9 +950,11 @@ public class ConstructionDefaults {
 	 *            If the visual styles should be reset
 	 * @param setEuclidianVisible
 	 *            If eucldianVisible should be set
+	 * @param setAuxiliaryProperty
+	 *            if auxiliary property should be set
 	 */
 	final public void setDefaultVisualStyles(GeoElement geo, boolean isReset,
-			boolean setEuclidianVisible) {
+			boolean setEuclidianVisible, boolean setAuxiliaryProperty) {
 		// all object types that are not specifically supported
 		// should get the default values of a line
 		// int type = DEFAULT_LINE;
@@ -953,9 +972,10 @@ public class ConstructionDefaults {
 																// for
 																// slider/angle
 				geo.setAllVisualPropertiesExceptEuclidianVisible(defaultGeo,
-						isReset);
+						isReset, setAuxiliaryProperty);
 			} else {
-				geo.setAllVisualProperties(defaultGeo, isReset);
+				geo.setAllVisualProperties(defaultGeo, isReset,
+						setAuxiliaryProperty);
 			}
 
 			if (geo instanceof GeoFunction) {

@@ -52,7 +52,7 @@ public class SpreadsheetSettings extends AbstractSettings {
 	private int vScrollBarValue;
 
 	public static class Defaults {
-		public static final boolean SHOW_FORMULA_BAR = true; //Default false
+		public static final boolean SHOW_FORMULA_BAR = false;
 		public static final boolean SHOW_GRID = true;
 		public static final boolean SHOW_ROW_HEADER = true;
 		public static final boolean SHOW_COLUMN_HEADER = true;
@@ -61,8 +61,8 @@ public class SpreadsheetSettings extends AbstractSettings {
 		public static final boolean IS_COLUMN_SELECT = false;
 		public static final boolean ALLOW_SPECIAL_EDITOR = false;
 		public static final boolean ALLOW_TOOLTIPS = true;
-		public static final boolean EQUALS_REQUIRED = true; //Default false
-		public static final boolean ENABLE_AUTOCOMPLETE = true; //Default false
+		public static final boolean EQUALS_REQUIRED = false;
+		public static final boolean ENABLE_AUTOCOMPLETE = false;
 	}
 
 	public boolean hasInitialized() {
