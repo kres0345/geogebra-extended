@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ar-base/ar-base.iml" filepath="$PROJECT_DIR$/ar-base/ar-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-jre/common-jre.iml" filepath="$PROJECT_DIR$/common-jre/common-jre.iml" />
+      <module fileurl="file://$PROJECT_DIR$/desktop/desktop.iml" filepath="$PROJECT_DIR$/desktop/desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/dev/dev.iml" filepath="$PROJECT_DIR$/web/dev/dev.iml" />
+      <module fileurl="file://$PROJECT_DIR$/retex/editor-base/editor-base.iml" filepath="$PROJECT_DIR$/retex/editor-base/editor-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/retex/editor-desktop/editor-desktop.iml" filepath="$PROJECT_DIR$/retex/editor-desktop/editor-desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/retex/editor-web/editor-web.iml" filepath="$PROJECT_DIR$/retex/editor-web/editor-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/geogebra.iml" filepath="$PROJECT_DIR$/geogebra.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ggbjdk/ggbjdk.iml" filepath="$PROJECT_DIR$/ggbjdk/ggbjdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/giac-jni/giac-jni.iml" filepath="$PROJECT_DIR$/giac-jni/giac-jni.iml" />
+      <module fileurl="file://$PROJECT_DIR$/input3D/impl/impl.iml" filepath="$PROJECT_DIR$/input3D/impl/impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/input3D/input3D.iml" filepath="$PROJECT_DIR$/input3D/input3D.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jogl2/jogl2.iml" filepath="$PROJECT_DIR$/jogl2/jogl2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/keyboard-base/keyboard-base.iml" filepath="$PROJECT_DIR$/keyboard-base/keyboard-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/keyboard-scientific/keyboard-scientific.iml" filepath="$PROJECT_DIR$/keyboard-scientific/keyboard-scientific.iml" />
+      <module fileurl="file://$PROJECT_DIR$/keyboard-web/keyboard-web.iml" filepath="$PROJECT_DIR$/keyboard-web/keyboard-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/retex/renderer-base/renderer-base.iml" filepath="$PROJECT_DIR$/retex/renderer-base/renderer-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/retex/renderer-desktop/renderer-desktop.iml" filepath="$PROJECT_DIR$/retex/renderer-desktop/renderer-desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/retex/renderer-web/renderer-web.iml" filepath="$PROJECT_DIR$/retex/renderer-web/renderer-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/input3D/stub/stub.iml" filepath="$PROJECT_DIR$/input3D/stub/stub.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test/test.iml" filepath="$PROJECT_DIR$/test/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/web.iml" filepath="$PROJECT_DIR$/web/web.iml" />
+    </modules>
+  </component>
+</project>

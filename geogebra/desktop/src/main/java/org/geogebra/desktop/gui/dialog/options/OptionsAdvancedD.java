@@ -215,7 +215,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 	}
 
 	/**
-	 * Initialize the GUI fontsize panel
+	 * Initialize the GUI font-size panel
 	 */
 	private void initGUIFontSizePanel() {
 		guiFontsizePanel = new JPanel();
