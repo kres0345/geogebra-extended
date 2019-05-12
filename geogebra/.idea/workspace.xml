@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cd54d609-f135-448f-8a7f-81bdeb674d57" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/geogebra.eml" beforeDir="false" afterPath="$PROJECT_DIR$/geogebra.eml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/geogebra.iml" beforeDir="false" afterPath="$PROJECT_DIR$/geogebra.iml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/ar-base/bin/default/" />
     <ignored path="$PROJECT_DIR$/common/bin/default/" />
@@ -29,11 +30,91 @@
     <ignored path="$PROJECT_DIR$/input3D/stub/bin/default/" />
     <ignored path="$PROJECT_DIR$/test/bin/default/" />
     <ignored path="$PROJECT_DIR$/web/bin/default/" />
+    <ignored path="$PROJECT_DIR$/.gradle/" />
+    <ignored path="$PROJECT_DIR$/build/" />
+    <ignored path="$PROJECT_DIR$/ar-base/.gradle/" />
+    <ignored path="$PROJECT_DIR$/ar-base/build/" />
+    <ignored path="$PROJECT_DIR$/ar-base/out/" />
+    <ignored path="$PROJECT_DIR$/common/.gradle/" />
+    <ignored path="$PROJECT_DIR$/common/build/" />
+    <ignored path="$PROJECT_DIR$/common/out/" />
+    <ignored path="$PROJECT_DIR$/common-jre/.gradle/" />
+    <ignored path="$PROJECT_DIR$/common-jre/build/" />
+    <ignored path="$PROJECT_DIR$/common-jre/out/" />
+    <ignored path="$PROJECT_DIR$/desktop/.gradle/" />
+    <ignored path="$PROJECT_DIR$/desktop/build/" />
+    <ignored path="$PROJECT_DIR$/desktop/out/" />
+    <ignored path="$PROJECT_DIR$/retex/editor-base/.gradle/" />
+    <ignored path="$PROJECT_DIR$/retex/editor-base/build/" />
+    <ignored path="$PROJECT_DIR$/retex/editor-base/out/" />
+    <ignored path="$PROJECT_DIR$/retex/editor-desktop/.gradle/" />
+    <ignored path="$PROJECT_DIR$/retex/editor-desktop/build/" />
+    <ignored path="$PROJECT_DIR$/retex/editor-desktop/out/" />
+    <ignored path="$PROJECT_DIR$/retex/editor-web/.gradle/" />
+    <ignored path="$PROJECT_DIR$/retex/editor-web/build/" />
+    <ignored path="$PROJECT_DIR$/retex/editor-web/out/" />
+    <ignored path="$PROJECT_DIR$/ggbjdk/.gradle/" />
+    <ignored path="$PROJECT_DIR$/ggbjdk/build/" />
+    <ignored path="$PROJECT_DIR$/ggbjdk/out/" />
+    <ignored path="$PROJECT_DIR$/giac-jni/.gradle/" />
+    <ignored path="$PROJECT_DIR$/giac-jni/build/" />
+    <ignored path="$PROJECT_DIR$/giac-jni/out/" />
+    <ignored path="$PROJECT_DIR$/input3D/.gradle/" />
+    <ignored path="$PROJECT_DIR$/input3D/build/" />
+    <ignored path="$PROJECT_DIR$/input3D/out/" />
+    <ignored path="$PROJECT_DIR$/jogl2/.gradle/" />
+    <ignored path="$PROJECT_DIR$/jogl2/build/" />
+    <ignored path="$PROJECT_DIR$/jogl2/out/" />
+    <ignored path="$PROJECT_DIR$/keyboard-base/.gradle/" />
+    <ignored path="$PROJECT_DIR$/keyboard-base/build/" />
+    <ignored path="$PROJECT_DIR$/keyboard-base/out/" />
+    <ignored path="$PROJECT_DIR$/keyboard-scientific/.gradle/" />
+    <ignored path="$PROJECT_DIR$/keyboard-scientific/build/" />
+    <ignored path="$PROJECT_DIR$/keyboard-scientific/out/" />
+    <ignored path="$PROJECT_DIR$/keyboard-web/.gradle/" />
+    <ignored path="$PROJECT_DIR$/keyboard-web/build/" />
+    <ignored path="$PROJECT_DIR$/keyboard-web/out/" />
+    <ignored path="$PROJECT_DIR$/retex/renderer-base/.gradle/" />
+    <ignored path="$PROJECT_DIR$/retex/renderer-base/build/" />
+    <ignored path="$PROJECT_DIR$/retex/renderer-base/out/" />
+    <ignored path="$PROJECT_DIR$/retex/renderer-desktop/.gradle/" />
+    <ignored path="$PROJECT_DIR$/retex/renderer-desktop/build/" />
+    <ignored path="$PROJECT_DIR$/retex/renderer-desktop/out/" />
+    <ignored path="$PROJECT_DIR$/retex/renderer-web/.gradle/" />
+    <ignored path="$PROJECT_DIR$/retex/renderer-web/build/" />
+    <ignored path="$PROJECT_DIR$/retex/renderer-web/out/" />
+    <ignored path="$PROJECT_DIR$/test/.gradle/" />
+    <ignored path="$PROJECT_DIR$/test/build/" />
+    <ignored path="$PROJECT_DIR$/test/out/" />
+    <ignored path="$PROJECT_DIR$/web/.gradle/" />
+    <ignored path="$PROJECT_DIR$/web/build/" />
+    <ignored path="$PROJECT_DIR$/web/out/" />
+    <ignored path="$PROJECT_DIR$/input3D/impl/.gradle/" />
+    <ignored path="$PROJECT_DIR$/input3D/impl/build/" />
+    <ignored path="$PROJECT_DIR$/input3D/impl/out/" />
+    <ignored path="$PROJECT_DIR$/input3D/stub/.gradle/" />
+    <ignored path="$PROJECT_DIR$/input3D/stub/build/" />
+    <ignored path="$PROJECT_DIR$/input3D/stub/out/" />
+    <ignored path="$PROJECT_DIR$/web/dev/.gradle/" />
+    <ignored path="$PROJECT_DIR$/web/dev/build/" />
+    <ignored path="$PROJECT_DIR$/web/dev/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view />
+      </state>
+    </system>
   </component>
   <component name="FileEditorManager">
     <leaf />
@@ -60,18 +141,23 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="geogebra" type="b2602c69:ProjectViewProjectNode" />
-              <item name="geogebra" type="462c0819:PsiDirectoryNode" />
+              <item name="geogebra" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="geogebra" type="b2602c69:ProjectViewProjectNode" />
+              <item name="geogebra" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="desktop" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -111,17 +197,15 @@
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="848" extended-state="6" />
     <layout>
-      <window_info id="Favorites" side_tool="true" />
-      <window_info id="Image Layers" />
-      <window_info id="Designer" />
-      <window_info id="UI Designer" />
-      <window_info id="Capture Tool" />
-      <window_info id="Learn" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20671141" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20052083" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" weight="0.32867134" />
+      <window_info id="Designer" order="2" />
+      <window_info id="Image Layers" order="3" />
+      <window_info id="Capture Tool" order="4" />
+      <window_info id="UI Designer" order="5" />
+      <window_info id="Learn" order="6" />
+      <window_info id="Favorites" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Build" sideWeight="0.49934897" weight="0.32882273" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -129,14 +213,18 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Palette" />
-      <window_info anchor="right" id="Theme Preview" />
-      <window_info anchor="right" id="Maven" />
-      <window_info anchor="right" id="Capture Analysis" />
-      <window_info anchor="right" id="Palette&#9;" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50065106" side_tool="true" weight="0.32882273" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info anchor="right" id="Gradle" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Maven" order="4" />
+      <window_info anchor="right" id="Theme Preview" order="5" />
+      <window_info anchor="right" id="Capture Analysis" order="6" />
+      <window_info anchor="right" id="Palette&#9;" order="7" />
     </layout>
   </component>
   <component name="editorHistoryManager">
@@ -164,6 +252,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/desktop/src/main/java/geogebra/GeoGebra3D.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
         </state>
       </provider>
     </entry>

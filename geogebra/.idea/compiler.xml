@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="com.himamis.retex.editor-base.main" target="1.7" />
+      <module name="com.himamis.retex.editor-base.test" target="1.7" />
+      <module name="com.himamis.retex.renderer-base.main" target="1.7" />
+      <module name="com.himamis.retex.renderer-base.test" target="1.7" />
+      <module name="geogebra.ar-base.main" target="1.7" />
+      <module name="geogebra.ar-base.test" target="1.7" />
+      <module name="geogebra.common-jre.main" target="1.7" />
+      <module name="geogebra.common-jre.test" target="1.7" />
+      <module name="geogebra.common.main" target="1.7" />
+      <module name="geogebra.common.test" target="1.7" />
+      <module name="geogebra.desktop.main" target="1.7" />
+      <module name="geogebra.desktop.test" target="1.7" />
+      <module name="geogebra.editor-desktop.main" target="1.7" />
+      <module name="geogebra.editor-desktop.test" target="1.7" />
+      <module name="geogebra.editor-web.main" target="1.7" />
+      <module name="geogebra.editor-web.test" target="1.7" />
+      <module name="geogebra.ggbjdk.main" target="1.7" />
+      <module name="geogebra.ggbjdk.test" target="1.7" />
+      <module name="geogebra.giac-jni.main" target="1.7" />
+      <module name="geogebra.giac-jni.test" target="1.7" />
+      <module name="geogebra.input3D.impl.main" target="1.7" />
+      <module name="geogebra.input3D.impl.test" target="1.7" />
+      <module name="geogebra.input3D.main" target="11" />
+      <module name="geogebra.input3D.stub.main" target="1.7" />
+      <module name="geogebra.input3D.stub.test" target="1.7" />
+      <module name="geogebra.input3D.test" target="11" />
+      <module name="geogebra.jogl2.main" target="1.7" />
+      <module name="geogebra.jogl2.test" target="1.7" />
+      <module name="geogebra.keyboard-base.main" target="1.7" />
+      <module name="geogebra.keyboard-base.test" target="1.7" />
+      <module name="geogebra.keyboard-scientific.main" target="1.7" />
+      <module name="geogebra.keyboard-scientific.test" target="1.7" />
+      <module name="geogebra.keyboard-web.main" target="1.7" />
+      <module name="geogebra.keyboard-web.test" target="1.7" />
+      <module name="geogebra.renderer-desktop.main" target="1.7" />
+      <module name="geogebra.renderer-desktop.test" target="1.7" />
+      <module name="geogebra.renderer-web.main" target="1.7" />
+      <module name="geogebra.renderer-web.test" target="1.7" />
+      <module name="geogebra.test.main" target="11" />
+      <module name="geogebra.test.test" target="11" />
+      <module name="geogebra.web.dev.main" target="11" />
+      <module name="geogebra.web.dev.test" target="11" />
+      <module name="geogebra.web.main" target="1.7" />
+      <module name="geogebra.web.test" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

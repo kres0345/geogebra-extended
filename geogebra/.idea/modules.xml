@@ -3,6 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ar-base/ar-base.iml" filepath="$PROJECT_DIR$/ar-base/ar-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/editor-base/com.himamis.retex.editor-base.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/editor-base/com.himamis.retex.editor-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/editor-base/com.himamis.retex.editor-base.main.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/editor-base/com.himamis.retex.editor-base.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/editor-base/com.himamis.retex.editor-base.test.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/editor-base/com.himamis.retex.editor-base.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/renderer-base/com.himamis.retex.renderer-base.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/renderer-base/com.himamis.retex.renderer-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/renderer-base/com.himamis.retex.renderer-base.main.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/renderer-base/com.himamis.retex.renderer-base.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/renderer-base/com.himamis.retex.renderer-base.test.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/renderer-base/com.himamis.retex.renderer-base.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
       <module fileurl="file://$PROJECT_DIR$/common-jre/common-jre.iml" filepath="$PROJECT_DIR$/common-jre/common-jre.iml" />
       <module fileurl="file://$PROJECT_DIR$/desktop/desktop.iml" filepath="$PROJECT_DIR$/desktop/desktop.iml" />
@@ -11,6 +17,66 @@
       <module fileurl="file://$PROJECT_DIR$/retex/editor-desktop/editor-desktop.iml" filepath="$PROJECT_DIR$/retex/editor-desktop/editor-desktop.iml" />
       <module fileurl="file://$PROJECT_DIR$/retex/editor-web/editor-web.iml" filepath="$PROJECT_DIR$/retex/editor-web/editor-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/geogebra.iml" filepath="$PROJECT_DIR$/geogebra.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ar-base/geogebra.ar-base.iml" filepath="$PROJECT_DIR$/.idea/modules/ar-base/geogebra.ar-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ar-base/geogebra.ar-base.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ar-base/geogebra.ar-base.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ar-base/geogebra.ar-base.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ar-base/geogebra.ar-base.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/geogebra.common.iml" filepath="$PROJECT_DIR$/.idea/modules/common/geogebra.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common-jre/geogebra.common-jre.iml" filepath="$PROJECT_DIR$/.idea/modules/common-jre/geogebra.common-jre.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common-jre/geogebra.common-jre.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common-jre/geogebra.common-jre.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common-jre/geogebra.common-jre.test.iml" filepath="$PROJECT_DIR$/.idea/modules/common-jre/geogebra.common-jre.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/geogebra.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/geogebra.common.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/geogebra.common.test.iml" filepath="$PROJECT_DIR$/.idea/modules/common/geogebra.common.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/desktop/geogebra.desktop.iml" filepath="$PROJECT_DIR$/.idea/modules/desktop/geogebra.desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/desktop/geogebra.desktop.main.iml" filepath="$PROJECT_DIR$/.idea/modules/desktop/geogebra.desktop.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/desktop/geogebra.desktop.test.iml" filepath="$PROJECT_DIR$/.idea/modules/desktop/geogebra.desktop.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/editor-desktop/geogebra.editor-desktop.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/editor-desktop/geogebra.editor-desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/editor-desktop/geogebra.editor-desktop.main.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/editor-desktop/geogebra.editor-desktop.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/editor-desktop/geogebra.editor-desktop.test.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/editor-desktop/geogebra.editor-desktop.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/editor-web/geogebra.editor-web.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/editor-web/geogebra.editor-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/editor-web/geogebra.editor-web.main.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/editor-web/geogebra.editor-web.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/editor-web/geogebra.editor-web.test.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/editor-web/geogebra.editor-web.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ggbjdk/geogebra.ggbjdk.iml" filepath="$PROJECT_DIR$/.idea/modules/ggbjdk/geogebra.ggbjdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ggbjdk/geogebra.ggbjdk.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ggbjdk/geogebra.ggbjdk.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ggbjdk/geogebra.ggbjdk.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ggbjdk/geogebra.ggbjdk.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/giac-jni/geogebra.giac-jni.iml" filepath="$PROJECT_DIR$/.idea/modules/giac-jni/geogebra.giac-jni.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/giac-jni/geogebra.giac-jni.main.iml" filepath="$PROJECT_DIR$/.idea/modules/giac-jni/geogebra.giac-jni.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/giac-jni/geogebra.giac-jni.test.iml" filepath="$PROJECT_DIR$/.idea/modules/giac-jni/geogebra.giac-jni.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/input3D/geogebra.input3D.iml" filepath="$PROJECT_DIR$/.idea/modules/input3D/geogebra.input3D.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/input3D/impl/geogebra.input3D.impl.iml" filepath="$PROJECT_DIR$/.idea/modules/input3D/impl/geogebra.input3D.impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/input3D/impl/geogebra.input3D.impl.main.iml" filepath="$PROJECT_DIR$/.idea/modules/input3D/impl/geogebra.input3D.impl.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/input3D/impl/geogebra.input3D.impl.test.iml" filepath="$PROJECT_DIR$/.idea/modules/input3D/impl/geogebra.input3D.impl.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/input3D/geogebra.input3D.main.iml" filepath="$PROJECT_DIR$/.idea/modules/input3D/geogebra.input3D.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/input3D/stub/geogebra.input3D.stub.iml" filepath="$PROJECT_DIR$/.idea/modules/input3D/stub/geogebra.input3D.stub.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/input3D/stub/geogebra.input3D.stub.main.iml" filepath="$PROJECT_DIR$/.idea/modules/input3D/stub/geogebra.input3D.stub.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/input3D/stub/geogebra.input3D.stub.test.iml" filepath="$PROJECT_DIR$/.idea/modules/input3D/stub/geogebra.input3D.stub.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/input3D/geogebra.input3D.test.iml" filepath="$PROJECT_DIR$/.idea/modules/input3D/geogebra.input3D.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jogl2/geogebra.jogl2.iml" filepath="$PROJECT_DIR$/.idea/modules/jogl2/geogebra.jogl2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jogl2/geogebra.jogl2.main.iml" filepath="$PROJECT_DIR$/.idea/modules/jogl2/geogebra.jogl2.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jogl2/geogebra.jogl2.test.iml" filepath="$PROJECT_DIR$/.idea/modules/jogl2/geogebra.jogl2.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/keyboard-base/geogebra.keyboard-base.iml" filepath="$PROJECT_DIR$/.idea/modules/keyboard-base/geogebra.keyboard-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/keyboard-base/geogebra.keyboard-base.main.iml" filepath="$PROJECT_DIR$/.idea/modules/keyboard-base/geogebra.keyboard-base.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/keyboard-base/geogebra.keyboard-base.test.iml" filepath="$PROJECT_DIR$/.idea/modules/keyboard-base/geogebra.keyboard-base.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/keyboard-scientific/geogebra.keyboard-scientific.iml" filepath="$PROJECT_DIR$/.idea/modules/keyboard-scientific/geogebra.keyboard-scientific.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/keyboard-scientific/geogebra.keyboard-scientific.main.iml" filepath="$PROJECT_DIR$/.idea/modules/keyboard-scientific/geogebra.keyboard-scientific.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/keyboard-scientific/geogebra.keyboard-scientific.test.iml" filepath="$PROJECT_DIR$/.idea/modules/keyboard-scientific/geogebra.keyboard-scientific.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/keyboard-web/geogebra.keyboard-web.iml" filepath="$PROJECT_DIR$/.idea/modules/keyboard-web/geogebra.keyboard-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/keyboard-web/geogebra.keyboard-web.main.iml" filepath="$PROJECT_DIR$/.idea/modules/keyboard-web/geogebra.keyboard-web.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/keyboard-web/geogebra.keyboard-web.test.iml" filepath="$PROJECT_DIR$/.idea/modules/keyboard-web/geogebra.keyboard-web.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/renderer-desktop/geogebra.renderer-desktop.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/renderer-desktop/geogebra.renderer-desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/renderer-desktop/geogebra.renderer-desktop.main.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/renderer-desktop/geogebra.renderer-desktop.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/renderer-desktop/geogebra.renderer-desktop.test.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/renderer-desktop/geogebra.renderer-desktop.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/renderer-web/geogebra.renderer-web.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/renderer-web/geogebra.renderer-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/renderer-web/geogebra.renderer-web.main.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/renderer-web/geogebra.renderer-web.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/retex/renderer-web/geogebra.renderer-web.test.iml" filepath="$PROJECT_DIR$/.idea/modules/retex/renderer-web/geogebra.renderer-web.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/test/geogebra.test.iml" filepath="$PROJECT_DIR$/.idea/modules/test/geogebra.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/test/geogebra.test.main.iml" filepath="$PROJECT_DIR$/.idea/modules/test/geogebra.test.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/test/geogebra.test.test.iml" filepath="$PROJECT_DIR$/.idea/modules/test/geogebra.test.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/geogebra.web.iml" filepath="$PROJECT_DIR$/.idea/modules/web/geogebra.web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/dev/geogebra.web.dev.iml" filepath="$PROJECT_DIR$/.idea/modules/web/dev/geogebra.web.dev.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/dev/geogebra.web.dev.main.iml" filepath="$PROJECT_DIR$/.idea/modules/web/dev/geogebra.web.dev.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/dev/geogebra.web.dev.test.iml" filepath="$PROJECT_DIR$/.idea/modules/web/dev/geogebra.web.dev.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/geogebra.web.main.iml" filepath="$PROJECT_DIR$/.idea/modules/web/geogebra.web.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/geogebra.web.test.iml" filepath="$PROJECT_DIR$/.idea/modules/web/geogebra.web.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/ggbjdk/ggbjdk.iml" filepath="$PROJECT_DIR$/ggbjdk/ggbjdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/giac-jni/giac-jni.iml" filepath="$PROJECT_DIR$/giac-jni/giac-jni.iml" />
       <module fileurl="file://$PROJECT_DIR$/input3D/impl/impl.iml" filepath="$PROJECT_DIR$/input3D/impl/impl.iml" />
