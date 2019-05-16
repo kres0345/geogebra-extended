@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import javax.swing.UIManager;
 
+import com.ogprover.pp.tp.thmstatement.False;
 import org.geogebra.common.awt.GFont;
 import org.geogebra.common.main.FontManager;
 import org.geogebra.common.util.lang.Language;
@@ -25,6 +26,7 @@ public class FontManagerD extends FontManager {
 
 	private GFont boldFont, italicFont, smallFont, plainFont, serifFont,
 			serifFontBold, javaSans, javaSerif;
+	private GFont comicSansFont;
 
 	private int fontSize;
 	private String sansName, serifName;
@@ -43,6 +45,7 @@ public class FontManagerD extends FontManager {
 			"Times" // Mac OS X
 	};
 
+	public boolean ComicSansFontEnabled;
 	public FontManagerD() {
 		setFontSize(12);
 	}
@@ -135,6 +138,9 @@ public class FontManagerD extends FontManager {
 		if (fontNameSansSerif == null) {
 			fontNameSansSerif = "SansSerif";
 		}
+		if (ComicSansFontEnabled){
+			fontNameSansSerif = "ComicSansMS";
+		}
 		if (fontNameSerif == null) {
 			fontNameSerif = "Serif";
 		}
@@ -174,6 +180,9 @@ public class FontManagerD extends FontManager {
 
 		// create similar font with the specified size
 		plainFont = getFont(sans, Font.PLAIN, size);
+		if (ComicSansFontEnabled){
+			plainFont = getFont("ComicSansMS", Font.PLAIN, size);
+		}
 		boldFont = getFont(sans, Font.BOLD, size);
 		italicFont = getFont(sans, Font.ITALIC, size);
 		smallFont = getFont(sans, Font.PLAIN, size - 2);
@@ -283,9 +292,9 @@ public class FontManagerD extends FontManager {
 		// System.out.println("expensive test getFontCanDisplay, " +
 		// testCharacters);
 
-		// if (true) {
-		// return "Comic Sans MS";
-		// }
+		if (ComicSansFontEnabled) {
+			return "Comic Sans MS";
+		}
 
 		// try given fonts
 		if (tryFontNames != null) {

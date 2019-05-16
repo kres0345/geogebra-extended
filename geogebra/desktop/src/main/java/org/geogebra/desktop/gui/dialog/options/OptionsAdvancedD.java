@@ -29,6 +29,7 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.geogebra.common.gui.SetLabels;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.PathRegionHandling;
@@ -67,11 +68,13 @@ public class OptionsAdvancedD implements OptionPanelD,
 	private JPanel virtualKeyboardPanel, guiFontsizePanel, tooltipPanel,
 			languagePanel, angleUnitPanel, continuityPanel,
 			usePathAndRegionParametersPanel, rightAnglePanel, coordinatesPanel;
+	private JPanel extrasPanel;
 
 	/**	*/
 	private JLabel keyboardLanguageLabel, guiFontSizeLabel, widthLabel,
 			heightLabel, opacityLabel, tooltipLanguageLabel,
 			tooltipTimeoutLabel;
+	private JLabel comicSansLabel;
 
 	/** */
 	private JComboBox<String> cbKeyboardLanguage, cbTooltipLanguage,
@@ -81,6 +84,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 	/**	 */
 	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits,
 			cbUseLocalLabels;
+	private JCheckBox cbComicSans;
 
 	/** */
 	private JRadioButton angleUnitRadioDegree, angleUnitRadioRadian,
@@ -147,6 +151,8 @@ public class OptionsAdvancedD implements OptionPanelD,
 		initRightAnglePanel();
 		initCoordinatesPanel();
 
+		initExtrasPanel();  // EXTRASPANEL HERE YOU GO
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new FullWidthLayout());
 
@@ -160,6 +166,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 		panel.add(guiFontsizePanel);
 		panel.add(tooltipPanel);
 		panel.add(languagePanel);
+		panel.add(extrasPanel);
 		// panel.add(perspectivesPanel);
 
 		panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -248,6 +255,17 @@ public class OptionsAdvancedD implements OptionPanelD,
 		cbUseLocalLabels = new JCheckBox();
 		cbUseLocalLabels.addActionListener(this);
 		languagePanel.add(cbUseLocalLabels);
+	}
+
+	/**
+	 * Initialize the extra tools panel.
+	 */
+	private void initExtrasPanel(){
+		extrasPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		cbComicSans = new JCheckBox();
+		cbComicSans.addActionListener(this);
+		extrasPanel.add(cbComicSans);
 	}
 
 	/**
@@ -603,6 +621,9 @@ public class OptionsAdvancedD implements OptionPanelD,
 			// } else if (source == cbIgnoreDocumentLayout) {
 			// settings.getLayout().setIgnoreDocumentLayout(
 			// cbIgnoreDocumentLayout.isSelected());
+		} else if (source == cbComicSans) {
+			System.out.println("Clicked cbComicSans: ".concat(Boolean.toString(cbComicSans.isSelected())));
+			app.getFontManager().updateDefaultFonts(app.getFontSize(), "Comic Sans MS", "Serif");
 		} else if (source == angleUnitRadioDegree) {
 			app.getKernel().setAngleUnit(Kernel.ANGLE_DEGREE);
 			app.getKernel().updateConstruction(false);
@@ -800,6 +821,11 @@ public class OptionsAdvancedD implements OptionPanelD,
 		coordinatesRadio1.setText(loc.getMenu("A = (x, y)"));
 		coordinatesRadio2.setText(loc.getMenu("A(x | y)"));
 		coordinatesRadio3.setText(loc.getMenu("A: (x, y)"));
+
+		extrasPanel.setBorder(
+				LayoutUtil.titleBorder("Extra Options")
+		);
+		cbComicSans.setText("Comic Sans Font");
 
 		// perspectivesPanel.setBorder(LayoutUtil.titleBorder(app
 		// .getMenu("Perspectives")));
@@ -1022,6 +1048,9 @@ public class OptionsAdvancedD implements OptionPanelD,
 		cbTooltipLanguage.setFont(font);
 		cbTooltipTimeout.setFont(font);
 		cbGUIFont.setFont(font);
+
+		extrasPanel.setFont(font);
+		cbComicSans.setFont(font);
 	}
 
 	@Override
