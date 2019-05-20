@@ -68,7 +68,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 	private JPanel virtualKeyboardPanel, guiFontsizePanel, tooltipPanel,
 			languagePanel, angleUnitPanel, continuityPanel,
 			usePathAndRegionParametersPanel, rightAnglePanel, coordinatesPanel;
-	private JPanel extrasPanel;
+	private JPanel extrasPanel, lanPanel;
 
 	/**	*/
 	private JLabel keyboardLanguageLabel, guiFontSizeLabel, widthLabel,
@@ -84,7 +84,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 	/**	 */
 	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits,
 			cbUseLocalLabels;
-	private JCheckBox cbComicSans;
+	private JCheckBox cbComicSans, cbLanMode;
 
 	/** */
 	private JRadioButton angleUnitRadioDegree, angleUnitRadioRadian,
@@ -152,6 +152,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 		initCoordinatesPanel();
 
 		initExtrasPanel();  // EXTRASPANEL HERE YOU GO
+		initLanPanel();
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new FullWidthLayout());
@@ -167,6 +168,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 		panel.add(tooltipPanel);
 		panel.add(languagePanel);
 		panel.add(extrasPanel);
+		panel.add(lanPanel);
 		// panel.add(perspectivesPanel);
 
 		panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -266,6 +268,17 @@ public class OptionsAdvancedD implements OptionPanelD,
 		cbComicSans = new JCheckBox();
 		cbComicSans.addActionListener(this);
 		extrasPanel.add(cbComicSans);
+	}
+
+	/**
+	 * Initialize the lan mode panel.
+	 */
+	private void initLanPanel(){
+		lanPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		cbLanMode = new JCheckBox();
+		cbLanMode.addActionListener(this);
+		lanPanel.add(cbLanMode);
 	}
 
 	/**
@@ -624,6 +637,9 @@ public class OptionsAdvancedD implements OptionPanelD,
 		} else if (source == cbComicSans) {
 			System.out.println("Clicked cbComicSans: ".concat(Boolean.toString(cbComicSans.isSelected())));
 			app.getFontManager().updateDefaultFonts(app.getFontSize(), "Comic Sans MS", "Serif");
+		} else if (source == cbLanMode) {
+			System.out.println("Lan mode toggled");
+
 		} else if (source == angleUnitRadioDegree) {
 			app.getKernel().setAngleUnit(Kernel.ANGLE_DEGREE);
 			app.getKernel().updateConstruction(false);
@@ -826,6 +842,11 @@ public class OptionsAdvancedD implements OptionPanelD,
 				LayoutUtil.titleBorder("Extra Options")
 		);
 		cbComicSans.setText("Comic Sans Font");
+
+		lanPanel.setBorder(
+				LayoutUtil.titleBorder("LAN Settings")
+		);
+		cbLanMode.setText("LAN Mode");
 
 		// perspectivesPanel.setBorder(LayoutUtil.titleBorder(app
 		// .getMenu("Perspectives")));
@@ -1051,6 +1072,9 @@ public class OptionsAdvancedD implements OptionPanelD,
 
 		extrasPanel.setFont(font);
 		cbComicSans.setFont(font);
+
+		lanPanel.setFont(font);
+		cbLanMode.setFont(font);
 	}
 
 	@Override

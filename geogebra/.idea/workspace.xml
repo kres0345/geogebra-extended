@@ -2,14 +2,13 @@
 <project version="4">
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui" mnemonic="G" />
-    <bookmark url="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java" line="262" mnemonic="E" />
-    <bookmark url="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java" line="624" mnemonic="C" />
+    <bookmark url="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java" line="264" mnemonic="E" />
+    <bookmark url="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java" line="637" mnemonic="C" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cd54d609-f135-448f-8a7f-81bdeb674d57" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/main/FontManagerD.java" beforeDir="false" afterPath="$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/main/FontManagerD.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/ar-base/bin/default/" />
     <ignored path="$PROJECT_DIR$/common/bin/default/" />
@@ -125,31 +124,32 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="625" column="83" selection-start-line="625" selection-start-column="83" selection-end-line="625" selection-end-column="83" />
+            <state relative-caret-position="297">
+              <caret line="1076" column="32" selection-start-line="1076" selection-start-column="32" selection-end-line="1076" selection-end-column="32" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/main/AppD.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="3016" column="38" selection-start-line="3016" selection-start-column="38" selection-end-line="3016" selection-end-column="38" />
+            <state relative-caret-position="701">
+              <caret line="3039" column="7" selection-start-line="3039" selection-start-column="7" selection-end-line="3039" selection-end-column="7" />
               <folding>
                 <element signature="e#0#153993#0" expanded="true" />
                 <element signature="imports" expanded="true" />
+                <element signature="e#83602#83603#0" expanded="true" />
                 <element signature="e#83666#83667#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/awt/GFontD.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="16" column="5" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="5" />
+            <state relative-caret-position="204">
+              <caret line="18" selection-start-line="18" selection-end-line="18" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#267#268#0" expanded="true" />
@@ -162,15 +162,21 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/main/FontManagerD.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="143">
+            <state relative-caret-position="654">
               <caret line="294" column="32" selection-start-line="294" selection-start-column="32" selection-end-line="294" selection-end-column="32" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#10471#10472#0" expanded="true" />
                 <element signature="e#10493#10494#0" expanded="true" />
+                <element signature="e#10532#10533#0" expanded="true" />
                 <element signature="e#10556#10557#0" expanded="true" />
+                <element signature="e#10594#10595#0" expanded="true" />
                 <element signature="e#10617#10618#0" expanded="true" />
+                <element signature="e#10655#10656#0" expanded="true" />
                 <element signature="e#10678#10679#0" expanded="true" />
+                <element signature="e#10716#10717#0" expanded="true" />
                 <element signature="e#10739#10740#0" expanded="true" />
+                <element signature="e#12543#12544#0" expanded="true" />
                 <element signature="e#12565#12566#0" expanded="true" />
               </folding>
             </state>
@@ -219,6 +225,81 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="org" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="org" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="geogebra" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="org" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="geogebra" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="resources" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="PackagesPane">
         <subPane>
           <expand>
@@ -297,85 +378,10 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="org" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="org" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="geogebra" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="org" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="geogebra" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="geogebra" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="desktop" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="resources" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1557996092685" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1558347612830" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
@@ -446,7 +452,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="848" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23307292" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -573,49 +578,56 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/awt/GFontD.java">
+    <entry file="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="16" column="5" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#267#268#0" expanded="true" />
-            <element signature="e#285#286#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="297">
+          <caret line="1076" column="32" selection-start-line="1076" selection-start-column="32" selection-end-line="1076" selection-end-column="32" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/main/FontManagerD.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
+        <state relative-caret-position="654">
           <caret line="294" column="32" selection-start-line="294" selection-start-column="32" selection-end-line="294" selection-end-column="32" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#10471#10472#0" expanded="true" />
             <element signature="e#10493#10494#0" expanded="true" />
+            <element signature="e#10532#10533#0" expanded="true" />
             <element signature="e#10556#10557#0" expanded="true" />
+            <element signature="e#10594#10595#0" expanded="true" />
             <element signature="e#10617#10618#0" expanded="true" />
+            <element signature="e#10655#10656#0" expanded="true" />
             <element signature="e#10678#10679#0" expanded="true" />
+            <element signature="e#10716#10717#0" expanded="true" />
             <element signature="e#10739#10740#0" expanded="true" />
+            <element signature="e#12543#12544#0" expanded="true" />
             <element signature="e#12565#12566#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="625" column="83" selection-start-line="625" selection-start-column="83" selection-end-line="625" selection-end-column="83" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/main/AppD.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="3016" column="38" selection-start-line="3016" selection-start-column="38" selection-end-line="3016" selection-end-column="38" />
+        <state relative-caret-position="701">
+          <caret line="3039" column="7" selection-start-line="3039" selection-start-column="7" selection-end-line="3039" selection-end-column="7" />
           <folding>
             <element signature="e#0#153993#0" expanded="true" />
             <element signature="imports" expanded="true" />
+            <element signature="e#83602#83603#0" expanded="true" />
             <element signature="e#83666#83667#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/awt/GFontD.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#267#268#0" expanded="true" />
+            <element signature="e#285#286#0" expanded="true" />
           </folding>
         </state>
       </provider>
