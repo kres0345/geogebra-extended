@@ -26,8 +26,17 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="geogebra.renderer-web.main" />
-    <orderEntry type="module" module-name="com.himamis.retex.editor-base.main" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../../retex/editor-base/src/main/java" />
+          <root url="file://$MODULE_DIR$/../../../../retex/editor-base/build/generated/javacc" />
+          <root url="file://$MODULE_DIR$/../../../../retex/editor-base/src/main/javacc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -55,6 +64,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="geogebra.renderer-web.main" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -64,18 +74,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="com.himamis.retex.editor-base.main" />
     <orderEntry type="library" name="Gradle: com.google.gwt:gwt-dev:2.8.2" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../../retex/editor-base/src/main/java" />
-          <root url="file://$MODULE_DIR$/../../../../retex/editor-base/build/generated/javacc" />
-          <root url="file://$MODULE_DIR$/../../../../retex/editor-base/src/main/javacc" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="Gradle: com.google.gwt:gwt-user:2.8.2" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
     <orderEntry type="module" module-name="com.himamis.retex.renderer-base.main" />

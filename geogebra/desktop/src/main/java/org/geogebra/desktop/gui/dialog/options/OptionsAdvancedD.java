@@ -11,30 +11,17 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.geogebra.common.gui.SetLabels;
 import org.geogebra.common.kernel.Kernel;
 import org.geogebra.common.kernel.PathRegionHandling;
 import org.geogebra.common.main.Feature;
 import org.geogebra.common.main.settings.Settings;
+import org.geogebra.common.main.LANController;
 import org.geogebra.common.plugin.EuclidianStyleConstants;
 import org.geogebra.common.util.Util;
 import org.geogebra.common.util.debug.Log;
@@ -45,6 +32,7 @@ import org.geogebra.desktop.gui.util.LayoutUtil;
 import org.geogebra.desktop.main.AppD;
 import org.geogebra.desktop.main.KeyboardSettings;
 import org.geogebra.desktop.main.LocalizationD;
+
 
 /**
  * Advanced options for the options dialog.
@@ -57,6 +45,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 	 * Application object.
 	 */
 	private AppD app;
+	private LANController LC;
 	private final LocalizationD loc;
 
 	/**
@@ -74,7 +63,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 	private JLabel keyboardLanguageLabel, guiFontSizeLabel, widthLabel,
 			heightLabel, opacityLabel, tooltipLanguageLabel,
 			tooltipTimeoutLabel;
-	private JLabel comicSansLabel;
+	//private JLabel comicSansLabel;
 
 	/** */
 	private JComboBox<String> cbKeyboardLanguage, cbTooltipLanguage,
@@ -94,17 +83,23 @@ public class OptionsAdvancedD implements OptionPanelD,
 			usePathAndRegionParametersRadioOff, rightAngleRadio1,
 			rightAngleRadio2, rightAngleRadio3, rightAngleRadio4,
 			coordinatesRadio1, coordinatesRadio2, coordinatesRadio3;
+	private JRadioButton lanServerClient1, lanServerClient2;
+
 
 	/** */
 	private ButtonGroup angleUnitButtonGroup, continuityButtonGroup,
 			usePathAndRegionParametersButtonGroup, rightAngleButtonGroup,
 			coordinatesButtonGroup;
+	private ButtonGroup lanServerClientGroup;
 
 	/** */
 	private JTextField tfKeyboardWidth, tfKeyboardHeight;
 
 	/** */
 	private JSlider slOpacity;
+
+	private JButton lanConnectButton;
+	private JTextField lanTargetTextField;
 
 	/**
 	 * Timeout values of tooltips (last entry reserved for "Off", but that has
@@ -125,6 +120,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 		this.wrappedPanel = new JPanel(new BorderLayout());
 
 		this.app = app;
+		this.LC = new LANController();
 		this.loc = app.getLocalization();
 		this.settings = app.getSettings();
 
@@ -279,6 +275,26 @@ public class OptionsAdvancedD implements OptionPanelD,
 		cbLanMode = new JCheckBox();
 		cbLanMode.addActionListener(this);
 		lanPanel.add(cbLanMode);
+
+		lanServerClientGroup = new ButtonGroup();
+
+		lanServerClient1 = new JRadioButton();
+		lanServerClient1.addActionListener(this);
+		lanPanel.add(lanServerClient1);
+		lanServerClientGroup.add(lanServerClient1);
+
+		lanServerClient2 = new JRadioButton();
+		lanServerClient2.addActionListener(this);
+		lanPanel.add(lanServerClient2);
+		lanServerClientGroup.add(lanServerClient2);
+
+		lanTargetTextField = new JTextField(9);
+		lanTargetTextField.addFocusListener(this);
+		lanPanel.add(lanTargetTextField);
+
+		lanConnectButton = new JButton();
+		lanConnectButton.addActionListener(this);
+		lanPanel.add(lanConnectButton);
 	}
 
 	/**
@@ -445,9 +461,9 @@ public class OptionsAdvancedD implements OptionPanelD,
 		coordinatesRadio3 = new JRadioButton();
 		coordinatesRadio3.addActionListener(this);
 		coordinatesPanel.add(coordinatesRadio3);
-		coordinatesButtonGroup.add(coordinatesRadio3);
+		coordinatesButtonGroup.add(coordinatesRadio3);                      
 	}
-
+	
 	/**
 	 * Update the user interface, ie change selected values.
 	 * 
@@ -485,6 +501,9 @@ public class OptionsAdvancedD implements OptionPanelD,
 		coordinatesRadio1.setSelected(app.getKernel().getCoordStyle() == 0);
 		coordinatesRadio2.setSelected(app.getKernel().getCoordStyle() == 1);
 		coordinatesRadio3.setSelected(app.getKernel().getCoordStyle() == 2);
+
+		lanServerClient1.setSelected(app.getKernel().getLanServerClientMode() == 0);
+		lanServerClient2.setSelected(app.getKernel().getLanServerClientMode() == 1);
 
 		// cbIgnoreDocumentLayout.setSelected(settings.getLayout()
 		// .isIgnoringDocumentLayout());
@@ -638,9 +657,29 @@ public class OptionsAdvancedD implements OptionPanelD,
 			System.out.println("Clicked cbComicSans: ".concat(Boolean.toString(cbComicSans.isSelected())));
 			app.getFontManager().updateDefaultFonts(app.getFontSize(), "Comic Sans MS", "Serif");
 		} else if (source == cbLanMode) {
-			System.out.println("Lan mode toggled");
-
-		} else if (source == angleUnitRadioDegree) {
+		    app.getKernel().setLanMode(cbLanMode.isSelected());
+			System.out.println("LAN mode toggled");
+		} else if (source == lanServerClient1) {
+            app.getKernel().setLanServerClientMode(0);
+        } else if (source == lanServerClient2) {
+			app.getKernel().setLanServerClientMode(1);
+		} else if (source == lanConnectButton) {
+			if(app.getKernel().getLanServerClientMode() == 0){
+				System.out.println("Connecting to host...");
+				if(LC.ConnectClient(lanTargetTextField.getText())){
+					System.out.println("Connected.");
+				}else{
+					System.out.println("Couldn't connect to host");
+				}
+			}else{
+				System.out.println("Creating server...");
+				if(LC.StartServer(lanTargetTextField.getText())){
+					System.out.println("Server listening...");
+				}else{
+					System.out.println("Couldn't create server.");
+				}
+			}
+        } else if (source == angleUnitRadioDegree) {
 			app.getKernel().setAngleUnit(Kernel.ANGLE_DEGREE);
 			app.getKernel().updateConstruction(false);
 			app.setUnsaved();
@@ -847,6 +886,10 @@ public class OptionsAdvancedD implements OptionPanelD,
 				LayoutUtil.titleBorder("LAN Settings")
 		);
 		cbLanMode.setText("LAN Mode");
+		lanServerClient1.setText("Client");
+		lanServerClient2.setText("Server");
+		lanConnectButton.setText("Start/Connect");
+		lanTargetTextField.setText("Target Address");
 
 		// perspectivesPanel.setBorder(LayoutUtil.titleBorder(app
 		// .getMenu("Perspectives")));
@@ -1075,6 +1118,9 @@ public class OptionsAdvancedD implements OptionPanelD,
 
 		lanPanel.setFont(font);
 		cbLanMode.setFont(font);
+		lanServerClient1.setFont(font);
+		lanServerClient2.setFont(font);
+		lanConnectButton.setFont(font);
 	}
 
 	@Override

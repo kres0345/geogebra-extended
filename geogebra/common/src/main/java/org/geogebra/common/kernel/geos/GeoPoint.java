@@ -2624,6 +2624,7 @@ public class GeoPoint extends GeoVec3D implements VectorValue, PathOrPoint,
 
 	@Override
 	public boolean movePoint(Coords rwTransVec, Coords endPosition) {
+		System.out.println("moved");
 		boolean movedGeo = false;
 
 		final GeoPoint point = this;

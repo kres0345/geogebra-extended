@@ -74,6 +74,10 @@ public class GeomFactoryDesktop extends GeomFactory {
 
 	@Override
 	public Point2D createPoint2D(double x, double y) {
+		System.out.print("New point: ");
+		System.out.print(x);
+		System.out.print(" ");
+		System.out.println(y);
 		return new Point2DD(x, y);
 	}
 

@@ -1,5 +1,8 @@
 package org.geogebra.common.euclidian;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +58,7 @@ import org.geogebra.common.kernel.algos.AlgoAngle;
 import org.geogebra.common.kernel.algos.AlgoElement;
 import org.geogebra.common.kernel.arithmetic.Function;
 import org.geogebra.common.kernel.arithmetic.NumberValue;
+import org.geogebra.common.kernel.arithmetic.ValueType;
 import org.geogebra.common.kernel.geos.GProperty;
 import org.geogebra.common.kernel.geos.GeoCurveCartesian;
 import org.geogebra.common.kernel.geos.GeoElement;
@@ -80,8 +84,10 @@ import org.geogebra.common.main.ScreenReader;
 import org.geogebra.common.main.SelectionManager;
 import org.geogebra.common.main.settings.AbstractSettings;
 import org.geogebra.common.main.settings.EuclidianSettings;
+import org.geogebra.common.main.LANController;
 import org.geogebra.common.plugin.EuclidianStyleConstants;
 import org.geogebra.common.plugin.GeoClass;
+import org.geogebra.common.plugin.GgbAPI;
 import org.geogebra.common.util.AsyncOperation;
 import org.geogebra.common.util.DoubleUtil;
 import org.geogebra.common.util.MyMath;
@@ -89,6 +95,8 @@ import org.geogebra.common.util.NumberFormatAdapter;
 import org.geogebra.common.util.StringUtil;
 
 import com.himamis.retex.editor.share.util.Unicode;
+
+
 
 /**
  * View containing graphic representation of construction elements
@@ -430,6 +438,8 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	protected boolean firstPaint = true;
 	/** application */
 	protected App app;
+	protected GgbAPI api;
+	protected LANController LC;
 
 	private EuclidianSettings settings;
 
@@ -614,6 +624,8 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		this.euclidianController = ec;
 		kernel = ec.getKernel();
 		app = kernel.getApplication();
+		api = app.getGgbApi(); //LAN Mode stuff
+		LC = new LANController(); //LAN Mode stuff
 		this.settings = settings;
 		// no repaint
 		if (kernel.getConstruction() != null) {
@@ -1856,8 +1868,41 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		}
 	}
 
+	private long lastObject = 0;
+	private String lastObjectName = "";
+
 	@Override
 	public void update(GeoElement geo) {
+		System.out.print("GeoClassType: ");
+		System.out.print(geo.getGeoClassType());
+		System.out.print(" - ValueType: ");
+		System.out.print(geo.getValueType());
+		System.out.print(" - Def: ");
+		System.out.println(geo.getLabelDescription());
+
+		System.out.println(api.getValueString(geo.getLabelDescription()));
+
+		if (geo.getGeoClassType().equals(GeoClass.POINT)){
+
+			if (!lastObjectName.equals(geo.getLabelDescription()) || System.currentTimeMillis() - lastObject > 1000){
+				if (LC.isConnected()){
+					try{
+						LC.sendCommand(api.getValueString(geo.getLabelDescription()));
+					}catch (IOException e){
+						System.out.println(e.toString());
+					}
+				}
+
+				lastObject = System.currentTimeMillis();
+				lastObjectName = geo.getLabelDescription();
+
+			}
+		}
+		/*
+		if(geo.getLabelDescription().equals("B")){
+			System.out.println(api.evalCommand("A=(0,0)"));
+		}*/
+
 		DrawableND d = drawableMap.get(geo);
 		cacheLayers(-1);
 		if (d != null) {

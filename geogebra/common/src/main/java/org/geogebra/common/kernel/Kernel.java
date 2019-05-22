@@ -107,6 +107,23 @@ import com.himamis.retex.editor.share.util.Unicode;
 public class Kernel implements SpecialPointsListener, ConstructionStepper {
 
 	/**
+	 * LAN and Extras related
+	 */
+	private int LANServerClientMode = 1;
+	private boolean LANMode = false;
+
+	public void setLanServerClientMode(int serverMode) {
+		LANServerClientMode = serverMode;
+	}
+	public void setLanMode(boolean lanMode){
+		LANMode = lanMode;
+	}
+	final public int getLanServerClientMode() {
+		return LANServerClientMode;
+	}
+	final public boolean getLanMode() { return LANMode; }
+
+	/**
 	 * Maximal number of spreadsheet columns if these are increased above 32000,
 	 * you need to change traceRow to an int[]
 	 */

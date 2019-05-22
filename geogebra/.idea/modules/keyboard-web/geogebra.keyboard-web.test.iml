@@ -21,6 +21,139 @@
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/../../../keyboard-base/src/main/resources" />
+          <root url="file://$MODULE_DIR$/../../../keyboard-base/src/main/java" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../keyboard-base/src/main/resources" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../keyboard-base/src/main/java" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../keyboard-scientific/src/main/resources" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../keyboard-scientific/src/main/resources" />
+          <root url="file://$MODULE_DIR$/../../../keyboard-scientific/src/main/java" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../keyboard-scientific/src/main/java" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../common/src/main/resources" />
+          <root url="file://$MODULE_DIR$/../../../common/src/nonfree/resources" />
+          <root url="file://$MODULE_DIR$/../../../common/src/main/java" />
+          <root url="file://$MODULE_DIR$/../../../common/build/generated/javacc" />
+          <root url="file://$MODULE_DIR$/../../../common/src/main/javacc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../common/src/main/resources" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../common/src/nonfree/resources" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../common/src/main/java" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../common/build/generated/javacc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../common/src/main/javacc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/resources" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/resources" />
+          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/java" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/java" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -31,139 +164,6 @@
     <orderEntry type="module" module-name="geogebra.web.dev.main" />
     <orderEntry type="module" module-name="geogebra.common.main" />
     <orderEntry type="module" module-name="com.himamis.retex.editor-base.main" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../keyboard-base/src/main/java" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../keyboard-scientific/src/main/resources" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../keyboard-scientific/src/main/java" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../common/src/main/resources" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../common/src/nonfree/resources" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../common/src/main/java" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../common/build/generated/javacc" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../common/src/main/javacc" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/resources" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/java" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../keyboard-base/src/main/resources" />
-          <root url="file://$MODULE_DIR$/../../../keyboard-base/src/main/java" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../keyboard-scientific/src/main/resources" />
-          <root url="file://$MODULE_DIR$/../../../keyboard-scientific/src/main/java" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../common/src/main/resources" />
-          <root url="file://$MODULE_DIR$/../../../common/src/nonfree/resources" />
-          <root url="file://$MODULE_DIR$/../../../common/src/main/java" />
-          <root url="file://$MODULE_DIR$/../../../common/build/generated/javacc" />
-          <root url="file://$MODULE_DIR$/../../../common/src/main/javacc" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/resources" />
-          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/java" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="com.himamis.retex.renderer-base.main" />
     <orderEntry type="library" name="Gradle: com.google.j2objc:annotations:1.0.2" level="project" />
     <orderEntry type="library" name="Gradle: com.google.code.findbugs:annotations:3.0.1" level="project" />
@@ -223,8 +223,8 @@
     <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpcore:4.4.3" level="project" />
     <orderEntry type="library" name="Gradle: xml-apis:xml-apis:1.4.01" level="project" />
     <orderEntry type="library" name="Gradle: org.mortbay.jasper:apache-el:8.0.9.M3" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.google.gwt:gwt-servlet:2.8.2" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty.websocket:websocket-api:9.2.13.v20150730" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.google.gwt:gwt-servlet:2.8.2" level="project" />
     <orderEntry type="library" name="Gradle: com.google.gwt:gwt-codeserver:2.8.2" level="project" />
     <orderEntry type="library" name="Gradle: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.commons:commons-lang3:3.4" level="project" />

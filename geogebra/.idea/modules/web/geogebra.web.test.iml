@@ -28,19 +28,33 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="geogebra.keyboard-web.main" />
-    <orderEntry type="module" module-name="geogebra.web.dev.main" />
-    <orderEntry type="module" module-name="geogebra.ggbjdk.main" />
-    <orderEntry type="module" module-name="geogebra.common.main" />
-    <orderEntry type="module" module-name="geogebra.editor-web.main" />
-    <orderEntry type="module" module-name="com.himamis.retex.editor-base.main" />
-    <orderEntry type="module" module-name="geogebra.renderer-web.main" />
-    <orderEntry type="module" module-name="com.himamis.retex.renderer-base.main" />
-    <orderEntry type="library" name="Gradle: com.googlecode.gwtphonegap:gwtphonegap:3.5.0.1" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/resources" />
+          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/java" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/../../../web/dev/src/main/java" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../common/src/main/resources" />
+          <root url="file://$MODULE_DIR$/../../../common/src/nonfree/resources" />
+          <root url="file://$MODULE_DIR$/../../../common/src/main/java" />
+          <root url="file://$MODULE_DIR$/../../../common/build/generated/javacc" />
+          <root url="file://$MODULE_DIR$/../../../common/src/main/javacc" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -112,6 +126,16 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../retex/editor-web/src/main/resources" />
+          <root url="file://$MODULE_DIR$/../../../retex/editor-web/src/main/java" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
           <root url="file://$MODULE_DIR$/../../../retex/editor-web/src/main/java" />
         </CLASSES>
         <JAVADOC />
@@ -130,12 +154,23 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../keyboard-web/src/main/resources" />
           <root url="file://$MODULE_DIR$/../../../keyboard-web/src/main/java" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../keyboard-web/src/main/java" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="geogebra.keyboard-web.main" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -172,6 +207,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="geogebra.web.dev.main" />
+    <orderEntry type="module" module-name="geogebra.ggbjdk.main" />
+    <orderEntry type="module" module-name="geogebra.common.main" />
+    <orderEntry type="module" module-name="geogebra.editor-web.main" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -208,6 +247,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="com.himamis.retex.editor-base.main" />
+    <orderEntry type="module" module-name="geogebra.renderer-web.main" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -217,6 +258,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="com.himamis.retex.renderer-base.main" />
+    <orderEntry type="library" name="Gradle: com.googlecode.gwtphonegap:gwtphonegap:3.5.0.1" level="project" />
     <orderEntry type="library" name="Gradle: com.googlecode:gwtgl:0.9.1" level="project" />
     <orderEntry type="library" name="Gradle: com.googlecode:gwtgl:sources:0.9.1" level="project" />
     <orderEntry type="library" name="Gradle: fr.ujf-grenoble:giac-gwt:67028" level="project" />
@@ -225,49 +268,6 @@
     <orderEntry type="library" name="Gradle: com.google.gwt:gwt-dev:2.8.2" level="project" />
     <orderEntry type="library" name="Gradle: com.asual.lesscss:lesscss-engine:1.3.0" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.13-beta-3" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/resources" />
-          <root url="file://$MODULE_DIR$/../../../web/dev/src/main/java" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../common/src/main/resources" />
-          <root url="file://$MODULE_DIR$/../../../common/src/nonfree/resources" />
-          <root url="file://$MODULE_DIR$/../../../common/src/main/java" />
-          <root url="file://$MODULE_DIR$/../../../common/build/generated/javacc" />
-          <root url="file://$MODULE_DIR$/../../../common/src/main/javacc" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../retex/editor-web/src/main/resources" />
-          <root url="file://$MODULE_DIR$/../../../retex/editor-web/src/main/java" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../keyboard-web/src/main/resources" />
-          <root url="file://$MODULE_DIR$/../../../keyboard-web/src/main/java" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="Gradle: com.google.gwt:gwt-user:2.8.2" level="project" />
     <orderEntry type="library" name="Gradle: io.bit3:jsass:5.4.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.j2objc:annotations:1.0.2" level="project" />
