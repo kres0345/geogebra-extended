@@ -5,13 +5,14 @@
     <bookmark url="file://$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java" line="656" mnemonic="C" />
     <bookmark url="file://$PROJECT_DIR$/retex/renderer-desktop/src/main/java/com/himamis/retex/renderer/desktop/geom/GeomFactoryDesktop.java" line="80" mnemonic="P" />
     <bookmark url="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/kernel/geos/GeoPoint.java" line="3002" mnemonic="G" />
-    <bookmark url="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/euclidian/EuclidianView.java" description="Update function" line="1874" mnemonic="U" />
+    <bookmark url="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/euclidian/EuclidianView.java" description="Update function" line="1881" mnemonic="U" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cd54d609-f135-448f-8a7f-81bdeb674d57" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/kress.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/kress.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/euclidian/EuclidianView.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/euclidian/EuclidianView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANController.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANThread.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/ar-base/bin/default/" />
     <ignored path="$PROJECT_DIR$/common/bin/default/" />
@@ -136,8 +137,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/euclidian/EuclidianView.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="29087">
-              <caret line="1893" column="82" selection-start-line="1893" selection-start-column="82" selection-end-line="1893" selection-end-column="82" />
+            <state relative-caret-position="311">
+              <caret line="1872" selection-start-line="1872" selection-end-line="1872" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -148,8 +149,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="27" column="40" selection-start-line="27" selection-start-column="40" selection-end-line="27" selection-end-column="40" />
+            <state relative-caret-position="272">
+              <caret line="16" column="47" selection-start-line="16" selection-start-column="47" selection-end-line="16" selection-end-column="47" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -160,8 +161,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="13" column="30" lean-forward="true" selection-start-line="13" selection-start-column="30" selection-end-line="13" selection-end-column="30" />
+            <state relative-caret-position="238">
+              <caret line="14" column="23" lean-forward="true" selection-start-line="14" selection-start-column="23" selection-end-line="14" selection-end-column="23" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -6148,9 +6149,11 @@
         <option value="$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/main/LANController.java" />
         <option value="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANControllerStatics.java" />
         <option value="$PROJECT_DIR$/desktop/src/main/java/org/geogebra/desktop/gui/dialog/options/OptionsAdvancedD.java" />
-        <option value="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/euclidian/EuclidianView.java" />
         <option value="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANThread.java" />
         <option value="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANController.java" />
+        <option value="$PROJECT_DIR$/common/src/main/java/org/geogebra/common/euclidian/EuclidianView.java" />
+        <option value="$PROJECT_DIR$/common/src/main/java/ch/arrg/jdebounce/DebounceExecutor.java" />
+        <option value="$PROJECT_DIR$/common/src/main/java/ch/arrg/jdebounce/DebouncerStore.java" />
       </list>
     </option>
   </component>
@@ -6223,27 +6226,6 @@
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="org" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="geogebra" type="b2602c69:ProjectViewProjectNode" />
-              <item name="geogebra" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="geogebra" type="b2602c69:ProjectViewProjectNode" />
-              <item name="geogebra" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="geogebra" type="b2602c69:ProjectViewProjectNode" />
@@ -6427,7 +6409,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="point&#9;FILE&#9;file://C:/Users/kress/Documents/GitHub/geogebra-extended/geogebra/retex/renderer-base/src/main/java/com/himamis/retex/renderer/share/platform/geom/Point2D.java&#10;ValueType&#9;PSI&#9;JAVA://org.geogebra.common.kernel.arithmetic.ValueType&#10;update&#9;PSI&#9;JAVA://org.geogebra.common.euclidian.draw.DrawRay#update&#10;GeoElement&#9;FILE&#9;file://C:/Users/kress/Documents/GitHub/geogebra-extended/geogebra/common/src/main/java/org/geogebra/common/kernel/geos/GeoElement.java&#10;graphics&#9;PSI&#9;JAVA://com.himamis.retex.renderer.share.platform.Graphics&#10;graphics2d&#9;PSI&#9;JAVA://com.himamis.retex.renderer.desktop.graphics.Graphics2DD&#10;geometry&#9;PSI&#9;JAVA://org.geogebra.web.full.main.activity.GeometryActivity&#10;algebra&#9;PSI&#9;JAVA://org.geogebra.web.full.gui.view.algebra.AlgebraViewW#algebraController&#10;segment&#9;PSI&#9;JAVA://org.geogebra.common.geogebra3D.euclidian3D.openGL.PlotterBrush#segment&#10;&quot;POINT HAVE BEEN SET, SEGMENT&quot;&#9;null&#9;null&#10;point tool&#9;PSI&#9;JAVA://org.geogebra.euclidian.ControllerTest#pointTool&#10;triangle&#9;PSI&#9;JAVA://org.geogebra.common.geogebra3D.kernel3D.geos.GeoTriangulatedSurface3D.Triangle" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559641434455" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559663729499" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
@@ -6438,6 +6420,10 @@
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="org.geogebra.common.main" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\kress\Documents\GitHub\geogebra-extended\geogebra\common\src\main\java\ch" />
+      <recent name="C:\Users\kress\Documents\GitHub\geogebra-extended\geogebra\common\src\main\java\ch\arrg\jdebounce" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -6492,9 +6478,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="848" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49526387" visible="true" weight="0.23307292" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49526387" visible="true" weight="0.23307292" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -6531,26 +6516,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/gradlew">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-850">
-          <caret line="4" column="35" lean-forward="true" selection-start-line="4" selection-start-column="35" selection-end-line="4" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gradle.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/geogebra.eml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/geogebra.iml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="416">
@@ -6828,16 +6793,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/euclidian/EuclidianView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="29087">
-          <caret line="1893" column="82" selection-start-line="1893" selection-start-column="82" selection-end-line="1893" selection-end-column="82" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/kernel/geos/GeoPoint.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="26639">
@@ -6864,18 +6819,63 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="30" lean-forward="true" selection-start-line="13" selection-start-column="30" selection-end-line="13" selection-end-column="30" />
+        <state relative-caret-position="238">
+          <caret line="14" column="23" lean-forward="true" selection-start-line="14" selection-start-column="23" selection-end-line="14" selection-end-column="23" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/euclidian/EuclidianView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="1872" selection-start-line="1872" selection-end-line="1872" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/ch/arrg/jdebounce/DebouncerStore.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="21" column="11" lean-forward="true" selection-start-line="21" selection-start-column="11" selection-end-line="21" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/ch/arrg/jdebounce/aop/DebounceMethodInterceptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="5" lean-forward="true" selection-start-line="15" selection-start-column="5" selection-end-line="15" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/ch/arrg/jdebounce/DebounceExecutor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="16" column="11" selection-start-line="16" selection-start-column="11" selection-end-line="16" selection-end-column="11" />
+          <folding>
+            <element signature="e#483#484#0" expanded="true" />
+            <element signature="e#550#551#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/ch/arrg/jdebounce/aop/Debounce.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="254">
+          <caret line="30" column="39" lean-forward="true" selection-start-line="30" selection-start-column="39" selection-end-line="30" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/common/src/main/java/org/geogebra/common/main/LANController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="27" column="40" selection-start-line="27" selection-start-column="40" selection-end-line="27" selection-end-column="40" />
+        <state relative-caret-position="272">
+          <caret line="16" column="47" selection-start-line="16" selection-start-column="47" selection-end-line="16" selection-end-column="47" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

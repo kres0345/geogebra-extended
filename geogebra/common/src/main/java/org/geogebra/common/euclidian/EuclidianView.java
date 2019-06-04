@@ -3,10 +3,8 @@ package org.geogebra.common.euclidian;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import org.geogebra.common.awt.GAffineTransform;
 import org.geogebra.common.awt.GBasicStroke;
@@ -1868,6 +1866,15 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		}
 	}
 
+	public static void updateM(){
+		 new Timer().schedule(new TimerTask() {
+			 @Override
+			 public void run() {
+
+			 }
+		 }, LANController.REFRESH_RATE);
+	}
+
 	private long lastObject = 0;
 	private String lastObjectName = "";
 
@@ -1880,22 +1887,18 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		System.out.print(" - Def: ");
 		System.out.println(geo.getLabelDescription());
 
-		System.out.println(api.getValueString(geo.getLabelDescription()));
-
-		if (geo.getGeoClassType().equals(GeoClass.POINT)){
-
-			if (!lastObjectName.equals(geo.getLabelDescription()) || System.currentTimeMillis() - lastObject > 1000){
-				if (LANController.isConnected()){
-					System.out.println("Sending command!");
-					LANController.sendCommand(api.getValueString(geo.getLabelDescription()));
-				}else{
-					System.out.println("Not connected!");
+		if (!lastObjectName.equals(geo.getLabelDescription()) || System.currentTimeMillis() - lastObject > 1000){
+			if (LANController.isConnected()){
+				switch (geo.getGeoClassType()){
+					case LIST:
+					case POINT:
+						LANController.sendCommand(api.getValueString(geo.getLabelDescription()));
+						break;
 				}
-				//TODO:LAN Implement Debouncing system instead of simply ignoring.
-				lastObject = System.currentTimeMillis();
-				lastObjectName = geo.getLabelDescription();
-
 			}
+			//TODO:LAN Implement debouncing system instead of simply ignoring.
+			lastObject = System.currentTimeMillis();
+			lastObjectName = geo.getLabelDescription();
 		}
 		/*
 		if(geo.getLabelDescription().equals("B")){

@@ -1,19 +1,11 @@
 package org.geogebra.common.main;
 
+import ch.arrg.jdebounce.aop.Debounce;
 import org.geogebra.common.plugin.GgbAPI;
 
-import java.io.*;
-
 import java.net.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.nio.channels.Selector;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class LANController {
 
@@ -21,6 +13,8 @@ public class LANController {
         SERVER,
         CLIENT
     }
+
+    public static final int REFRESH_RATE = 1000;
 
     static List<String> commandQueue = new ArrayList<String>();
     static InetAddress ConnectedClient;

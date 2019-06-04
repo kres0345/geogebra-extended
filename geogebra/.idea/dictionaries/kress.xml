@@ -2,6 +2,8 @@
   <dictionary name="kress">
     <words>
       <w>addr</w>
+      <w>debouncer</w>
+      <w>debouncing</w>
       <w>errorlevel</w>
       <w>fontsize</w>
       <w>gebra</w>
