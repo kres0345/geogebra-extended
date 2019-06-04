@@ -17,15 +17,14 @@ import java.util.Set;
 
 public class LANController {
 
-    public LANController() {
-
+    enum NetType{
+        SERVER,
+        CLIENT
     }
 
-    /**
-     * Don't touch this, use addData instead.
-     */
     static List<String> commandQueue = new ArrayList<String>();
     static InetAddress ConnectedClient;
+
     private static Thread currentThread;
 
     /**
@@ -57,136 +56,34 @@ public class LANController {
             }
         }catch (Exception e){}
         ResetSettings();
+
         LANThread lanThread = new LANThread();
-        lanThread.tcpServer = true;
+        lanThread.netType = NetType.SERVER;
 
         currentThread = new Thread(lanThread);
         currentThread.start();
     }
 
-    /*
-    public static void StartClient(InetAddress targetAddr){
-        try{
-            if(currentThread != null && !currentThread.isInterrupted()){
-                currentThread.interrupt();
-            }
-        }catch (Exception e){}
-        LANThread lanThread = new LANThread();
-        lanThread.netPort = 1111;
-        lanThread.tcpServer = true;
-        lanThread.targetAddress = targetAddr;
-
-        currentThread = new Thread(lanThread);
-        currentThread.start();
-    }*/
     public static void ConnectClient(String target){
         try{
-            if(currentThread != null && !currentThread.isInterrupted()){
+            if(currentThread != null && !currentThread.isInterrupted())
                 currentThread.interrupt();
-            }
         }catch (Exception e){ }
         ResetSettings();
 
-        LANThread lanThread = new LANThread();
-        lanThread.tcpServer = false;
+        LANThread tLAN = new LANThread();
+        tLAN.netType = NetType.CLIENT;
+
         try{
-            lanThread.targetAddress = InetAddress.getByName(target);
+            tLAN.targetAddress = InetAddress.getByName(target);
         }catch (UnknownHostException e){
             System.out.println("Invalid address");
             return;
         }
 
-        currentThread = new Thread(lanThread);
+        currentThread = new Thread(tLAN);
         currentThread.start();
     }
-
-    /*
-    private void trueClient() throws IOException {
-        InetSocketAddress geogebraAddr = new InetSocketAddress("localhost", 1111);
-        //SocketChannel geogebraClient = SocketChannel.open(geogebraAddr);
-        geogebraClient = SocketChannel.open(geogebraAddr);
-
-        System.out.println("Connecting to Server on port 1111...");
-    }
-
-    private void connectClient() throws IOException {
-        InetSocketAddress geogebraAddr = new InetSocketAddress("localhost", 1111);
-        //SocketChannel geogebraClient = SocketChannel.open(geogebraAddr);
-        geogebraClient = SocketChannel.open(geogebraAddr);
-
-        System.out.println("Connecting to Server on port 1111...");
-
-        ArrayList<String> companyDetails = new ArrayList<String>();
-
-        // create a ArrayList with companyName list
-        companyDetails.add("Facebook");
-        companyDetails.add("Twitter");
-        companyDetails.add("IBM");
-        companyDetails.add("Google");
-        companyDetails.add("geogebra");
-
-        for (String companyName : companyDetails) {
-
-            byte[] message = new String(companyName).getBytes();
-            ByteBuffer buffer = ByteBuffer.wrap(message);
-            geogebraClient.write(buffer);
-
-            System.out.println("sending: " + companyName);
-            buffer.clear();
-
-            // wait for 2 seconds before sending next message
-            //Thread.sleep(2000);
-        }
-        geogebraClient.close();
-    }*/
-
-    //https://crunchify.com/java-nio-non-blocking-io-with-server-client-example-java-nio-bytebuffer-and-channels-selector-java-nio-vs-io/
-
-    /*
-    private SocketChannel geogebraClient;
-
-    private List<String> CommandQueue = new ArrayList<String>();
-
-    public static List<String> GetCommandQueue(){
-        return LANController.CommandQueue;
-    }
-
-    public LANController(){
-
-    }*/
-
-
-    /*
-    public boolean ConnectClient(String target) {
-        try{
-            //connectClient();
-            trueClient();
-            return true;
-        }catch (IOException e){
-            return false;
-        }
-    }*/
-    /*
-    public boolean isConnected() {
-        if(geogebraClient == null)
-            return false;
-
-        return geogebraClient.isConnected();
-    }*/
-    /*
-    public void DisconnectClient() throws IOException {
-        geogebraClient.close();
-    }*/
-
-    /*
-    public int sendMessage(String msg) throws IOException {
-        byte[] bytes = msg.getBytes();
-        ByteBuffer buffer = ByteBuffer.wrap(bytes);
-        return geogebraClient.write(buffer);
-    }
-    public int sendCommand(String cmd) throws IOException {
-        return sendMessage("e:" + cmd);
-    }*/
 }
 /*
 class LANControllerServer implements Runnable{
@@ -310,4 +207,97 @@ class LANControllerClientHandler implements Runnable{
             return false;
         }
 
+    }*/
+
+
+
+
+
+
+/*
+    private void trueClient() throws IOException {
+        InetSocketAddress geogebraAddr = new InetSocketAddress("localhost", 1111);
+        //SocketChannel geogebraClient = SocketChannel.open(geogebraAddr);
+        geogebraClient = SocketChannel.open(geogebraAddr);
+
+        System.out.println("Connecting to Server on port 1111...");
+    }
+
+    private void connectClient() throws IOException {
+        InetSocketAddress geogebraAddr = new InetSocketAddress("localhost", 1111);
+        //SocketChannel geogebraClient = SocketChannel.open(geogebraAddr);
+        geogebraClient = SocketChannel.open(geogebraAddr);
+
+        System.out.println("Connecting to Server on port 1111...");
+
+        ArrayList<String> companyDetails = new ArrayList<String>();
+
+        // create a ArrayList with companyName list
+        companyDetails.add("Facebook");
+        companyDetails.add("Twitter");
+        companyDetails.add("IBM");
+        companyDetails.add("Google");
+        companyDetails.add("geogebra");
+
+        for (String companyName : companyDetails) {
+
+            byte[] message = new String(companyName).getBytes();
+            ByteBuffer buffer = ByteBuffer.wrap(message);
+            geogebraClient.write(buffer);
+
+            System.out.println("sending: " + companyName);
+            buffer.clear();
+
+            // wait for 2 seconds before sending next message
+            //Thread.sleep(2000);
+        }
+        geogebraClient.close();
+    }*/
+
+//https://crunchify.com/java-nio-non-blocking-io-with-server-client-example-java-nio-bytebuffer-and-channels-selector-java-nio-vs-io/
+
+    /*
+    private SocketChannel geogebraClient;
+
+    private List<String> CommandQueue = new ArrayList<String>();
+
+    public static List<String> GetCommandQueue(){
+        return LANController.CommandQueue;
+    }
+
+    public LANController(){
+
+    }*/
+
+
+    /*
+    public boolean ConnectClient(String target) {
+        try{
+            //connectClient();
+            trueClient();
+            return true;
+        }catch (IOException e){
+            return false;
+        }
+    }*/
+    /*
+    public boolean isConnected() {
+        if(geogebraClient == null)
+            return false;
+
+        return geogebraClient.isConnected();
+    }*/
+    /*
+    public void DisconnectClient() throws IOException {
+        geogebraClient.close();
+    }*/
+
+    /*
+    public int sendMessage(String msg) throws IOException {
+        byte[] bytes = msg.getBytes();
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        return geogebraClient.write(buffer);
+    }
+    public int sendCommand(String cmd) throws IOException {
+        return sendMessage("e:" + cmd);
     }*/
