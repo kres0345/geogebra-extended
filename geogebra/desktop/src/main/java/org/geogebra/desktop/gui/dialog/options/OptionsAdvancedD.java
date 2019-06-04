@@ -120,7 +120,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 		this.wrappedPanel = new JPanel(new BorderLayout());
 
 		this.app = app;
-		this.LC = new LANController();
+		//this.LC = new LANController();
 		this.loc = app.getLocalization();
 		this.settings = app.getSettings();
 
@@ -666,18 +666,13 @@ public class OptionsAdvancedD implements OptionPanelD,
 		} else if (source == lanConnectButton) {
 			if(app.getKernel().getLanServerClientMode() == 0){
 				System.out.println("Connecting to host...");
-				if(LC.ConnectClient(lanTargetTextField.getText())){
-					System.out.println("Connected.");
-				}else{
-					System.out.println("Couldn't connect to host");
-				}
+				//LC.ConnectClient(lanTargetTextField.getText());
+				LANController.ConnectClient(lanTargetTextField.getText());
+				System.out.println("Connected.");
 			}else{
 				System.out.println("Creating server...");
-				if(LC.StartServer(lanTargetTextField.getText())){
-					System.out.println("Server listening...");
-				}else{
-					System.out.println("Couldn't create server.");
-				}
+				LANController.StartServer();
+				System.out.println("Server listening...");
 			}
         } else if (source == angleUnitRadioDegree) {
 			app.getKernel().setAngleUnit(Kernel.ANGLE_DEGREE);

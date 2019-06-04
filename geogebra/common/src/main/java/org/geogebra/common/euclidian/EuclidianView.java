@@ -439,7 +439,7 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	/** application */
 	protected App app;
 	protected GgbAPI api;
-	protected LANController LC;
+	//protected LANController LC;
 
 	private EuclidianSettings settings;
 
@@ -625,7 +625,7 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		kernel = ec.getKernel();
 		app = kernel.getApplication();
 		api = app.getGgbApi(); //LAN Mode stuff
-		LC = new LANController(); //LAN Mode stuff
+		//LC = new LANController(); //LAN Mode stuff
 		this.settings = settings;
 		// no repaint
 		if (kernel.getConstruction() != null) {
@@ -1885,14 +1885,13 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 		if (geo.getGeoClassType().equals(GeoClass.POINT)){
 
 			if (!lastObjectName.equals(geo.getLabelDescription()) || System.currentTimeMillis() - lastObject > 1000){
-				if (LC.isConnected()){
-					try{
-						LC.sendCommand(api.getValueString(geo.getLabelDescription()));
-					}catch (IOException e){
-						System.out.println(e.toString());
-					}
+				if (LANController.isConnected()){
+					System.out.println("Sending command!");
+					LANController.sendCommand(api.getValueString(geo.getLabelDescription()));
+				}else{
+					System.out.println("Not connected!");
 				}
-
+				//TODO:LAN Implement Debouncing system instead of simply ignoring.
 				lastObject = System.currentTimeMillis();
 				lastObjectName = geo.getLabelDescription();
 
