@@ -1882,21 +1882,49 @@ public abstract class EuclidianView implements EuclidianViewInterfaceCommon,
 	public void update(GeoElement geo) {
 		System.out.print("GeoClassType: ");
 		System.out.print(geo.getGeoClassType());
-		System.out.print(" - ValueType: ");
-		System.out.print(geo.getValueType());
-		System.out.print(" - Def: ");
-		System.out.println(geo.getLabelDescription());
+        //System.out.print(" - ValueType: ");
+        //System.out.print(geo.getValueType());
+        System.out.print(" _ Def: ");
+		System.out.print(geo.getLabelDescription());
+		System.out.print(" _ getValueString: ");
+        System.out.print(api.getValueString(geo.getLabelDescription()));
+        System.out.print(" _ getCommandString: ");
+        System.out.println(api.getCommandString(geo.getLabelDescription()));
 
-		if (!lastObjectName.equals(geo.getLabelDescription()) || System.currentTimeMillis() - lastObject > 1000){
+
+		if (!lastObjectName.equals(geo.getLabelDescription()) || System.currentTimeMillis() - lastObject > 100){
 			if (LANController.isConnected()){
+			    String outString = "";
 				switch (geo.getGeoClassType()){
 					case LIST:
+					    outString = api.getValueString(geo.getLabelDescription());
+					    break;
 					case POINT:
-						LANController.sendCommand(api.getValueString(geo.getLabelDescription()));
+					    outString = api.getValueString(geo.getLabelDescription());
+                        break;
+                    case CONIC:
+                        outString = geo.getLabelDescription();
+                        break;
+                    case NUMERIC:  // Part of Spreadsheet functionality
+                        outString = geo.getLabelDescription();
 						break;
+                    case TEXT:  // Part of Spreadsheet functionality
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(geo.getLabelDescription());
+                        sb.append("=");
+                        sb.append('"');
+                        sb.append(api.getValueString(geo.getLabelDescription()));
+                        sb.append('"');
+                        outString = sb.toString();
+                        break;
 				}
+				outString = LANController.stripWhitespace(outString);
+				if (!outString.equals("") && !LANController.checkIgnoreData(outString)){
+                    System.out.println("Sent " + outString);
+                    LANController.sendCommand(outString);
+                }
 			}
-			//TODO:LAN Implement debouncing system instead of simply ignoring.
+			//TODO: LAN Implement debouncing system instead of simply ignoring.
 			lastObject = System.currentTimeMillis();
 			lastObjectName = geo.getLabelDescription();
 		}

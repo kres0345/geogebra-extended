@@ -73,7 +73,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 	/**	 */
 	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits,
 			cbUseLocalLabels;
-	private JCheckBox cbComicSans, cbLanMode;
+	private JCheckBox cbComicSans;//, cbLanMode;
 
 	/** */
 	private JRadioButton angleUnitRadioDegree, angleUnitRadioRadian,
@@ -98,7 +98,7 @@ public class OptionsAdvancedD implements OptionPanelD,
 	/** */
 	private JSlider slOpacity;
 
-	private JButton lanConnectButton;
+	private JButton lanConnectButton, lanDisconnectButton;
 	private JTextField lanTargetTextField;
 
 	/**
@@ -272,9 +272,9 @@ public class OptionsAdvancedD implements OptionPanelD,
 	private void initLanPanel(){
 		lanPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		cbLanMode = new JCheckBox();
-		cbLanMode.addActionListener(this);
-		lanPanel.add(cbLanMode);
+		//cbLanMode = new JCheckBox();
+		//cbLanMode.addActionListener(this);
+		//lanPanel.add(cbLanMode);
 
 		lanServerClientGroup = new ButtonGroup();
 
@@ -295,6 +295,10 @@ public class OptionsAdvancedD implements OptionPanelD,
 		lanConnectButton = new JButton();
 		lanConnectButton.addActionListener(this);
 		lanPanel.add(lanConnectButton);
+
+		lanDisconnectButton = new JButton();
+		lanDisconnectButton.addActionListener(this);
+		lanPanel.add(lanDisconnectButton);
 	}
 
 	/**
@@ -656,10 +660,10 @@ public class OptionsAdvancedD implements OptionPanelD,
 		} else if (source == cbComicSans) {
 			System.out.println("Clicked cbComicSans: ".concat(Boolean.toString(cbComicSans.isSelected())));
 			app.getFontManager().updateDefaultFonts(app.getFontSize(), "Comic Sans MS", "Serif");
-		} else if (source == cbLanMode) {
+		} /*else if (source == cbLanMode) {
 		    app.getKernel().setLanMode(cbLanMode.isSelected());
 			System.out.println("LAN mode toggled");
-		} else if (source == lanServerClient1) {
+		} */else if (source == lanServerClient1) {
             app.getKernel().setLanServerClientMode(0);
         } else if (source == lanServerClient2) {
 			app.getKernel().setLanServerClientMode(1);
@@ -674,10 +678,14 @@ public class OptionsAdvancedD implements OptionPanelD,
 				LANController.StartServer();
 				System.out.println("Server listening...");
 			}
-        } else if (source == angleUnitRadioDegree) {
-			app.getKernel().setAngleUnit(Kernel.ANGLE_DEGREE);
-			app.getKernel().updateConstruction(false);
-			app.setUnsaved();
+        } else if (source == lanDisconnectButton) {
+			if (LANController.isConnected()) {
+				LANController.disconnectClient();
+			}
+		} else if (source == angleUnitRadioDegree) {
+				app.getKernel().setAngleUnit(Kernel.ANGLE_DEGREE);
+				app.getKernel().updateConstruction(false);
+				app.setUnsaved();
 		} else if (source == angleUnitRadioRadian) {
 			app.getKernel().setAngleUnit(Kernel.ANGLE_RADIANT);
 			app.getKernel().updateConstruction(false);
@@ -880,10 +888,11 @@ public class OptionsAdvancedD implements OptionPanelD,
 		lanPanel.setBorder(
 				LayoutUtil.titleBorder("LAN Settings")
 		);
-		cbLanMode.setText("LAN Mode");
+		//cbLanMode.setText("LAN Mode");
 		lanServerClient1.setText("Client");
 		lanServerClient2.setText("Server");
-		lanConnectButton.setText("Start/Connect");
+		lanConnectButton.setText("Start");
+		lanDisconnectButton.setText("Stop");
 		lanTargetTextField.setText("Target Address");
 
 		// perspectivesPanel.setBorder(LayoutUtil.titleBorder(app
@@ -1112,10 +1121,11 @@ public class OptionsAdvancedD implements OptionPanelD,
 		cbComicSans.setFont(font);
 
 		lanPanel.setFont(font);
-		cbLanMode.setFont(font);
+		//cbLanMode.setFont(font);
 		lanServerClient1.setFont(font);
 		lanServerClient2.setFont(font);
 		lanConnectButton.setFont(font);
+		lanDisconnectButton.setFont(font);
 	}
 
 	@Override

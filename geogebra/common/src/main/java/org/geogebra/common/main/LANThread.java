@@ -12,7 +12,7 @@ public class LANThread implements Runnable {
 
     LANController.NetType netType = LANController.NetType.SERVER;
     InetAddress targetAddress;
-    int netPort = 1111;
+    public int netPort = 1111;
 
     private SendQueue SQ;
 
@@ -145,10 +145,8 @@ class SendQueue implements Runnable{
 
     public void run(){
         while(sendingQueue) {
-            if(LANController.commandQueue.size() > 0) {
-                System.out.println("Sending command from queue...");
-                in.println(LANController.commandQueue.get(0));
-                LANController.commandQueue.remove(0);
+            if(LANController.dataQueue.size() > 0) {
+                in.println(LANController.dataQueue.remove());
             }
         }
     }

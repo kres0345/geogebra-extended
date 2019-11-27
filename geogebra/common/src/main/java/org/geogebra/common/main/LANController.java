@@ -1,11 +1,9 @@
 package org.geogebra.common.main;
 
-import ch.arrg.jdebounce.aop.Debounce;
-import org.geogebra.common.plugin.GgbAPI;
+//import ch.arrg.jdebounce.aop.Debounce;
 
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class LANController {
 
@@ -15,8 +13,14 @@ public class LANController {
     }
 
     public static final int REFRESH_RATE = 1000;
+    //public static final String[] IGNORED_DATA = {"Point(xAxis)"};
+    private static final Set<String> IGNORED_DATA = new HashSet<String>(Arrays.asList(
+            new String[] {"Point(xAxis)", "Point(yAxis)", "Point(zAxis)"}
+    ));
 
-    static List<String> commandQueue = new ArrayList<String>();
+
+    //static List<String> dataQueue = new ArrayList<String>();
+    static Queue<String> dataQueue = new LinkedList<>();
     static InetAddress ConnectedClient;
 
     private static Thread currentThread;
@@ -25,13 +29,41 @@ public class LANController {
      * Used for adding data to be sent over to client/server.
      * @param data Data to send
      */
-    public static void addData(String data) { commandQueue.add(data); }
-    public static void sendCommand(String cmd) { commandQueue.add("e:" + cmd); }
+    public static void addData(String data) {
+        dataQueue.add(data);
+    }
+    public static void sendCommand(String cmd) {
+        dataQueue.add("e:" + cmd);
+    }
+
+    /**
+     * Check if a string is in the IGNORED_DATA list.
+     * @param data String to check with
+     */
+    public static boolean checkIgnoreData(String data){
+        return IGNORED_DATA.contains(data);
+    }
+
+    public static String stripWhitespace(String string){
+        StringBuilder out = new StringBuilder();
+        boolean insideString = false;
+        for (char ch: string.toCharArray()) {
+            if (ch == '"'){
+                insideString = !insideString;
+            }
+            if (ch == ' ' && !insideString){
+                continue;
+            }
+            out.append(ch);
+        }
+
+        return out.toString();
+    }
 
     /**
      * Asks server to disconnect :)
      */
-    public static void disconnectClient(){ commandQueue.add("dis"); }
+    public static void disconnectClient(){ dataQueue.add("dis"); }
 
     /**
      * @return Weather client is connected.
@@ -39,7 +71,8 @@ public class LANController {
     public static boolean isConnected() { return ConnectedClient != null; }
 
     private static void ResetSettings(){
-        commandQueue = new ArrayList<String>();
+        //dataQueue = new ArrayList<String>();
+        dataQueue = new LinkedList<>();
         ConnectedClient = null;
     }
 
